@@ -1,5 +1,5 @@
 #pragma once
-#include "case.h"
+#include "cell.h"
 
 using t_mat = std::vector<std::unique_ptr<cell>>;
 

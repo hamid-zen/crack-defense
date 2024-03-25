@@ -1,5 +1,5 @@
 #include "grid.h"
-#include "case.h"
+#include "cell.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>

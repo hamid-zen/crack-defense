@@ -1,4 +1,4 @@
-#include "case.h"
+#include "cell.h"
 
 cell::cell(t_colors color, coordonne col, coordonne lig)
     : _color(color), _colonne(col), _ligne(lig), _y(lig){}
