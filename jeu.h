@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <iostream>
 
-enum class tdirection{
+enum class t_direction{
     haut,
     bas,
     gauche,
@@ -18,13 +18,12 @@ class jeu{
 public:
     jeu(coordonne _max_hauteur=12,coordonne _max_largeur=6,int colors=4);
     bool perdu();
-    void deplacer_viseur(tdirection dir);
+    void deplacer_viseur(t_direction dir);
     void afficher() const;
 
 private:
     grid _grille;
     viseur _viseur;
-
 };
 
 
