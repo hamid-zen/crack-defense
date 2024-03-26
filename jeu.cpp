@@ -33,3 +33,11 @@ void jeu::deplacer_viseur(tdirection dir)
     }
     }
 }
+std::pair<unsigned int, unsigned int> jeu::faire_tomber(coordonne x, coordonne y)
+{   unsigned int j(y);
+    while((j+1)<_grille1.max_hauteur() && _grille1(x,j+1)==t_colors::empty_cell){
+        j++;
+    }
+    return std::pair<unsigned int, unsigned int>(x,j);
+}
+
