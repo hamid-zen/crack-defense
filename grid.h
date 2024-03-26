@@ -12,6 +12,7 @@ public:
     void init();
 
     void afficher() const;
+    t_colors operator() (coordonne x, coordonne y);
 
 private:
     t_mat _board;
