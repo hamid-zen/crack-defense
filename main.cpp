@@ -9,8 +9,11 @@ int main()
     jeu j;
     std::cout << "Avant deplacement\n";
     j.afficher();
-    j.deplacer_viseur(t_direction::haut);
-    std::cout << "Apres deplacement\n";
+    j.deplacer_viseur(t_direction::droite);
+    j.deplacer_viseur(t_direction::droite);
+    j.deplacer_viseur(t_direction::droite);
+    std::cout << "Apres deplacement bas\n";
     j.afficher();
+
     return 0;
 }
