@@ -96,3 +96,11 @@ void grid::afficher() const
     }
     std::cout << "\n";
 }
+
+t_colors grid::operator()(coordonne x, coordonne y)
+{
+    if(x < Max_largeur && y < Max_hauteur &&_board[ x + y *Max_largeur ])
+        return _board[ x + y * Max_largeur ] -> color();
+    else return t_colors::empty_cell;
+
+}
