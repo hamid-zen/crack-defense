@@ -1,10 +1,21 @@
-#ifndef VISEUR_H
-#define VISEUR_H
+#pragma once
+#include "cell.h"
 
-class viseur
-{
+
+/*
+ * Dans cette classe on stocke la position de la case gauche du viseur
+ */
+class viseur {
 public:
-    viseur();
-};
+    viseur(coordonne x, coordonne y);
 
-#endif // VISEUR_H
+    coordonne x() const;
+    void setX(coordonne newX);
+
+    coordonne y() const;
+    void setY(coordonne newY);
+
+private:
+    coordonne _x;
+    coordonne _y;
+};
