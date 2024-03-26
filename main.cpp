@@ -1,5 +1,6 @@
 #include <iostream>
 #include "grid.h"
+#include "jeu.h"
 using namespace std;
 
 int main()

@@ -6,5 +6,4 @@ set(CMAKE_CXX_EXTENSIONS off)
 if(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     add_compile_options(-Wall -Wpedantic)
 endif()
-add_executable(crack-attack main.cpp cell.h  grid.h cell.cpp grid.cpp
-    viseur.h viseur.cpp)
+add_executable(crack-attack main.cpp cell.h  jeu.h viseur.h grid.h cell.cpp  jeu.cpp viseur.cpp grid.cpp)

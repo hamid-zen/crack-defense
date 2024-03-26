@@ -3,8 +3,7 @@
 #include <vector>
 #include <memory>
 
-const unsigned int Max_hauteur=12;
-const unsigned int Max_largeur=6;
+
 const unsigned int nombre_couleurs=4;
 using coordonne =unsigned int ;
 
