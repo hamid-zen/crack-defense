@@ -11,20 +11,19 @@ enum class t_colors {
     bleu , rose,jaune,orange,empty_cell
 };
 
+std::string toString_color(t_colors couleur);
+
 class cell {
 
 public:
-    cell(t_colors color,coordonne col,coordonne lig) ;
-    cell(t_colors color,coordonne col,coordonne lig, float y) ;
+    cell(t_colors color) ;
 
     t_colors color() const;
 
-    std::string toString_color();
+
+    void setColor(t_colors newColor);
 
 private:
     t_colors _color;
-    coordonne _colonne;
-    coordonne _ligne;
-    float _y;
 
 };

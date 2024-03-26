@@ -1,12 +1,11 @@
 #include "jeu.h"
-#include <algorithm>
 
 jeu::jeu(coordonne _max_hauteur, coordonne _max_largeur, int colors)
-    :_grille1(_max_hauteur,_max_largeur,colors),_viseur(_max_largeur/2,_max_hauteur/2,_max_largeur/2+1,_max_hauteur/2+1){}
+    :_grille(_max_hauteur,_max_largeur,colors),_viseur(_max_largeur/2,_max_hauteur/2,_max_largeur/2+1,_max_hauteur/2+1){ _grille.init(); /* TODO: Enlever */}
 
 bool jeu::perdu()
-{  for(unsigned int i(0);i<_grille1.max_largeur();i++){
-            if(_grille1(i,0)!=t_colors::empty_cell)
+{  for(unsigned int i(0);i<_grille.max_largeur();i++){
+            if(_grille(i,0)!=t_colors::empty_cell)
                 return  true;
     }
     return false;
@@ -32,4 +31,34 @@ void jeu::deplacer_viseur(tdirection dir)
 
     }
     }
+}
+
+void jeu::afficher() const
+{
+    for (unsigned int j(0);j<_grille.max_hauteur();j++){
+        std::cout << std::endl;
+        for(unsigned int i(0);i<_grille.max_largeur();i++){
+            if( _grille(i, j)==t_colors::empty_cell){
+                std::cout<<"| ";
+            }
+            else{
+                std::cout << "|" << toString_color(_grille(i, j));
+            }
+        }
+        std::cout << "|";
+    }
+    std::cout << "\n"<<" ";
+    for(unsigned int k(0);k<_grille.max_largeur();k++){
+        std::cout<<"_"<<" ";
+    }
+    std::cout<<std::endl;
+    for(unsigned int i(0);i<_grille.max_largeur();i++){
+        if( _grille(i, _grille.max_hauteur())==t_colors::empty_cell){
+            std::cout<<"| ";
+        }
+        else{
+            std::cout << "|" << toString_color(_grille(i, _grille.max_hauteur()));
+        }
+    }
+    std::cout<<"|"<<std::endl;
 }

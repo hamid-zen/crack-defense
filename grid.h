@@ -9,8 +9,7 @@ public:
     t_colors couleurAleatoire() const;
     bool adjacent(coordonne i,coordonne j,t_colors clr ) const;
     void init();
-    void afficher() const;
-    t_colors operator() (coordonne x, coordonne y);
+    t_colors operator() (coordonne x, coordonne y) const;
     coordonne max_hauteur() const;
     coordonne max_largeur() const;
     float taille_ligne_incomplete() const;

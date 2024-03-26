@@ -6,8 +6,7 @@ using namespace std;
 int main()
 {
     srand(time(0));
-    grid g;
-    g.init();
-    g.afficher();
+    jeu j;
+    j.afficher();
     return 0;
 }

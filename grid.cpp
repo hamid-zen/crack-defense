@@ -74,45 +74,15 @@ void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 lign
                 couleur=couleurAleatoire();
             }while(adjacent(i,j,couleur));
 
-            _board[i+j*_max_largeur]=std::make_unique<cell>(couleur,i,j);
+            _board[i+j*_max_largeur]=std::make_unique<cell>(couleur);
         }
 
     }
 }
 
-void grid::afficher() const
+t_colors grid::operator()(coordonne x, coordonne y) const
 {
-    for (unsigned int j(0);j<_max_hauteur;j++){
-        std::cout << std::endl;
-        for(unsigned int i(0);i<_max_largeur;i++){
-            if( _board[i+j*_max_largeur]==nullptr){
-                std::cout<<"| ";
-            }
-            else{
-                std::cout << "|" << _board[i+j*_max_largeur]->toString_color();
-            }
-        }
-        std::cout << "|";
-    }
-    std::cout << "\n"<<" ";
-    for(unsigned int k(0);k<_max_largeur;k++){
-        std::cout<<"_"<<" ";
-    }
-    std::cout<<std::endl;
-    for(unsigned int i(0);i<_max_largeur;i++){
-        if( _board[i+_max_hauteur*_max_largeur]==nullptr){
-            std::cout<<"| ";
-        }
-        else{
-            std::cout << "|" << _board[i+_max_hauteur*_max_largeur]->toString_color();
-        }
-    }
-    std::cout<<"|"<<std::endl;
-}
-
-t_colors grid::operator()(coordonne x, coordonne y)
-{
-    if(x < _max_largeur && y < _max_hauteur &&_board[ x + y *_max_largeur ])
+    if(x < _max_largeur && y <= _max_hauteur && _board[ x + y *_max_largeur ])
         return _board[ x + y * _max_largeur ] -> color();
     else return t_colors::empty_cell;
 
@@ -133,8 +103,15 @@ coordonne grid::max_hauteur() const
     return _max_hauteur;
 }
 
+/**
+ * @brief grid::echange
+ * @param x1
+ * @param y1
+ * @param x2
+ * @param y2
+ * Echange les pointeur dans (x1, y1) avec celui de (x2, y2)
+ */
 void grid::echange(coordonne x1, coordonne y1, coordonne x2, coordonne y2)
 {
-    auto cell1(std::move(_board[x1+_max_largeur*y1])), cell2(std::move(_board[x2+_max_largeur*y2]));
-    std::swap(cell1, cell2);
+    std::swap(_board[x1+_max_largeur*y1], _board[x2+_max_largeur*y2]);
 }
