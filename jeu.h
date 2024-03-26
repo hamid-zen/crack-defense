@@ -20,6 +20,7 @@ public:
 private:
     grid _grille1;
     viseur _viseur;
+    int _score;
 
 };
 
