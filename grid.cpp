@@ -132,3 +132,9 @@ coordonne grid::max_hauteur() const
 {
     return _max_hauteur;
 }
+
+void grid::echange(coordonne x1, coordonne y1, coordonne x2, coordonne y2)
+{
+    auto cell1(std::move(_board[x1+_max_largeur*y1])), cell2(std::move(_board[x2+_max_largeur*y2]));
+    std::swap(cell1, cell2);
+}

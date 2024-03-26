@@ -46,5 +46,3 @@ void viseur::setX1(const coordonne &x1)
 {
     _x1 = x1;
 }
-
-

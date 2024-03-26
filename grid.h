@@ -15,6 +15,7 @@ public:
     coordonne max_largeur() const;
     float taille_ligne_incomplete() const;
 
+    void echange(coordonne x1, coordonne y1, coordonne x2, coordonne y2);
 private:
     t_mat _board;
     coordonne _max_hauteur;

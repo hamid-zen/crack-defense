@@ -10,7 +10,6 @@ class viseur {
 public:
     viseur(coordonne x1, coordonne y1,coordonne x2, coordonne y2);
 
-
     coordonne x1() const;
     void setX1(const coordonne &x1);
 
