@@ -9,7 +9,7 @@ const unsigned int nombre_couleurs=4;
 using coordonne =unsigned int ;
 
 enum class t_colors {
-    bleu , rose,jaune,orange
+    bleu , rose,jaune,orange,empty_cell
 };
 
 class cell {
