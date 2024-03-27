@@ -21,6 +21,9 @@ public:
     void deplacer_viseur(t_direction dir);
     void afficher() const;
     void echanger_cases_viseur();
+    std::pair<coordonne,coordonne> getcase1viseur() const; //recupere la position de la premiere case du viseur
+    std::pair<coordonne,coordonne> getcase2viseur() const;
+    t_colors getColor(std::pair<coordonne,coordonne> pair) const; //recupere la couleur de la case qui a pour position pair
 private:
     grid _grille;
     viseur _viseur;
