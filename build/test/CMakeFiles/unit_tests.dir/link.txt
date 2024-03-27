@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/unit_tests.dir/test_calc.cpp.o -o unit_tests  ../src/libgamelib.a ../_deps/catch2-build/src/libCatch2Main.a ../_deps/catch2-build/src/libCatch2.a 
