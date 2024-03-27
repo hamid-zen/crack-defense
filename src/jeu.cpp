@@ -18,6 +18,15 @@ bool jeu::perdu()
     }
     return false;
 }
+ std::pair<coordonne,coordonne> jeu::getcase1viseur() const{
+    return std::pair<coordonne,coordonne>(_viseur.x1(),_viseur.y1());
+ }
+ std::pair<coordonne,coordonne> jeu::getcase2viseur() const{
+    return std::pair<coordonne,coordonne>(_viseur.x2(),_viseur.y2());
+ }
+ t_colors jeu::getColor( std::pair<coordonne,coordonne> pair) const{
+        return _grille(pair.first,pair.second);
+}
 
 /**
  * @brief deplace le viseur dans une direction donnée en checkant les bounds
