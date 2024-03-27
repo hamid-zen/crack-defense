@@ -144,3 +144,91 @@ void jeu::echanger_cases_viseur() {
         j++;
     }
 }
+std::pair<unsigned int, unsigned int> jeu::faire_tomber(coordonne x, coordonne y)
+{   unsigned int j(y);
+    while((j+1)<_grille.max_hauteur() && _grille(x,j+1)==t_colors::empty_cell){
+        j++;
+    }
+    return std::pair<unsigned int, unsigned int>(x,j);
+}
+
+std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_vertical()
+{
+    std::vector<std::pair<unsigned int, unsigned int> > vec;
+
+        //alignement verticale
+        for(unsigned int i(0);i<_grille.max_largeur();i++){
+            t_colors clr=_grille(i,0);
+            vec.clear();
+            vec.push_back(std::pair<unsigned int, unsigned int>(i,0)); //on ajoute la position de cette case au vecteur
+            for(unsigned int j(1);j<_grille.max_hauteur();j++){
+                if(vec.size()==3){ //cad on a trouvé un alignement verticale
+                    unsigned int k(j);
+                    //on ajoute tant que c'est la meme couleur
+                    while(_grille(i,k)==clr && k<_grille.max_hauteur()){
+                        vec.push_back(std::pair<unsigned int, unsigned int>(i,k));
+                        k++;
+                    }
+                    return vec;
+                }
+                else if(clr==t_colors::empty_cell || (_grille(i,j)!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+                {  vec.clear();
+                    vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                    clr=_grille(i,j);
+                }
+                 
+                else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
+                       vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                    }
+                }
+
+            }
+        if(vec.size()==3){ //alignement a la fin
+           return vec;
+        }
+        vec.clear();
+        return vec;
+}
+
+std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_horizontale()
+{
+    std::vector<std::pair<unsigned int, unsigned int> > vec;
+
+   for(unsigned int j(0);j<_grille.max_hauteur();j++) {
+        t_colors clr=_grille(0,j);
+        vec.clear();
+        vec.push_back(std::pair<unsigned int, unsigned int>(0,j)); //on ajoute la position de cette case au vecteur
+        for(unsigned int i(1);i<_grille.max_largeur();i++){
+            if(vec.size()==3){ //cad on a trouvé un alignement verticale
+                unsigned int k(i);
+                //on ajoute tant que c'est la meme couleur
+                while(_grille(k,j)==clr && k<_grille.max_largeur()){
+                    vec.push_back(std::pair<unsigned int, unsigned int>(k,j));
+                    k++;
+                }
+                return vec;
+            }
+            else if(clr==t_colors::empty_cell || (_grille(i,j)!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+            {  vec.clear();
+                vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                clr=_grille(i,j);
+            }else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
+                   vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+
+                }
+            }
+
+    }
+    if(vec.size()==3){ //alignement a la fin
+       return vec;
+    }
+    vec.clear();
+    return vec;
+}
+
+std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement()
+{
+    if(alignement_vertical().size()>0)
+        return alignement_vertical();
+    else return alignement_horizontale();
+}
