@@ -5,7 +5,7 @@ jeu::jeu(coordonne _max_hauteur, coordonne _max_largeur, int colors)
 
 /**
  * @brief check si le jeu est perdu
- * 
+ *
  * @return true perdu
  * @return false non-perdu
  */
@@ -20,8 +20,8 @@ bool jeu::perdu()
 }
 
 /**
- * @brief deplace le viseur dans une direction donnée
- * 
+ * @brief deplace le viseur dans une direction donnée en checkant les bounds
+ *
  * @param dir direction du deplaçement
  */
 void jeu::deplacer_viseur(t_direction dir)
@@ -30,26 +30,38 @@ void jeu::deplacer_viseur(t_direction dir)
     {
     case t_direction::bas:
     {
-        _viseur.setY1(_viseur.y1() + 1);
-        _viseur.setY2(_viseur.y2() + 1);
+        if (_viseur.y1() < _grille.max_hauteur() - 1 && _viseur.y2() < _grille.max_hauteur() - 1)
+        {
+            _viseur.setY1(_viseur.y1() + 1);
+            _viseur.setY2(_viseur.y2() + 1);
+        }
         break;
     }
     case t_direction::haut:
     {
-        _viseur.setY1(_viseur.y1() - 1);
-        _viseur.setY2(_viseur.y2() - 1);
+        if (_viseur.y1() > 0 && _viseur.y2() > 0)
+        {
+            _viseur.setY1(_viseur.y1() - 1);
+            _viseur.setY2(_viseur.y2() - 1);
+        }
         break;
     }
     case t_direction::gauche:
     {
-        _viseur.setX1(_viseur.x1() - 1);
-        _viseur.setX2(_viseur.x2() - 1);
+        if (_viseur.x1() > 0 && _viseur.x2() > 0)
+        {
+            _viseur.setX1(_viseur.x1() - 1);
+            _viseur.setX2(_viseur.x2() - 1);
+        }
         break;
     }
     case t_direction::droite:
     {
-        _viseur.setX1(_viseur.x1() + 1);
-        _viseur.setX2(_viseur.x2() + 1);
+        if (_viseur.x1() < _grille.max_largeur() - 1 && _viseur.x2() < _grille.max_largeur() - 1)
+        {
+            _viseur.setX1(_viseur.x1() + 1);
+            _viseur.setX2(_viseur.x2() + 1);
+        }
         break;
     }
     }
@@ -57,7 +69,7 @@ void jeu::deplacer_viseur(t_direction dir)
 
 /**
  * @brief affiche la table
- * 
+ *
  */
 void jeu::afficher() const
 {
