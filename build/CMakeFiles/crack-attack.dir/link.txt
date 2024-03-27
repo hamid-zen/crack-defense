@@ -1,0 +1,1 @@
+/usr/bin/c++ "CMakeFiles/crack-attack.dir/main.cpp.o" -o crack-attack  src/libgamelib.a 

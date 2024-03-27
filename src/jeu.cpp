@@ -115,3 +115,23 @@ void jeu::afficher() const
     }
     std::cout << "|" << std::endl;
 }
+
+void jeu::echanger_cases_viseur() {
+    // On echange dans la grille
+    _grille.echange(_viseur.x1(), _viseur.y1(), _viseur.x2(), _viseur.y2());
+
+    // On check si on doit faire descendre
+    coordonne i = _viseur.x1(), j = _viseur.y1();
+    while (j < _grille.max_hauteur()-1 && _grille(i, j) == t_colors::empty_cell)
+    {
+        _grille.echange(i, j, i, j-1);
+        j++;
+    }
+    i = _viseur.x2();
+    j = _viseur.y2();
+    while (j < _grille.max_hauteur()-1 && _grille(i, j) == t_colors::empty_cell)
+    {
+        _grille.echange(i, j, i, j-1);
+        j++;
+    }
+}
