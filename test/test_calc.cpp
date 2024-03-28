@@ -51,3 +51,45 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
     REQUIRE(j.getColor(vec[0])== j.getColor(vec[2])) ; //les 3 cases devraient avoir la meme couleur
     REQUIRE(j.getColor(vec[0])==t_colors::rose); //et devrait etre la couleur rouge
 }
+TEST_CASE("faire_tomber", "[tomber][test]") {
+    srand(5);
+    jeu j;
+    j.changer_sense_viseur();
+    j.deplacer_viseur(t_direction::gauche);
+    j.deplacer_viseur(t_direction::haut);
+    j.echanger_cases_viseur();
+    j.deplacer_viseur(t_direction::haut);
+    auto position = j.faire_tomber(3,5);
+    REQUIRE(position.first == 3);
+    REQUIRE(position.second == 7);
+}
+TEST_CASE("faire_glisser_colonne", "[glisser][test]") {
+    srand(6);
+    jeu j;
+    j.changer_sense_viseur();
+    for(int i(0);i<3;i++){
+        j.deplacer_viseur(t_direction::gauche);
+    }
+    for(int i(0);i<2;i++){
+        j.deplacer_viseur(t_direction::bas);
+    }
+    j.echanger_cases_viseur();
+    j.deplacer_viseur(t_direction::bas); 
+    j.deplacer_viseur(t_direction::haut);
+    coordonne xvide = j.getcase2viseur().first ;
+    coordonne yvide = j.getcase2viseur().second ;
+    std::vector<t_colors> v;
+    coordonne jtemp = yvide;
+    while(j.getColor({xvide,jtemp-1})!=t_colors::empty_cell){
+        v.push_back(j.getColor({xvide,jtemp-1}));
+        jtemp -- ;
+
+    }
+    j.faire_glisser_colone(xvide);
+    jtemp=0;
+    while(j.getColor({xvide,yvide})!=t_colors::empty_cell){
+        REQUIRE(v[jtemp]==j.getColor({xvide,yvide}));
+        jtemp++;
+        yvide--;
+    }
+}

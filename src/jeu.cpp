@@ -28,6 +28,11 @@ bool jeu::perdu()
         return _grille(pair.first,pair.second);
 }
 
+t_colors jeu::operator()(coordonne x, coordonne y) const
+{
+    return _grille(x,y);
+}
+
 /**
  * @brief deplace le viseur dans une direction donnée en checkant les bounds
  *
@@ -130,20 +135,7 @@ void jeu::echanger_cases_viseur() {
     // On echange dans la grille
     _grille.echange(_viseur.x1(), _viseur.y1(), _viseur.x2(), _viseur.y2());
 
-    // On check si on doit faire descendre
-    coordonne i = _viseur.x1(), j = _viseur.y1();
-    while (j < _grille.max_hauteur()-1 && _grille(i, j) == t_colors::empty_cell)
-    {
-        _grille.echange(i, j, i, j-1);
-        j++;
-    }
-    i = _viseur.x2();
-    j = _viseur.y2();
-    while (j < _grille.max_hauteur()-1 && _grille(i, j) == t_colors::empty_cell)
-    {
-        _grille.echange(i, j, i, j-1);
-        j++;
-    }
+    
 }
 std::pair<unsigned int, unsigned int> jeu::faire_tomber(coordonne x, coordonne y)
 {   unsigned int j(y);
@@ -247,15 +239,15 @@ void jeu::faire_glisser_colone(coordonne x){ //x la colone
             while(_grille(x,j)!=t_colors::empty_cell){ //on cherche en partant du bas la premiere case vide
                     j--;
             }
-            while(_grille(x,j)!=t_colors::empty_cell){ //on cherche la premiere case suspendu au dessus du vide
+            while(_grille(x,j)==t_colors::empty_cell){ //on cherche la premiere case suspendu au dessus du vide
                 j--;
             }
-              for(unsigned int k(j);j>0;j--){ //on parcours toutes les cases restantes au dessus
+              for(unsigned int k(j);j>=0;j--){ //on parcours toutes les cases restantes au dessus
                 if(_grille(x,j)==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
-                    return;
+                    break;
                 else{
-                auto position=faire_tomber(x,j); //on prend la pposition ou la case doit tomber (forcement une case vide)
-                _grille.echange(x,j,position.first,position.second); //on les fait s'echanger
+                    auto position=faire_tomber(x,j); //on prend la pposition ou la case doit tomber (forcement une case vide)
+                    _grille.echange(x,j,position.first,position.second); //on les fait s'echanger
 
 
                 }

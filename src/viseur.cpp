@@ -59,9 +59,9 @@ void viseur::setX1(const coordonne &x1)
 }
 
 bool viseur::estVerticale() const{
-    return (x1==x2);
+    return (_x1==_x2);
 }
 
 bool viseur::estHorizontale()  const {
-    return y1==y2;
+    return _y1==_y2;
 }
