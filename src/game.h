@@ -32,11 +32,17 @@ public:
     t_colors operator()(position const & p)const;
     void rotate_target();
     void slideColumn(cordinate x);
+    std::vector<position> slidecolumn_start_position(cordinate const & x); //recupere les position des des cases qui doivent tomber
     void delete_cell(position const &x);
     std::vector<cell> generate_random_line(size t)const;
     void place_new_case(position p,std::vector<cell> v);
     delta grid_dy()const;
     void inc_dy(delta const & d);
+    void setWidth(size const & x);
+    void setHeight(size const & x);
+    void setColors_numbers(t_number_color const & x);
+    void init();
+
 private:
     grid _grid;
     target _target;
