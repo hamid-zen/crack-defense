@@ -45,6 +45,7 @@ void jeu::deplacer_viseur(t_direction dir)
             _viseur.setY2(_viseur.y2() + 1);
         }
         break;
+       
     }
     case t_direction::haut:
     {
@@ -231,4 +232,33 @@ std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement()
     if(alignement_vertical().size()>0)
         return alignement_vertical();
     else return alignement_horizontale();
+}
+
+void jeu::changer_sense_viseur(){
+    if(_viseur.estVerticale() && _viseur.x1()<_grille.max_largeur()-1)
+        _viseur.setSense();
+    else if(_viseur.estHorizontale() && _viseur.y1()<_grille.max_hauteur()-1)
+        _viseur.setSense();
+        //sinn le changement de sense est impossible on en fait rien
+}
+
+void jeu::faire_glisser_colone(coordonne x){ //x la colone
+            int j(_grille.max_hauteur()-1);
+            while(_grille(x,j)!=t_colors::empty_cell){ //on cherche en partant du bas la premiere case vide
+                    j--;
+            }
+            while(_grille(x,j)!=t_colors::empty_cell){ //on cherche la premiere case suspendu au dessus du vide
+                j--;
+            }
+                        for(unsigned int k(j);j>0;j--){
+                if(_grille(x,j)==t_colors::empty_cell)
+                    return;
+                else{
+                auto position=faire_tomber(x,j);
+                _grille.echange(x,j,position.first,position.second);
+
+
+                }
+            }
+
 }

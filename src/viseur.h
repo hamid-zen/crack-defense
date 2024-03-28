@@ -22,11 +22,14 @@ public:
     coordonne y2() const;
     void setY2(const coordonne &y2);
 
+    void setSense();
+    bool estVerticale() const;
+    bool estHorizontale()  const ;
+
 private:
     coordonne _x1;
     coordonne _y1;
     coordonne _x2;
     coordonne _y2;
-
 
 };

@@ -7,12 +7,13 @@ TEST_CASE("Echange_case", "test") {
     srand(42);
         jeu j;
         j.deplacer_viseur(t_direction::droite); //viseur sur o-r
-        couleur1=j.getColor(j.getcase1viseur()); //on stocke la couleur de la premiere case
+        couleur1=j.getColor(j.getcase1viseur());
         couleur2=j.getColor(j.getcase2viseur());
         j.echanger_cases_viseur(); //sensé etre r-o maintenant
         REQUIRE(couleur1== j.getColor(j.getcase2viseur())); //la couleur de la premiere case devient celle de la 2eme
         REQUIRE(couleur2== j.getColor(j.getcase1viseur()));
 }
+
 TEST_CASE("Alignement_horizontale", "[alignement][test]") {
     std::vector<std::pair<unsigned int, unsigned int> > vec;
     srand(12);

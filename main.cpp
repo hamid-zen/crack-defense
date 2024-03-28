@@ -6,17 +6,21 @@ using namespace std;
 //TODO: tout traduire en une seule langue
 int main()
 {
-    srand(42);
+    srand(5);
     jeu j;
-    std::cout << "avant echange: \n";
-    j.deplacer_viseur(t_direction::droite);
+    std::cout << "avant deplacement: \n";
     j.afficher();
-    std::cout << "avant echange (viseur sur les cases): \n";
     j.deplacer_viseur(t_direction::gauche);
-    j.afficher();
+    j.deplacer_viseur(t_direction::gauche);
+    j.deplacer_viseur(t_direction::bas);
     j.echanger_cases_viseur();
-    std::cout << "apres echange: \n";
-    j.deplacer_viseur(t_direction::droite);
-    j.afficher();
+    for(int i(1);i<=3;i++)
+        j.deplacer_viseur(t_direction::bas);
+   
+    j.echanger_cases_viseur();
+j.deplacer_viseur(t_direction::droite);
+           j.afficher();
+
+
     return 0;
 }
