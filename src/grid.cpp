@@ -114,3 +114,12 @@ void grid::delete_cell(position p)
 void grid::place_cell(cell c,position p){
     _board[p.x()+p.y()*_max_height] = std::make_unique<cell>(c);
 }
+void grid::Setmax_width(cordinate const & x) {
+    this->_max_width=x;
+}
+void grid::Setmax_height(cordinate const & x) {
+    _max_height=x;
+}
+void grid::SetNbr_colors(t_number_color const & x) {
+    nbr_colors=x;
+}
