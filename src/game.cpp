@@ -177,6 +177,9 @@ std::vector<position > game::vertical_alignment()
                        vec.push_back(position(i,j));
                     }
                 }
+            if(vec.size()==3){ //alignement a la fin
+           return vec;
+        }
 
             }
         if(vec.size()==3){ //alignement a la fin
@@ -213,6 +216,9 @@ std::vector<position> game::horizontal_alignment()
 
                 }
             }
+        if(vec.size()==3){ //alignement a la fin
+       return vec;
+    }
 
     }
     if(vec.size()==3){ //alignement a la fin
