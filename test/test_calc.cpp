@@ -51,6 +51,83 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
     REQUIRE(j.getColor(vec[0])== j.getColor(vec[2])) ; //les 3 cases devraient avoir la meme couleur
     REQUIRE(j.getColor(vec[0])==t_colors::rose); //et devrait etre la couleur rouge
 }
+
+TEST_CASE("estVertical_estHorizontal", "[test]")
+{
+    viseur v1(3, 6, 3, 5);
+    REQUIRE(v1.estVerticale());
+    REQUIRE(!v1.estHorizontale());
+
+    viseur v2(3, 6, 4, 6);
+    REQUIRE(!v2.estVerticale());
+    REQUIRE(v2.estHorizontale());
+}
+
+TEST_CASE("setSense", "[test]")
+{
+    viseur v1(3, 6, 3, 5);
+    REQUIRE(v1.estVerticale());
+    REQUIRE(!v1.estHorizontale());
+
+    v1.setSense();
+    REQUIRE(v1.x1() == 3);
+    REQUIRE(v1.y1() == 6);
+    REQUIRE(v1.x2() == 4);
+    REQUIRE(v1.y2() == 6);
+
+    v1.setSense();
+    REQUIRE(v1.x1() == 3);
+    REQUIRE(v1.y1() == 6);
+    REQUIRE(v1.x2() == 3);
+    REQUIRE(v1.y2() == 7);
+}
+
+TEST_CASE("changer_sense_viseur", "[test]")
+{
+    srand(5);
+    jeu j;
+
+    // On check si il est bien a la bonne case
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(3), static_cast<unsigned int>(6)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(3), static_cast<unsigned int>(7)));
+
+    // On change de sense
+    j.changer_sense_viseur();
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(3), static_cast<unsigned int>(6)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(4), static_cast<unsigned int>(6)));
+
+    // On check qu'il revient bien a la position de base
+    j.changer_sense_viseur();
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(3), static_cast<unsigned int>(6)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(3), static_cast<unsigned int>(7)));
+
+    // On deplace tout a droite pour check si on peut faire un switch
+
+    // Le switch ne devrait pas marcher
+    j.deplacer_viseur(t_direction::droite);
+    j.deplacer_viseur(t_direction::droite);
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(6)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(7)));
+    j.changer_sense_viseur();
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(6)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(7)));
+
+    // On check horizontal=>vertical
+    // On se deplace tout en bas en horizontal et ducoup convertir en vertical ne devrait pas marcher
+    j.deplacer_viseur(t_direction::gauche);
+    j.changer_sense_viseur();
+    j.deplacer_viseur(t_direction::bas);
+    j.deplacer_viseur(t_direction::bas);
+    j.deplacer_viseur(t_direction::bas);
+    j.deplacer_viseur(t_direction::bas);
+    j.deplacer_viseur(t_direction::bas); 
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(4), static_cast<unsigned int>(11)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(11)));
+    j.changer_sense_viseur();
+    REQUIRE(j.getcase1viseur() == std::make_pair(static_cast<unsigned int>(4), static_cast<unsigned int>(11)));
+    REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(11)));
+}
+
 TEST_CASE("faire_tomber", "[tomber][test]") {
     srand(5);
     jeu j;
