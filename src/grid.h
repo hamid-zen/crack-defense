@@ -1,5 +1,7 @@
 #pragma once
 #include "cell.h"
+#include "rand.h" 
+#include <iostream>
 
 using t_mat = std::vector<std::unique_ptr<cell>>;
 using t_number_color=uint16_t ;
@@ -15,6 +17,8 @@ public:
     coordonne max_largeur() const;
     float taille_ligne_incomplete() const;
     void echange(coordonne x1, coordonne y1, coordonne x2, coordonne y2);
+    void place_cell(cell c,position p);
+    void delete_cell(position p);
 private:
     t_mat _board;
     coordonne _max_hauteur;

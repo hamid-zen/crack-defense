@@ -1,8 +1,5 @@
 #include "grid.h"
-#include "cell.h"
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
+
 
 
 grid::grid(coordonne hauteur, coordonne largeur,int colors)
@@ -57,7 +54,7 @@ bool grid::neighbours_same_color(coordonne i, coordonne j, t_colors clr) const
  * @return une nombre aleatoire entre 0 et k (inclu)
  */
 int nombreAleatoire(int k) {
-    return rand() % (k + 1);
+    return myrand() % (k + 1);
 }
 
 /**
@@ -65,10 +62,10 @@ int nombreAleatoire(int k) {
  * initialise la grille
  */
 void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
-{   for(unsigned int i(0);i<_max_largeur;i++){ //colone
+{   for(coordonne i(0);i<_max_largeur;i++){ //colone
         // pour chaque colone on genere un nbr de case pour la colonne
         int nbr=nombreAleatoire((_max_hauteur+1)/2)+1; //nbr aleatoire entre  2 et 8 si MAx_hauteur=12 sachant que 1 sera caché au debut
-        for(unsigned int j(_max_hauteur-nbr);j<_max_hauteur+1;j++){ //ligne
+        for(coordonne j(_max_hauteur-nbr);j<_max_hauteur+1;j++){ //ligne
             t_colors couleur;
             do{
                 couleur=randomColor();
@@ -114,4 +111,11 @@ coordonne grid::max_hauteur() const
 void grid::echange(coordonne x1, coordonne y1, coordonne x2, coordonne y2)
 {
     std::swap(_board[x1+_max_largeur*y1], _board[x2+_max_largeur*y2]);
+}
+void grid::delete_cell(position p)
+{
+    _board[p.x()+ p.y()*_max_hauteur].reset();
+}
+void grid::place_cell(cell c,position p){
+    _board[p.x()+p.y()*_max_hauteur] = std::make_unique<cell>(c);
 }

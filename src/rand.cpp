@@ -1,10 +1,11 @@
 #include "rand.h"
+static std::uint32_t next= 1;
 
 t_number myrand(void) {
     next = next * 1103515245 + 12345;
     return((t_number)(next/65536) % 32768);
 }
 
-void mysrand(unsigned int seed) {
+void mysrand(t_number seed) {
     next = seed;
 }

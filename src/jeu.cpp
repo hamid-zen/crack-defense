@@ -1,7 +1,7 @@
 #include "jeu.h"
 
 jeu::jeu(coordonne _max_hauteur, coordonne _max_largeur, int colors)
-    : _grille(_max_hauteur, _max_largeur, colors), _viseur(_max_largeur / 2, _max_hauteur / 2, _max_largeur / 2, _max_hauteur / 2 + 1) { _grille.init(); /* TODO: Enlever */ }
+    : _grille(_max_hauteur, _max_largeur, colors), _viseur(_max_largeur / 2, _max_hauteur / 2, _max_largeur / 2, _max_hauteur / 2 + 1), _grid_dy(0) { _grille.init(); /* TODO: Enlever */ }
 
 /**
  * @brief check si le jeu est perdu
@@ -256,4 +256,37 @@ void jeu::slideColumn(coordonne x){ //x la colone
                 }
             }
 
+}
+void jeu::delete_cell(position x)
+{
+    _grille.delete_cell(x);
+}
+
+std::vector<cell > jeu::generate_random_line(taille t) const
+{
+     std::vector<cell>v;
+     for(taille i(0);i<t;i++){
+        v.push_back(cell(_grille.randomColor()));
+     }
+     return v;
+     
+     
+}
+
+void jeu::place_new_case(position p,std::vector<cell> v)
+{
+    for (std::size_t c (0); c < v.size() ; c++)
+    {
+        _grille.place_cell(v[c],position(p.x(),p.y()+c));
+    }
+    
+}
+
+delta jeu::grid_dy() const
+{
+    return _grid_dy;
+}
+
+void jeu::inc_dy(delta const & d){
+    _grid_dy+=d;
 }

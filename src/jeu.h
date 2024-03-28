@@ -4,7 +4,6 @@
 #include "viseur.h"
 #include <algorithm>
 #include <iostream>
-#include "position.hh"
 
 enum class t_direction{
     haut,
@@ -33,9 +32,15 @@ public:
     t_colors operator()(position const & p)const;
     void rotate_target();
     void slideColumn(coordonne x);
+    void delete_cell(position x);
+    std::vector<cell> generate_random_line(taille t)const;
+    void place_new_case(position p,std::vector<cell> v);
+    delta grid_dy()const;
+    void inc_dy(delta const & d);
 private:
     grid _grille;
     viseur _viseur;
+    delta _grid_dy;
 };
 
 
