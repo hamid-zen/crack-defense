@@ -298,7 +298,19 @@ delta game::grid_dy() const
     return _grid_dy;
 }
 
-void game::inc_dy(delta const &d)
-{
-    _grid_dy += d;
+void game::inc_dy(delta const & d){
+    _grid_dy+=d;
+}
+
+void game::setWidth(size const & x){
+    _grid.Setmax_width(x);
+}
+void game::setHeight(size const & x){
+    _grid.Setmax_height(x);
+}
+void game::setColors_numbers(t_number_color const & x){
+    _grid.SetNbr_colors(x);
+}
+void game::init(){
+    _grid.init();
 }
