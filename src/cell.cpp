@@ -18,8 +18,8 @@ std::string toString_color(t_colors color)
 {
     switch (color) {
     case t_colors::blue: return "b";
-    case t_colors::pink: return "r";
-    case t_colors::yellow: return "j";
+    case t_colors::pink: return "p";
+    case t_colors::yellow: return "y";
     case t_colors::orange: return "o";
     default: return "";
     }
