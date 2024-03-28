@@ -137,14 +137,17 @@ void jeu::echanger_cases_viseur() {
 
     
 }
-std::pair<unsigned int, unsigned int> jeu::faire_tomber(coordonne x, coordonne y)
+std::pair<unsigned int, unsigned int> jeu::ou_tomber(coordonne x, coordonne y) const
 {   unsigned int j(y);
     while((j+1)<_grille.max_hauteur() && _grille(x,j+1)==t_colors::empty_cell){
         j++;
     }
     return std::pair<unsigned int, unsigned int>(x,j);
 }
-
+void jeu::faire_tomber(coordonne x,coordonne y){
+    auto position_final(ou_tomber(x,y));
+    _grille.echange(x,y,position_final.first,position_final.second);
+}
 std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_vertical()
 {
     std::vector<std::pair<unsigned int, unsigned int> > vec;
