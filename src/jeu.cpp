@@ -250,12 +250,12 @@ void jeu::faire_glisser_colone(coordonne x){ //x la colone
             while(_grille(x,j)!=t_colors::empty_cell){ //on cherche la premiere case suspendu au dessus du vide
                 j--;
             }
-                        for(unsigned int k(j);j>0;j--){
-                if(_grille(x,j)==t_colors::empty_cell)
+              for(unsigned int k(j);j>0;j--){ //on parcours toutes les cases restantes au dessus
+                if(_grille(x,j)==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
                     return;
                 else{
-                auto position=faire_tomber(x,j);
-                _grille.echange(x,j,position.first,position.second);
+                auto position=faire_tomber(x,j); //on prend la pposition ou la case doit tomber (forcement une case vide)
+                _grille.echange(x,j,position.first,position.second); //on les fait s'echanger
 
 
                 }
