@@ -249,7 +249,7 @@ void jeu::faire_glisser_colone(coordonne x){ //x la colone
                 if(_grille(x,k)==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
                     break;
                 else{
-                    auto position=faire_tomber(x,k); //on prend la pposition ou la case doit tomber (forcement une case vide)
+                    auto position=ou_tomber(x,k); //on prend la pposition ou la case doit tomber (forcement une case vide)
                     _grille.echange(x,k,position.first,position.second); //on les fait s'echanger
 
 
