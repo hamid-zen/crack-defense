@@ -128,7 +128,7 @@ TEST_CASE("changer_sense_viseur", "[test]")
     REQUIRE(j.getcase2viseur() == std::make_pair(static_cast<unsigned int>(5), static_cast<unsigned int>(11)));
 }
 
-TEST_CASE("faire_tomber", "[tomber][test]") {
+TEST_CASE("ou_tomber", "[tomber][test]") {
     srand(5);
     jeu j;
     j.changer_sense_viseur();
@@ -136,7 +136,7 @@ TEST_CASE("faire_tomber", "[tomber][test]") {
     j.deplacer_viseur(t_direction::haut);
     j.echanger_cases_viseur();
     j.deplacer_viseur(t_direction::haut);
-    auto position = j.faire_tomber(3,5);
+    auto position = j.ou_tomber(3,5);
     REQUIRE(position.first == 3);
     REQUIRE(position.second == 7);
 }
