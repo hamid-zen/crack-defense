@@ -13,7 +13,7 @@ grid::grid(coordonne hauteur, coordonne largeur,int colors)
  * @return une couleur aleatoire
  */
 // TODO: rajouter les autres couleurs
-t_colors grid::couleurAleatoire() const
+t_colors grid::randomColor() const
 {
     int k =nombreAleatoire(nbr_colors);
     switch (k) {
@@ -42,7 +42,7 @@ t_colors grid::couleurAleatoire() const
  * @param clr
  * @return si la case ajdacente (gauce, droite, bas, haut) est de la meme couleur
  */
-bool grid::adjacent(coordonne i, coordonne j, t_colors clr) const
+bool grid::neighbours_same_color(coordonne i, coordonne j, t_colors clr) const
 {
     return ((i-1>=0 && _board[j*_max_largeur+i-1] != nullptr && _board[j*_max_largeur+i-1]->color()==clr) || //verif à gauche
             (j-1>=0 && _board[(j-1)*_max_largeur+i] != nullptr && _board[(j-1)*_max_largeur+i]->color()==clr) || //verif au dessus
@@ -71,8 +71,8 @@ void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 lign
         for(unsigned int j(_max_hauteur-nbr);j<_max_hauteur+1;j++){ //ligne
             t_colors couleur;
             do{
-                couleur=couleurAleatoire();
-            }while(adjacent(i,j,couleur));
+                couleur=randomColor();
+            }while(neighbours_same_color(i,j,couleur));
 
             _board[i+j*_max_largeur]=std::make_unique<cell>(couleur);
         }

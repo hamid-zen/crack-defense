@@ -2,10 +2,11 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <cstdint>
 
 
-const unsigned int nombre_couleurs=4;
-using coordonne =unsigned int ;
+const uint16_t  nombre_couleurs=4;
+using coordonne =uint16_t ;
 
 enum class t_colors {
     bleu , rose,jaune,orange,empty_cell

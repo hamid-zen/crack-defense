@@ -9,7 +9,7 @@ jeu::jeu(coordonne _max_hauteur, coordonne _max_largeur, int colors)
  * @return true perdu
  * @return false non-perdu
  */
-bool jeu::perdu()
+bool jeu::is_lost()
 {
     for (unsigned int i(0); i < _grille.max_largeur(); i++)
     {
@@ -18,19 +18,19 @@ bool jeu::perdu()
     }
     return false;
 }
- std::pair<coordonne,coordonne> jeu::getcase1viseur() const{
-    return std::pair<coordonne,coordonne>(_viseur.x1(),_viseur.y1());
+position jeu::getcell1target() const{
+    return position(_viseur.x1(),_viseur.y1());
  }
- std::pair<coordonne,coordonne> jeu::getcase2viseur() const{
-    return std::pair<coordonne,coordonne>(_viseur.x2(),_viseur.y2());
+position jeu::getcell2target() const{
+    return position(_viseur.x2(),_viseur.y2());
  }
- t_colors jeu::getColor( std::pair<coordonne,coordonne> pair) const{
-        return _grille(pair.first,pair.second);
+t_colors jeu::getColor( position const & p ) const{
+        return _grille(p.x(),p.y());
 }
 
-t_colors jeu::operator()(coordonne x, coordonne y) const
+t_colors jeu::operator()(position const & p) const
 {
-    return _grille(x,y);
+    return _grille(p.x(),p.y());
 }
 
 /**
@@ -38,7 +38,7 @@ t_colors jeu::operator()(coordonne x, coordonne y) const
  *
  * @param dir direction du deplaçement
  */
-void jeu::deplacer_viseur(t_direction dir)
+void jeu::move_target(t_direction dir)
 {
     switch (dir)
     {
@@ -86,7 +86,7 @@ void jeu::deplacer_viseur(t_direction dir)
  * @brief affiche la table
  *
  */
-void jeu::afficher() const
+void jeu::show() const
 {
     for (unsigned int j(0); j < _grille.max_hauteur(); j++)
     {
@@ -131,50 +131,50 @@ void jeu::afficher() const
     std::cout << "|" << std::endl;
 }
 
-void jeu::echanger_cases_viseur() {
+void jeu::switch_cells_target() {
     // On echange dans la grille
     _grille.echange(_viseur.x1(), _viseur.y1(), _viseur.x2(), _viseur.y2());
 
     
 }
-std::pair<unsigned int, unsigned int> jeu::ou_tomber(coordonne x, coordonne y) const
+position jeu::drop_position(coordonne x, coordonne y) const
 {   unsigned int j(y);
     while((j+1)<_grille.max_hauteur() && _grille(x,j+1)==t_colors::empty_cell){
         j++;
     }
-    return std::pair<unsigned int, unsigned int>(x,j);
+    return position(x,j);
 }
-void jeu::faire_tomber(coordonne x,coordonne y){
-    auto position_final(ou_tomber(x,y));
-    _grille.echange(x,y,position_final.first,position_final.second);
+void jeu::drop(coordonne x,coordonne y){
+    auto position_final(drop_position(x,y));
+    _grille.echange(x,y,position_final.x(),position_final.y());
 }
-std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_vertical()
+std::vector<position > jeu::vertical_alignment()
 {
-    std::vector<std::pair<unsigned int, unsigned int> > vec;
+    std::vector<position > vec;
 
         //alignement verticale
         for(unsigned int i(0);i<_grille.max_largeur();i++){
             t_colors clr=_grille(i,0);
             vec.clear();
-            vec.push_back(std::pair<unsigned int, unsigned int>(i,0)); //on ajoute la position de cette case au vecteur
+            vec.push_back(position(i,0)); //on ajoute la position de cette case au vecteur
             for(unsigned int j(1);j<_grille.max_hauteur();j++){
                 if(vec.size()==3){ //cad on a trouvé un alignement verticale
                     unsigned int k(j);
                     //on ajoute tant que c'est la meme couleur
                     while(_grille(i,k)==clr && k<_grille.max_hauteur()){
-                        vec.push_back(std::pair<unsigned int, unsigned int>(i,k));
+                        vec.push_back(position(i,k));
                         k++;
                     }
                     return vec;
                 }
                 else if(clr==t_colors::empty_cell || (_grille(i,j)!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
                 {  vec.clear();
-                    vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                    vec.push_back(position(i,j));
                     clr=_grille(i,j);
                 }
                  
                 else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
-                       vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                       vec.push_back(position(i,j));
                     }
                 }
 
@@ -186,30 +186,30 @@ std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_vertical()
         return vec;
 }
 
-std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_horizontale()
+std::vector<position> jeu::horizontal_alignment()
 {
-    std::vector<std::pair<unsigned int, unsigned int> > vec;
+    std::vector<position> vec;
 
    for(unsigned int j(0);j<_grille.max_hauteur();j++) {
         t_colors clr=_grille(0,j);
         vec.clear();
-        vec.push_back(std::pair<unsigned int, unsigned int>(0,j)); //on ajoute la position de cette case au vecteur
+        vec.push_back(position(0,j)); //on ajoute la position de cette case au vecteur
         for(unsigned int i(1);i<_grille.max_largeur();i++){
             if(vec.size()==3){ //cad on a trouvé un alignement verticale
                 unsigned int k(i);
                 //on ajoute tant que c'est la meme couleur
                 while(_grille(k,j)==clr && k<_grille.max_largeur()){
-                    vec.push_back(std::pair<unsigned int, unsigned int>(k,j));
+                    vec.push_back(position(k,j));
                     k++;
                 }
                 return vec;
             }
             else if(clr==t_colors::empty_cell || (_grille(i,j)!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
             {  vec.clear();
-                vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                vec.push_back(position(i,j));
                 clr=_grille(i,j);
             }else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
-                   vec.push_back(std::pair<unsigned int, unsigned int>(i,j));
+                   vec.push_back(position(i,j));
 
                 }
             }
@@ -222,14 +222,14 @@ std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement_horizontale(
     return vec;
 }
 
-std::vector<std::pair<unsigned int, unsigned int> > jeu::alignement()
+std::vector<position > jeu::alignment()
 {
-    if(alignement_vertical().size()>0)
-        return alignement_vertical();
-    else return alignement_horizontale();
+    if(vertical_alignment().size()>0)
+        return vertical_alignment();
+    else return horizontal_alignment();
 }
 
-void jeu::changer_sense_viseur(){
+void jeu::rotate_target(){
     if(_viseur.estVerticale() && _viseur.x1()<_grille.max_largeur()-1)
         _viseur.setSense();
     else if(_viseur.estHorizontale() && _viseur.y1()<_grille.max_hauteur()-1)
@@ -237,7 +237,7 @@ void jeu::changer_sense_viseur(){
         //sinn le changement de sense est impossible on en fait rien
 }
 
-void jeu::faire_glisser_colone(coordonne x){ //x la colone
+void jeu::slideColumn(coordonne x){ //x la colone
             int j(_grille.max_hauteur()-1);
             while(_grille(x,j)!=t_colors::empty_cell){ //on cherche en partant du bas la premiere case vide
                     j--;
@@ -249,8 +249,8 @@ void jeu::faire_glisser_colone(coordonne x){ //x la colone
                 if(_grille(x,k)==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
                     break;
                 else{
-                    auto position=ou_tomber(x,k); //on prend la pposition ou la case doit tomber (forcement une case vide)
-                    _grille.echange(x,k,position.first,position.second); //on les fait s'echanger
+                    auto position=drop_position(x,k); //on prend la pposition ou la case doit tomber (forcement une case vide)
+                    _grille.echange(x,k,position.x(),position.y()); //on les fait s'echanger
 
 
                 }
