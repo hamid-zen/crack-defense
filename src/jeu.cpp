@@ -243,11 +243,11 @@ void jeu::faire_glisser_colone(coordonne x){ //x la colone
                 j--;
             }
               for(unsigned int k(j);j>=0;j--){ //on parcours toutes les cases restantes au dessus
-                if(_grille(x,j)==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
+                if(_grille(x,k)==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
                     break;
                 else{
-                    auto position=faire_tomber(x,j); //on prend la pposition ou la case doit tomber (forcement une case vide)
-                    _grille.echange(x,j,position.first,position.second); //on les fait s'echanger
+                    auto position=faire_tomber(x,k); //on prend la pposition ou la case doit tomber (forcement une case vide)
+                    _grille.echange(x,k,position.first,position.second); //on les fait s'echanger
 
 
                 }
