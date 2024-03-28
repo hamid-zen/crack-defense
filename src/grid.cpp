@@ -2,8 +2,8 @@
 
 
 
-grid::grid(coordonne hauteur, coordonne largeur,int colors)
-    : _board((hauteur+1)*largeur),_max_hauteur(hauteur),_max_largeur(largeur),_taille_ligne_incomplete(0),nbr_colors(colors){}
+grid::grid(cordinate height, cordinate width,t_number_color colors)
+    : _board((height+1)*width),_max_height(height),_max_width(width),nbr_colors(colors){}
 
 /**
  * @brief grid::couleurAleatoire
@@ -15,19 +15,19 @@ t_colors grid::randomColor() const
     int k =nombreAleatoire(nbr_colors);
     switch (k) {
     case 0:{
-        return t_colors::bleu;
+        return t_colors::blue;
     }
     case 1:{
-        return t_colors::jaune;
+        return t_colors::yellow;
     }
     case 2:{
         return t_colors::orange;
     }
     case 3:{
-        return t_colors::rose;
+        return t_colors::pink;
     }
     default:{
-         return t_colors::rose;
+         return t_colors::pink;
     }
     };
 }
@@ -39,12 +39,12 @@ t_colors grid::randomColor() const
  * @param clr
  * @return si la case ajdacente (gauce, droite, bas, haut) est de la meme couleur
  */
-bool grid::neighbours_same_color(coordonne i, coordonne j, t_colors clr) const
+bool grid::neighbours_same_color(position p, t_colors clr) const
 {
-    return ((i-1>=0 && _board[j*_max_largeur+i-1] != nullptr && _board[j*_max_largeur+i-1]->color()==clr) || //verif à gauche
-            (j-1>=0 && _board[(j-1)*_max_largeur+i] != nullptr && _board[(j-1)*_max_largeur+i]->color()==clr) || //verif au dessus
-            (i+1<_max_largeur && _board[j*_max_largeur+i+1] != nullptr && _board[j*_max_largeur+i+1]->color()==clr) || //verif à droite
-            (j+1<_max_hauteur && _board[(j+1)*_max_largeur+i] != nullptr && _board[(j+1)*_max_largeur+i]->color()==clr )) ; //verif en dessous
+    return ((p.x()-1>=0 && _board[p.y()*_max_width+p.x()-1] != nullptr && _board[p.y()*_max_width+p.x()-1]->color()==clr) || //verif à gauche
+            (p.y()-1>=0 && _board[(p.y()-1)*_max_width+p.x()] != nullptr && _board[(p.y()-1)*_max_width+p.x()]->color()==clr) || //verif au dessus
+            (p.x()+1<_max_width && _board[p.y()*_max_width+p.x()+1] != nullptr && _board[p.y()*_max_width+p.x()+1]->color()==clr) || //verif à droite
+            (p.y()+1<_max_width && _board[(p.y()+1)*_max_width+p.x()] != nullptr && _board[(p.y()+1)*_max_width+p.x()]->color()==clr )) ; //verif en dessous
 
 }
 
@@ -62,42 +62,37 @@ int nombreAleatoire(int k) {
  * initialise la grille
  */
 void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
-{   for(coordonne i(0);i<_max_largeur;i++){ //colone
+{   for(cordinate i(0);i<_max_width;i++){ //colone
         // pour chaque colone on genere un nbr de case pour la colonne
-        int nbr=nombreAleatoire((_max_hauteur+1)/2)+1; //nbr aleatoire entre  2 et 8 si MAx_hauteur=12 sachant que 1 sera caché au debut
-        for(coordonne j(_max_hauteur-nbr);j<_max_hauteur+1;j++){ //ligne
-            t_colors couleur;
+        int nbr=nombreAleatoire((_max_height+1)/2)+1; //nbr aleatoire entre  2 et 8 si MAx_hauteur=12 sachant que 1 sera caché au debut
+        for(cordinate j(_max_height-nbr);j<_max_height+1;j++){ //ligne
+            t_colors color;
             do{
-                couleur=randomColor();
-            }while(neighbours_same_color(i,j,couleur));
+                color=randomColor();
+            }while(neighbours_same_color(position(i,j),color));
 
-            _board[i+j*_max_largeur]=std::make_unique<cell>(couleur);
+            _board[i+j*_max_width]=std::make_unique<cell>(color);
         }
 
     }
 }
 
-t_colors grid::operator()(coordonne x, coordonne y) const
+t_colors grid::operator()(position p) const
 {
-    if(x < _max_largeur && y <= _max_hauteur && _board[ x + y *_max_largeur ])
-        return _board[ x + y * _max_largeur ] -> color();
+    if(p.x() < _max_width && p.y() <= _max_height && _board[ p.x() + p.y() *_max_width ])
+        return _board[ p.x() + p.y() * _max_width ] -> color();
     else return t_colors::empty_cell;
 
 }
 
-float grid::taille_ligne_incomplete() const
+cordinate grid::max_width() const
 {
-    return _taille_ligne_incomplete;
+    return _max_width;
 }
 
-coordonne grid::max_largeur() const
+cordinate grid::max_height() const
 {
-    return _max_largeur;
-}
-
-coordonne grid::max_hauteur() const
-{
-    return _max_hauteur;
+    return _max_height;
 }
 
 /**
@@ -108,14 +103,14 @@ coordonne grid::max_hauteur() const
  * @param y2
  * Echange les pointeur dans (x1, y1) avec celui de (x2, y2)
  */
-void grid::echange(coordonne x1, coordonne y1, coordonne x2, coordonne y2)
+void grid::switch_cell(position p1,position p2)
 {
-    std::swap(_board[x1+_max_largeur*y1], _board[x2+_max_largeur*y2]);
+    std::swap(_board[p1.x()+_max_width*p1.y()], _board[p2.x()+_max_width*p2.y()]);
 }
 void grid::delete_cell(position p)
 {
-    _board[p.x()+ p.y()*_max_hauteur].reset();
+    _board[p.x()+ p.y()*_max_height].reset();
 }
 void grid::place_cell(cell c,position p){
-    _board[p.x()+p.y()*_max_hauteur] = std::make_unique<cell>(c);
+    _board[p.x()+p.y()*_max_height] = std::make_unique<cell>(c);
 }

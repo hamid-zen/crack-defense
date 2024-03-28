@@ -17,9 +17,9 @@ void cell::setColor(t_colors newColor)
 std::string toString_color(t_colors color)
 {
     switch (color) {
-    case t_colors::bleu: return "b";
-    case t_colors::rose: return "r";
-    case t_colors::jaune: return "j";
+    case t_colors::blue: return "b";
+    case t_colors::pink: return "r";
+    case t_colors::yellow: return "j";
     case t_colors::orange: return "o";
     default: return "";
     }

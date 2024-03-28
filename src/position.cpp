@@ -1,6 +1,6 @@
 #include "position.h"
 
-position::position(coordonnee x, coordonnee y)
+position::position(cordinate x, cordinate y)
 	:_x(x), _y(y) {
 }
 
@@ -13,19 +13,19 @@ position::position(position const & p)
 }
 */
 
-coordonnee position::x() const {
+cordinate position::x() const {
 	return _x;
 }
 
-coordonnee position::y() const {
+cordinate position::y() const {
 	return _y;
 }
 
-void position::setx(coordonnee x) {
+void position::setx(cordinate x) {
 	_x = x;
 }
 
-void position::sety(coordonnee y) {
+void position::sety(cordinate y) {
 	_y = y;
 }
 

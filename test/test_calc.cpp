@@ -751,7 +751,7 @@
 //         yvide--;
 //     }
 // }
-a
+
 //     j.echanger_cases_viseur();
 //     j.deplacer_viseur(t_direction::bas); 
 //     j.deplacer_viseur(t_direction::haut);
@@ -772,7 +772,7 @@ a
 //         yvide--;
 //     }
 // }
-a
+
 //     j.changer_sense_viseur();
 //     j.deplacer_viseur(t_direction::gauche);
 //     j.deplacer_viseur(t_direction::haut);

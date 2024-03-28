@@ -7,11 +7,11 @@
 
 
 const uint16_t  nombre_couleurs=4;
-using coordonne =uint16_t ;
+using cordinate =uint16_t ;
 using t_int=int16_t;
 
 enum class t_colors {
-    bleu , rose,jaune,orange,empty_cell
+    blue, pink, yellow, orange, empty_cell
 };
 
 std::string toString_color(t_colors color);
@@ -30,6 +30,4 @@ private:
     t_colors _color;
     t_int _dx;
     t_int _dy;
-
-
 };
