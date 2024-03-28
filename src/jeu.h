@@ -21,7 +21,8 @@ public:
     void deplacer_viseur(t_direction dir);
     void afficher() const;
     void echanger_cases_viseur();
-    std::pair<unsigned int, unsigned int> faire_tomber(coordonne x, coordonne y);
+    std::pair<unsigned int, unsigned int> ou_tomber(coordonne x, coordonne y) const ;
+    void faire_tomber(coordonne x,coordonne y);
     std::vector<std::pair<unsigned int, unsigned int> >  alignement_vertical();
     std::vector<std::pair<unsigned int, unsigned int> > alignement_horizontale();
     std::vector<std::pair<unsigned int, unsigned int> >  alignement();
