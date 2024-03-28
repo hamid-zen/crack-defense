@@ -15,6 +15,9 @@ public:
     t_colors operator() (position p) const;
     cordinate max_height() const;
     cordinate max_width() const;
+    void Setmax_width(cordinate const & x) ;
+    void Setmax_height(cordinate const & x) ;
+    void SetNbr_colors(t_number_color const & x) ;
     void switch_cell(position p1, position p2);
     void place_cell(cell c,position p);
     void delete_cell(position p);
