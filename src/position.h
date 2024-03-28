@@ -17,9 +17,10 @@ public:
 	cordinate y() const;
 	void setx(cordinate x);
 	void sety(cordinate y);
-	bool comparaison(position const & p) const;
+	
+	bool operator == (position const &p) const { return _x==p._x && _y==p._y;}
+	bool operator != (position const &p) const { return !(*this == p) ;}
 private:
 	cordinate _x;
 	cordinate _y;
 };
-

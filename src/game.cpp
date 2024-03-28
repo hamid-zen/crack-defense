@@ -1,7 +1,7 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position( _max_width / 2, _max_height / 2),position(  _max_width / 2, _max_height / 2 + 1)), _grid_dy(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0) { _grid.init(); /* TODO: Enlever */ }
 
 /**
  * @brief check si le game est perdu
@@ -18,17 +18,20 @@ bool game::is_lost()
     }
     return false;
 }
-position game::getcell1target() const{
-    return position(_target.x1(),_target.y1());
- }
-position game::getcell2target() const{
-    return position(_target.x2(),_target.y2());
- }
-t_colors game::getColor( position const & p ) const{
-        return _grid(p);
+position game::getcell1target() const
+{
+    return position(_target.x1(), _target.y1());
+}
+position game::getcell2target() const
+{
+    return position(_target.x2(), _target.y2());
+}
+t_colors game::getColor(position const &p) const
+{
+    return _grid(p);
 }
 
-t_colors game::operator()(position const & p) const
+t_colors game::operator()(position const &p) const
 {
     return _grid(p);
 }
@@ -44,13 +47,12 @@ void game::move_target(t_direction dir)
     {
     case t_direction::down:
     {
-        if (_target.y1() < _grid.max_height()- 1 && _target.y2() < _grid.max_height() - 1)
+        if (_target.y1() < _grid.max_height() - 1 && _target.y2() < _grid.max_height() - 1)
         {
             _target.setY1(_target.y1() + 1);
             _target.setY2(_target.y2() + 1);
         }
         break;
-       
     }
     case t_direction::up:
     {
@@ -119,34 +121,36 @@ void game::show() const
     std::cout << std::endl;
     for (unsigned int i(0); i < _grid.max_width(); i++)
     {
-        if (_grid(position( i, _grid.max_height())) == t_colors::empty_cell)
+        if (_grid(position(i, _grid.max_height())) == t_colors::empty_cell)
         {
             std::cout << "| ";
         }
         else
         {
-            std::cout << "|" << toString_color(_grid(position( i, _grid.max_height())));
+            std::cout << "|" << toString_color(_grid(position(i, _grid.max_height())));
         }
     }
     std::cout << "|" << std::endl;
 }
 
-void game::switch_cells_target() {
+void game::switch_cells_target()
+{
     // On echange dans la grille
-    _grid.switch_cell(position(_target.x1(),_target.y1()), position(_target.x2(),_target.y2()));
-
-    
+    _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
 }
-position game::drop_position(position const & p) const
-{   unsigned int j(p.y());
-    while((j+1)<_grid.max_height() && _grid(position( p.x(),j+1))==t_colors::empty_cell){
+position game::drop_position(position const &p) const
+{
+    unsigned int j(p.y());
+    while ((j + 1) < _grid.max_height() && _grid(position(p.x(), j + 1)) == t_colors::empty_cell)
+    {
         j++;
     }
-    return position(p.x(),j);
+    return position(p.x(), j);
 }
-void game::drop(position const & p){
+void game::drop(position const &p)
+{
     auto position_final(drop_position(p));
-    _grid.switch_cell(p,position_final);
+    _grid.switch_cell(p, position_final);
 }
 std::vector<position > game::vertical_alignment()
 {
@@ -235,57 +239,58 @@ std::vector<position > game::alignment()
     else return horizontal_alignment();
 }
 
-void game::rotate_target(){
-    if(_target.isVertical() && _target.x1()<_grid.max_width()-1)
+void game::rotate_target()
+{
+    if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
         _target.setSense();
-    else if(_target.isHorizontal() && _target.y1()<_grid.max_height()-1)
+    else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
         _target.setSense();
-        //sinn le changement de sense est impossible on en fait rien
+    // sinn le changement de sense est impossible on en fait rien
 }
 
-void game::slideColumn(cordinate x){ //x la colone
-            int j(_grid.max_height()-1);
-            while(_grid(position( x,j))!=t_colors::empty_cell){ //on cherche en partant du bas la premiere case vide
-                    j--;
-            }
-            while(_grid(position( x,j))==t_colors::empty_cell){ //on cherche la premiere case suspendu au dessus du vide
-                j--;
-            }
-              for(unsigned int k(j);j>=0;j--){ //on parcours toutes les cases restantes au dessus
-                if(_grid(position( x,k))==t_colors::empty_cell) //jusqu'a qu'il n'y en ai plus
-                    break;
-                else{
-                    auto pst=drop_position(position(x,k)); //on prend la pposition ou la case doit tomber (forcement une case vide)
-                    _grid.switch_cell(position( x,k),pst); //on les fait s'echanger
-
-
-                }
-            }
-
+void game::slideColumn(cordinate x)
+{ // x la colone
+    int j(_grid.max_height() - 1);
+    while (_grid(position(x, j)) != t_colors::empty_cell)
+    { // on cherche en partant du bas la premiere case vide
+        j--;
+    }
+    while (_grid(position(x, j)) == t_colors::empty_cell)
+    { // on cherche la premiere case suspendu au dessus du vide
+        j--;
+    }
+    for (unsigned int k(j); j >= 0; j--)
+    {                                                      // on parcours toutes les cases restantes au dessus
+        if (_grid(position(x, k)) == t_colors::empty_cell) // jusqu'a qu'il n'y en ai plus
+            break;
+        else
+        {
+            auto pst = drop_position(position(x, k)); // on prend la pposition ou la case doit tomber (forcement une case vide)
+            _grid.switch_cell(position(x, k), pst);   // on les fait s'echanger
+        }
+    }
 }
 void game::delete_cell(position const &x)
 {
     _grid.delete_cell(x);
 }
 
-std::vector<cell > game::generate_random_line(size t) const
+std::vector<cell> game::generate_random_line(size t) const
 {
-     std::vector<cell>v;
-     for(size i(0);i<t;i++){
+    std::vector<cell> v;
+    for (size i(0); i < t; i++)
+    {
         v.push_back(cell(_grid.randomColor()));
-     }
-     return v;
-     
-     
+    }
+    return v;
 }
 
-void game::place_new_case(position p,std::vector<cell> v)
+void game::place_new_case(position p, std::vector<cell> v)
 {
-    for (std::size_t c (0); c < v.size() ; c++)
+    for (std::size_t c(0); c < v.size(); c++)
     {
-        _grid.place_cell(v[c],position(p.x(),p.y()+c));
+        _grid.place_cell(v[c], position(p.x(), p.y() + c));
     }
-    
 }
 
 delta game::grid_dy() const
@@ -293,6 +298,7 @@ delta game::grid_dy() const
     return _grid_dy;
 }
 
-void game::inc_dy(delta const & d){
-    _grid_dy+=d;
+void game::inc_dy(delta const &d)
+{
+    _grid_dy += d;
 }

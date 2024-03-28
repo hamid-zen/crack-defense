@@ -28,7 +28,3 @@ void position::setx(cordinate x) {
 void position::sety(cordinate y) {
 	_y = y;
 }
-
-bool position::comparaison(position const & p) const {
-	return (_x == p._x) && (_y == p._y);
-}
