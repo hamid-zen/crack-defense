@@ -44,7 +44,7 @@ cordinate target::y1() const
 
 void target::setY1(const cordinate &y1)
 {
-    _p1.sety(_p1.y());
+    _p1.sety(y1);
 }
 
 cordinate target::x1() const
