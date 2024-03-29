@@ -20,7 +20,7 @@ public:
     bool is_lost();
     void move_target(t_direction dir);
     void show() const;
-    void switch_cells_target();
+    bool switch_cells_target();
     position drop_position(position const & p) const ;
     void drop(position const &p);
     std::vector<position>  vertical_alignment();

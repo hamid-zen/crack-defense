@@ -24,3 +24,9 @@ std::string toString_color(t_colors color)
     default: return "";
     }
 }
+    t_int cell::dx() const{
+        return _dx; 
+    }
+    t_int cell::dy() const {
+        return _dy;
+    }

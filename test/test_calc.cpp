@@ -11,7 +11,8 @@ TEST_CASE("Echange_case", "test") {
     g.move_target(t_direction::down);
     couleur1=g(g.getcell1target());
     couleur2=g(g.getcell2target());
-    g.switch_cells_target();
+
+    REQUIRE( g.switch_cells_target()==true);
     REQUIRE(couleur1== g(g.getcell2target())); //la couleur de la premiere case devient celle de la 2eme
     REQUIRE(couleur2== g(g.getcell1target()));
 }
@@ -66,11 +67,15 @@ TEST_CASE("estVertical_estHorizontal", "[test]")
 TEST_CASE("ou_tomber", "[tomber][test]") {
     mysrand(5);
     game g;
+    bool fait;
+    g.show();
     g.rotate_target();
     g.move_target(t_direction::up);
     g.move_target(t_direction::left);
     g.move_target(t_direction::left);
-    g.switch_cells_target();
+    g.show();
+    fait=g.switch_cells_target();
+    REQUIRE(fait==true);
     REQUIRE(g.drop_position(g.getcell2target()) == position(2, 10));
 } 
 

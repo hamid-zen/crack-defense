@@ -18,7 +18,7 @@ public:
     void Setmax_width(cordinate const & x) ;
     void Setmax_height(cordinate const & x) ;
     void SetNbr_colors(t_number_color const & x) ;
-    void switch_cell(position p1, position p2);
+    bool switch_cell(position p1, position p2);
     void place_cell(cell c,position p);
     void delete_cell(position p);
 private:

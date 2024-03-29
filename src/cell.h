@@ -25,6 +25,8 @@ public:
 
 
     void setColor(t_colors newColor);
+    t_int dx() const;
+    t_int dy() const ;
 
 private:
     t_colors _color;

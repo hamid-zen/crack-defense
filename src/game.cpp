@@ -133,10 +133,10 @@ void game::show() const
     std::cout << "|" << std::endl;
 }
 
-void game::switch_cells_target()
+bool game::switch_cells_target()
 {
     // On echange dans la grille
-    _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
+   return _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
 }
 position game::drop_position(position const &p) const
 {

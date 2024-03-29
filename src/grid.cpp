@@ -103,9 +103,14 @@ cordinate grid::max_height() const
  * @param y2
  * Echange les pointeur dans (x1, y1) avec celui de (x2, y2)
  */
-void grid::switch_cell(position p1,position p2)
+bool grid::switch_cell(position p1,position p2)
 {
-    std::swap(_board[p1.x()+_max_width*p1.y()], _board[p2.x()+_max_width*p2.y()]);
+   if((_board[p1.x()+_max_width*p1.y()]==nullptr || (_board[p1.x()+_max_width*p1.y()]->dx()==0 && _board[p1.x()+_max_width*p1.y()]->dy()==0 ))&& ( (_board[p2.x()+_max_width*p2.y()]==nullptr )||(_board[p2.x()+_max_width*p2.y()]->dx()==0 && _board[p2.x()+_max_width*p2.y()]->dy()==0) )  )
+   { //si les deux case ne sont pas en train de bouger on peut les echanger
+        std::swap(_board[p1.x()+_max_width*p1.y()], _board[p2.x()+_max_width*p2.y()]);
+        return true;
+    } 
+        return false;
 }
 void grid::delete_cell(position p)
 {

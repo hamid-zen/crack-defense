@@ -1,1 +1,1 @@
-add_library(gamelib rand.cpp position.cpp cell.cpp grid.cpp game.cpp target.cpp)
+add_library(gamelib arbitre.cpp rand.cpp position.cpp cell.cpp grid.cpp game.cpp target.cpp)
