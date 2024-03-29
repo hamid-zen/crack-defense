@@ -1,7 +1,9 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)),_grid_dy(_max_height) {
+         _grid.init(); /* TODO: Enlever */
+          }
 
 /**
  * @brief check si le game est perdu
@@ -11,12 +13,15 @@ game::game(cordinate _max_height, cordinate _max_width, int colors)
  */
 bool game::is_lost()
 {
-    for (unsigned int i(0); i < _grid.max_width(); i++)
+    /*for (unsigned int i(0); i < _grid.max_width(); i++)
     {
         if (_grid(position(i, 0)) != t_colors::empty_cell)
             return true;
     }
-    return false;
+    return false;*/
+    if(_grid_dy<=0)
+        return true;
+    else return false;
 }
 position game::getcell1target() const
 {
@@ -298,8 +303,8 @@ delta game::grid_dy() const
     return _grid_dy;
 }
 
-void game::inc_dy(delta const & d){
-    _grid_dy+=d;
+void game::dec_dy(delta const & d){
+    _grid_dy-=d;
 }
 
 void game::setWidth(size const & x){
@@ -312,5 +317,13 @@ void game::setColors_numbers(t_number_color const & x){
     _grid.SetNbr_colors(x);
 }
 void game::init(){
-    _grid.init();
+    t_number height_colone_max(_grid.init());
+    _grid_dy=_grid.max_height()-height_colone_max;
+
+}
+
+void game::update_dy(){ //faire appel a cette fonction a chaque fois qu'on fait tomber une case/colone
+    delta d(_grid.height_max_column()); 
+    _grid_dy=d;
+
 }

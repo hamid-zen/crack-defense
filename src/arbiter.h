@@ -1,4 +1,5 @@
 #include "game.h"
+#include <curses.h>
 
 class arbiter{
 public:

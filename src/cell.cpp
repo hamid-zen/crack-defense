@@ -30,3 +30,7 @@ std::string toString_color(t_colors color)
     t_int cell::dy() const {
         return _dy;
     }
+
+bool cell::not_null() const{
+    return _color!=t_colors::empty_cell;
+}
