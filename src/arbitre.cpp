@@ -18,18 +18,18 @@ void arbitre::play()
         blue_shade_tile_texture, yellow_shade_tile_texture, orange_shade_tile_texture,
         pink_shade_tile_texture, empty_tile_texture, target_texture;
 
-    blue_tile_texture.loadFromFile("textures/single_blocks/Blue_colored.png");
-    yellow_tile_texture.loadFromFile("textures/single_blocks/Yellow_colored.png");
-    orange_tile_texture.loadFromFile("textures/single_blocks/Orange_colored.png");
-    pink_tile_texture.loadFromFile("textures/single_blocks/Pink_colored.png");
+    blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
+    yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
+    orange_tile_texture.loadFromFile("../textures/single_blocks/Orange_colored.png");
+    pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
 
-    blue_shade_tile_texture.loadFromFile("textures/single_blocks/Blue_shade.png");
-    yellow_shade_tile_texture.loadFromFile("textures/single_blocks/Yellow_shade.png");
-    orange_shade_tile_texture.loadFromFile("textures/single_blocks/Orange_shade.png");
-    pink_shade_tile_texture.loadFromFile("textures/single_blocks/Pink_shade.png");
+    blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
+    yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
+    orange_shade_tile_texture.loadFromFile("../textures/single_blocks/Orange_shade.png");
+    pink_shade_tile_texture.loadFromFile("../textures/single_blocks/Pink_shade.png");
 
-    empty_tile_texture.loadFromFile("textures/single_blocks/Ghost.png");
-    target_texture.loadFromFile("textures/single_blocks/Target.png");
+    empty_tile_texture.loadFromFile("../textures/single_blocks/Ghost.png");
+    target_texture.loadFromFile("../textures/single_blocks/Target.png");
 
     // On cree les sprite
     sf::Sprite s_tile, s_target(target_texture);
@@ -59,18 +59,18 @@ void arbitre::play()
                 else if (e.key.code == sf::Keyboard::Down)
                     _joueur1->move_target(t_direction::down);
                  else if (e.key.code == sf::Keyboard::Key::Space){
-                 if(!g.target_cells_empty()){
-                    if(g.switch_cells_target()){ //le switch a ete effectuee
-                        if(g.one_case_empty()){ //si une deux cases etaient vide
-                            g.drop();
-                            g.slideColumn(g.getcell1target().x());
-                            g.slideColumn(g.getcell2target().x());
+                 if(!_joueur1->target_cells_empty()){
+                    if(_joueur1->switch_cells_target()){ //le switch a ete effectuee
+                        if(_joueur1->one_case_empty()){ //si une deux cases etaient vide
+                            _joueur1->drop();
+                            _joueur1->slideColumn(_joueur1->getcell1target().x());
+                            _joueur1->slideColumn(_joueur1->getcell2target().x());
                         }
                     }
-                    auto v(g.alignment());
+                    auto v(_joueur1->alignment());
                     if(v.size()!=0){
                         for(auto i(0);i<v.size();i++){
-                            g.delete_cell(v[i]);
+                            _joueur1->delete_cell(v[i]);
                         }
 
                     }
