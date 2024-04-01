@@ -27,7 +27,7 @@ public:
     void setColor(t_colors newColor);
     t_int dx() const;
     t_int dy() const ;
-    bool not_null() const; 
+
 private:
     t_colors _color;
     t_int _dx;

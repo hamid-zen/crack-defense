@@ -61,14 +61,10 @@ int nombreAleatoire(int k) {
  * @brief grid::_init
  * initialise la grille
  */
-t_number grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
-{ int max(0);
-      for(cordinate i(0);i<_max_width;i++){ //colone
+void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
+{   for(cordinate i(0);i<_max_width;i++){ //colone
         // pour chaque colone on genere un nbr de case pour la colonne
         int nbr=nombreAleatoire((_max_height+1)/2)+1; //nbr aleatoire entre  2 et 8 si MAx_hauteur=12 sachant que 1 sera caché au debut
-        if(nbr>max){
-            max=nbr;
-        }
         for(cordinate j(_max_height-nbr);j<_max_height+1;j++){ //ligne
             t_colors color;
             do{
@@ -78,8 +74,7 @@ t_number grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 
             _board[i+j*_max_width]=std::make_unique<cell>(color);
         }
 
-    }//-1 car on ne compte pas la ligne caché
-    return max-1;
+    }
 }
 
 t_colors grid::operator()(position p) const
@@ -132,9 +127,4 @@ void grid::Setmax_height(cordinate const & x) {
 }
 void grid::SetNbr_colors(t_number_color const & x) {
     nbr_colors=x;
-}
-
-cordinate grid::height_max_column() const{
-   auto it(std::find_if(_board.begin(),_board.end(),[](auto const & x){ return x!=nullptr;}));
-   return((it-_board.begin())/_max_width);
 }
