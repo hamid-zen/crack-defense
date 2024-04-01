@@ -128,3 +128,29 @@ void grid::Setmax_height(cordinate const & x) {
 void grid::SetNbr_colors(t_number_color const & x) {
     nbr_colors=x;
 }
+
+std::vector<cell> grid::generate_random_line(size t) const
+{
+    std::vector<cell> v;
+    for (size i(0); i < t; i++) {
+        v.push_back(cell(randomColor()));
+    }
+    return v;
+}
+
+void grid::new_row()
+{
+    for (cordinate i(0); i < _max_width; i++) {
+        for (cordinate j(0); j < _max_height; j++) { //on s'arrete a max height et non maxheight+1
+            _board[i + j * _max_width] = std::move(_board[i + (j + 1) * _max_width]);
+        }
+    }
+
+    //apres avoir decaler toutes les lignes d'une case vers le haut
+    //il faut regenerer un nvl ligne aleatoire
+    auto vec(generate_random_line(_max_width));
+    for (cordinate i(0); i < _max_width; i++) {
+        _board[i + _max_height * _max_width] = std::make_unique<cell>(
+            vec[i]); //ici j=max_height car on remplie la toute premiere ligne(celle qui est caché pour l'insatnt)
+    }
+}

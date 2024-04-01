@@ -234,6 +234,7 @@ std::vector<position> game::horizontal_alignment()
 
 std::vector<position > game::alignment()
 {
+    //TODO: optimiser
     if(vertical_alignment().size()>0)
         return vertical_alignment();
     else return horizontal_alignment();
@@ -275,14 +276,28 @@ void game::delete_cell(position const &x)
     _grid.delete_cell(x);
 }
 
-std::vector<cell> game::generate_random_line(size t) const
+// std::vector<cell> game::generate_random_line(size t) const
+// {
+//     std::vector<cell> v;
+//     for (size i(0); i < t; i++)
+//     {
+//         v.push_back(cell(_grid.randomColor()));
+//     }
+//     return v;
+// }
+
+void game::add_new_row()
 {
-    std::vector<cell> v;
-    for (size i(0); i < t; i++)
-    {
-        v.push_back(cell(_grid.randomColor()));
-    }
-    return v;
+    // On ajoute une nouvelle ligne en faisant monter les cellules
+    _grid.new_row();
+
+    // On fait remonter la target d'un cran
+    move_target(t_direction::up);
+}
+
+void game::setGrid_dy(delta newGrid_dy)
+{
+    _grid_dy = newGrid_dy;
 }
 
 void game::place_new_case(position p, std::vector<cell> v)
@@ -298,9 +313,6 @@ delta game::grid_dy() const
     return _grid_dy;
 }
 
-void game::inc_dy(delta const & d){
-    _grid_dy+=d;
-}
 
 void game::setWidth(size const & x){
     _grid.Setmax_width(x);

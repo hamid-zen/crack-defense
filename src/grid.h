@@ -21,6 +21,9 @@ public:
     bool switch_cell(position p1, position p2);
     void place_cell(cell c,position p);
     void delete_cell(position p);
+    void new_row();
+    std::vector<cell> generate_random_line(size t) const;
+
 private:
     t_mat _board;
     cordinate _max_height;

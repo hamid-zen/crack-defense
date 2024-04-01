@@ -37,13 +37,15 @@ public:
     std::vector<cell> generate_random_line(size t)const;
     void place_new_case(position p,std::vector<cell> v);
     delta grid_dy()const;
-    void inc_dy(delta const & d);
     void setWidth(size const & x);
     void setHeight(size const & x);
     size height() const;
     size width() const;
     void setColors_numbers(t_number_color const & x);
     void init();
+    void add_new_row();
+
+    void setGrid_dy(delta newGrid_dy);
 
 private:
     grid _grid;

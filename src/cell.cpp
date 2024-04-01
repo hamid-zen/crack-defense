@@ -30,3 +30,13 @@ std::string toString_color(t_colors color)
     t_int cell::dy() const {
         return _dy;
     }
+
+    void cell::setDx(t_int newDx)
+    {
+        _dx = newDx;
+    }
+
+    void cell::setDy(t_int newDy)
+    {
+        _dy = newDy;
+    }

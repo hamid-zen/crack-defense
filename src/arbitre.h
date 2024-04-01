@@ -1,8 +1,8 @@
 #include "game.h"
 #include "timer.h"
+#include <SFML/Graphics.hpp>
 
-const t_number default_tick_duration = 33;
-
+//TODO: Pourrait prendre le srand
 class arbitre
 {
 public:
@@ -11,5 +11,5 @@ public:
 
 private:
     std::unique_ptr<game> _joueur1;
-    timer _timer;
+    float _vertical_speed;
 };

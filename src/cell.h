@@ -28,6 +28,9 @@ public:
     t_int dx() const;
     t_int dy() const ;
 
+    void setDx(t_int newDx);
+    void setDy(t_int newDy);
+
 private:
     t_colors _color;
     t_int _dx;
