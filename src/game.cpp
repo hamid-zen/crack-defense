@@ -147,10 +147,26 @@ position game::drop_position(position const &p) const
     }
     return position(p.x(), j);
 }
-void game::drop(position const &p)
+
+bool game::one_case_empty() const{
+    return ((getColor(this->getcell1target())==t_colors::empty_cell)&&(getColor(this->getcell2target())!=t_colors::empty_cell))|| ((getColor(this->getcell2target())==t_colors::empty_cell)&&(getColor(this->getcell1target())!=t_colors::empty_cell));
+}
+bool game::target_cells_empty() const{
+    return (getColor(this->getcell1target())==t_colors::empty_cell)&&(getColor(this->getcell2target())==t_colors::empty_cell);
+}
+
+void game::drop()
 {
-    auto position_final(drop_position(p));
+    if(getColor(getcell1target())==t_colors::empty_cell){
+            position p(getcell2target()); //la position ou se troyve la case qui doit tomber
+            auto position_final(drop_position(p));
     _grid.switch_cell(p, position_final);
+    }else{
+        position p(getcell1target());
+        auto position_final(drop_position(p));
+    _grid.switch_cell(p, position_final);
+    }
+    
 }
 std::vector<position > game::vertical_alignment()
 {
@@ -234,10 +250,15 @@ std::vector<position> game::horizontal_alignment()
 
 std::vector<position > game::alignment()
 {
-    //TODO: optimiser
     if(vertical_alignment().size()>0)
         return vertical_alignment();
     else return horizontal_alignment();
+}
+
+void game::delete_alignement(std::vector<position>  const & v){
+    for(auto i(v.size()-1);i>0;i--){
+        _grid.delete_cell(v[i]);
+    }
 }
 
 void game::rotate_target()
@@ -276,19 +297,9 @@ void game::delete_cell(position const &x)
     _grid.delete_cell(x);
 }
 
-// std::vector<cell> game::generate_random_line(size t) const
-// {
-//     std::vector<cell> v;
-//     for (size i(0); i < t; i++)
-//     {
-//         v.push_back(cell(_grid.randomColor()));
-//     }
-//     return v;
-// }
 
-void game::add_new_row()
-{
-    // On ajoute une nouvelle ligne en faisant monter les cellules
+void game::add_new_row(){
+ // On ajoute une nouvelle ligne en faisant monter les cellules
     _grid.new_row();
 
     // On fait remonter la target d'un cran
@@ -300,19 +311,26 @@ void game::setGrid_dy(delta newGrid_dy)
     _grid_dy = newGrid_dy;
 }
 
+
 void game::place_new_case(position p, std::vector<cell> v)
 {
     for (std::size_t c(0); c < v.size(); c++)
     {
-        _grid.place_cell(v[c], position(p.x(), p.y() + c));
+        
+         _grid.place_cell(v[c], position(p.x(), p.y() + c));
     }
 }
+
+
 
 delta game::grid_dy() const
 {
     return _grid_dy;
 }
 
+void game::inc_dy(delta const & d){
+    _grid_dy+=d;
+}
 
 void game::setWidth(size const & x){
     _grid.Setmax_width(x);
