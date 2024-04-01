@@ -58,8 +58,24 @@ void arbitre::play()
                     _joueur1->move_target(t_direction::right);
                 else if (e.key.code == sf::Keyboard::Down)
                     _joueur1->move_target(t_direction::down);
-                else if (e.key.code == sf::Keyboard::Enter)
-                    _joueur1->switch_cells_target();
+                 else if (e.key.code == sf::Keyboard::Key::Space){
+                 if(!g.target_cells_empty()){
+                    if(g.switch_cells_target()){ //le switch a ete effectuee
+                        if(g.one_case_empty()){ //si une deux cases etaient vide
+                            g.drop();
+                            g.slideColumn(g.getcell1target().x());
+                            g.slideColumn(g.getcell2target().x());
+                        }
+                    }
+                    auto v(g.alignment());
+                    if(v.size()!=0){
+                        for(auto i(0);i<v.size();i++){
+                            g.delete_cell(v[i]);
+                        }
+
+                    }
+                 }
+                }
             }
         }
         window.clear(sf::Color::White);
