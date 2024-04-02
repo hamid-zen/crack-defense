@@ -28,7 +28,6 @@ public:
     bool cells_above() const;//il y'a des cases au dessus de la cases au dessus du target
     std::vector<position>  vertical_alignment();
     std::vector<position> horizontal_alignment();
-    std::vector<position> horizontal_alignment(std::vector<position> const & positions); //retourne les alignement horizontale qui sont adjacetn a l'align vertical prit en paramettre
     std::vector<position>  alignment();
     void delete_alignement(std::vector<position>  const & v);
     position getcell1target() const; //recupere la position de la premiere case du viseur
