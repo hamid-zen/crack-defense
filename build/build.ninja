@@ -125,6 +125,14 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 build cmake_object_order_depends_target_gamelib: phony || src/CMakeFiles/gamelib.dir
 
+build src/CMakeFiles/gamelib.dir/interface.cpp.o: CXX_COMPILER__gamelib_unscanned_Debug /home/zen/Etudes/L3/crack-defense/src/interface.cpp || cmake_object_order_depends_target_gamelib
+  DEP_FILE = src/CMakeFiles/gamelib.dir/interface.cpp.o.d
+  FLAGS = -g -std=c++17 -fcolor-diagnostics
+  OBJECT_DIR = src/CMakeFiles/gamelib.dir
+  OBJECT_FILE_DIR = src/CMakeFiles/gamelib.dir
+  TARGET_COMPILE_PDB = src/CMakeFiles/gamelib.dir/gamelib.pdb
+  TARGET_PDB = src/libgamelib.pdb
+
 build src/CMakeFiles/gamelib.dir/arbitre.cpp.o: CXX_COMPILER__gamelib_unscanned_Debug /home/zen/Etudes/L3/crack-defense/src/arbitre.cpp || cmake_object_order_depends_target_gamelib
   DEP_FILE = src/CMakeFiles/gamelib.dir/arbitre.cpp.o.d
   FLAGS = -g -std=c++17 -fcolor-diagnostics
@@ -197,7 +205,7 @@ build src/CMakeFiles/gamelib.dir/timer.cpp.o: CXX_COMPILER__gamelib_unscanned_De
 #############################################
 # Link the static library src/libgamelib.a
 
-build src/libgamelib.a: CXX_STATIC_LIBRARY_LINKER__gamelib_Debug src/CMakeFiles/gamelib.dir/arbitre.cpp.o src/CMakeFiles/gamelib.dir/rand.cpp.o src/CMakeFiles/gamelib.dir/position.cpp.o src/CMakeFiles/gamelib.dir/cell.cpp.o src/CMakeFiles/gamelib.dir/grid.cpp.o src/CMakeFiles/gamelib.dir/game.cpp.o src/CMakeFiles/gamelib.dir/target.cpp.o src/CMakeFiles/gamelib.dir/timer.cpp.o
+build src/libgamelib.a: CXX_STATIC_LIBRARY_LINKER__gamelib_Debug src/CMakeFiles/gamelib.dir/interface.cpp.o src/CMakeFiles/gamelib.dir/arbitre.cpp.o src/CMakeFiles/gamelib.dir/rand.cpp.o src/CMakeFiles/gamelib.dir/position.cpp.o src/CMakeFiles/gamelib.dir/cell.cpp.o src/CMakeFiles/gamelib.dir/grid.cpp.o src/CMakeFiles/gamelib.dir/game.cpp.o src/CMakeFiles/gamelib.dir/target.cpp.o src/CMakeFiles/gamelib.dir/timer.cpp.o
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = src/CMakeFiles/gamelib.dir
   POST_BUILD = :

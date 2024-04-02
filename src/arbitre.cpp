@@ -7,7 +7,7 @@ arbitre::arbitre()
 {}
 void arbitre::update(t_action x){
    if(x != t_action::nothing){
-    switch(x){
+        switch(x){
         case t_action::go_right :{
          _joueur1->move_target(t_direction::right);
          break;

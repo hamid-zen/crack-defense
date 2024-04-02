@@ -74,7 +74,7 @@ void game::move_target(t_direction dir)
     }
     case t_direction::right:
     {
-        if (_target.x1() < _grid.max_width() - 1 && _target.x2() < _grid.max_width() - 1)
+        if (_target.x1() < _grid.max_width() - 2 && _target.x2() < _grid.max_width() - 2)
         {
             _target.setX1(_target.x1() + 1);
             _target.setX2(_target.x2() + 1);
@@ -267,7 +267,7 @@ void game::delete_alignement(std::vector<position>  const & v){
 
 void game::rotate_target()
 {
-    if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
+    if (_target.isVertical() && _target.x1() < _grid.max_width() - 2)
         _target.setSense();
     else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
         _target.setSense();
