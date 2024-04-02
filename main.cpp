@@ -1,10 +1,10 @@
-#include "src/arbitre.h"
+#include "src/interface.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
 //TODO: tout traduire en une seule langue
 int main(){
-    arbitre a;
-    a.play();
+    interface _interface;
+    _interface.play();
     return 0;
 }
