@@ -9,12 +9,12 @@ TEST_CASE("Echange_case", "test") {
     g.rotate_target();
     g.move_target(t_direction::down);
     g.move_target(t_direction::down);
-    couleur1=g(g.getcell1target());
-    couleur2=g(g.getcell2target());
+    couleur1=g[g.getcell1target()];
+    couleur2=g[g.getcell2target()];
 
     REQUIRE( g.switch_cells_target()==true);
-    REQUIRE(couleur1== g(g.getcell2target())); //la couleur de la premiere case devient celle de la 2eme
-    REQUIRE(couleur2== g(g.getcell1target()));
+    REQUIRE(couleur1== g[g.getcell2target()]); //la couleur de la premiere case devient celle de la 2eme
+    REQUIRE(couleur2== g[g.getcell1target()]);
 }
 
 TEST_CASE("Alignement_horizontale", "[alignement][test]") {
@@ -29,9 +29,9 @@ TEST_CASE("Alignement_horizontale", "[alignement][test]") {
 
     std::vector<position> vec = g.alignment();
     REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
-    REQUIRE(g(vec[0])== g(vec[1]) );
-    REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
-    REQUIRE(g(vec[0]) == t_colors::blue); //et devrait etre la couleur rouge
+    REQUIRE(g[vec[0]]== g[vec[1]]);
+    REQUIRE(g[vec[0]]== g[vec[2]]) ; // et ces trois cases devrait avoir la meme couleur
+    REQUIRE(g[vec[0]] == t_colors::blue); //et devrait etre la couleur rouge
 }
 
 TEST_CASE("Alignement_verticale", "[alignement][test]") {
@@ -48,9 +48,9 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
 
     std::vector<position> vec = g.alignment();
     REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
-    REQUIRE(g(vec[0])== g(vec[1]) );
-    REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
-    REQUIRE(g(vec[0]) == t_colors::pink); //et devrait etre la couleur rouge
+    REQUIRE(g[vec[0]]== g[vec[1]] );
+    REQUIRE(g[vec[0]]== g[vec[2]]) ; // et ces trois cases devrait avoir la meme couleur
+    REQUIRE(g[vec[0]] == t_colors::pink); //et devrait etre la couleur rouge
 }
 
 TEST_CASE("estVertical_estHorizontal", "[test]")
