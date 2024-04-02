@@ -1,3 +1,4 @@
+
 #include "cell.h"
 
 
@@ -24,19 +25,19 @@ std::string toString_color(t_colors color)
     default: return "";
     }
 }
-    t_int cell::dx() const{
+    delta cell::dx() const{
         return _dx; 
     }
-    t_int cell::dy() const {
+    delta cell::dy() const {
         return _dy;
     }
 
-    void cell::setDx(t_int newDx)
+    void cell::setDx(delta newDx)
     {
         _dx = newDx;
     }
 
-    void cell::setDy(t_int newDy)
+    void cell::setDy(delta newDy)
     {
         _dy = newDy;
     }

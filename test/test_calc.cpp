@@ -37,6 +37,9 @@ TEST_CASE("Alignement_horizontale", "[alignement][test]") {
 TEST_CASE("Alignement_verticale", "[alignement][test]") {
     mysrand(3);
     game g;
+        std::cout << "hehe1 \n";
+        g.show();
+
     g.rotate_target();
     g.move_target(t_direction::right);
     g.move_target(t_direction::down);
@@ -45,12 +48,69 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
     g.switch_cells_target();
     g.move_target(t_direction::up);
     g.move_target(t_direction::up);
-
+    std::cout << "hehe \n";
+    g.show();
     std::vector<position> vec = g.alignment();
     REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
     REQUIRE(g(vec[0])== g(vec[1]) );
     REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
     REQUIRE(g(vec[0]) == t_colors::pink); //et devrait etre la couleur rouge
+}
+
+TEST_CASE("Alignement_verticale_et_horizontale", "[alignement][test]") {
+    mysrand(3);
+    game g;
+    g.rotate_target();
+    g.move_target(t_direction::right);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.switch_cells_target();
+    g.move_target(t_direction::up);
+    g.move_target(t_direction::up);
+    std::vector<position> vec = g.alignment();
+    g.move_target(t_direction::left);
+    g.rotate_target();
+    g.switch_cells_target();
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::down);
+    g.switch_cells_target();
+    g.move_target(t_direction::left);
+    //g.show();
+    std::vector<position> vec1=g.horizontal_alignment(vec);
+    REQUIRE(vec1.size()== 2); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
+    REQUIRE(g(vec1[0])== g(vec1[1]) );
+    REQUIRE(g(vec1[0]) == t_colors::pink); //et devrait etre la couleur rose
+    //std::cout<<vec1[0].x()<<" "<<vec1[0].y()<<std::endl;
+}
+TEST_CASE("Alignement", "[alignement][test]") {
+    mysrand(3);
+    game g;
+    g.rotate_target();
+    g.move_target(t_direction::right);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.switch_cells_target();
+    g.move_target(t_direction::up);
+    g.move_target(t_direction::up);
+    g.move_target(t_direction::left);
+    g.rotate_target();
+    g.switch_cells_target();
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::down);
+    g.switch_cells_target();
+    g.move_target(t_direction::left);
+    //g.show();
+    std::vector<position> vec1=g.alignment();
+    std::cout<<"taille : "<<vec1.size()<<std::endl;
+    REQUIRE(vec1.size()== 5); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
+    REQUIRE(g(vec1[0])== g(vec1[1]) );
+    REQUIRE(g(vec1[0])== g(vec1[2]) );
+    REQUIRE(g(vec1[0])== g(vec1[3]) );
+    REQUIRE(g(vec1[0])== g(vec1[4]) );
+    REQUIRE(g(vec1[0]) == t_colors::pink); //et devrait etre la couleur rose
+    //std::cout<<vec1[0].x()<<" "<<vec1[0].y()<<std::endl;
 }
 
 TEST_CASE("estVertical_estHorizontal", "[test]")
@@ -99,6 +159,8 @@ TEST_CASE("bounds", "[test]")
     g.rotate_target();
     for (size_t i = 0; i < 11; i++)
         g.move_target(t_direction::down);
+    std::cout << "shoowing\n";
+    g.show();
     REQUIRE(g.getcell1target() == position(4, 11));
     REQUIRE(g.getcell2target() == position(5, 11));
     g.rotate_target(); // rotation impossible

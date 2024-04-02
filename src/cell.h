@@ -6,9 +6,10 @@
 #include "position.h"
 
 
+
 const uint16_t  nombre_couleurs=4;
 using cordinate =uint16_t ;
-using t_int=int16_t;
+
 
 enum class t_colors {
     blue, pink, yellow, orange, empty_cell
@@ -25,14 +26,14 @@ public:
 
 
     void setColor(t_colors newColor);
-    t_int dx() const;
-    t_int dy() const ;
+    delta dx() const;
+    delta dy() const ;
 
-    void setDx(t_int newDx);
-    void setDy(t_int newDy);
+    void setDx(delta newDx);
+    void setDy(delta newDy);
 
 private:
     t_colors _color;
-    t_int _dx;
-    t_int _dy;
+    delta _dx;
+    delta _dy;
 };

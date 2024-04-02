@@ -5,12 +5,15 @@
 #include <algorithm>
 #include <iostream>
 
+
 enum class t_direction{
     up,
     down,
     right,
     left
 };
+
+
 
 
 class game{
@@ -20,6 +23,7 @@ public:
     bool is_lost();
     void move_target(t_direction dir);
     void show() const;
+    bool switch_cells_target(position p1 ,position p2);
     bool switch_cells_target();
     bool one_case_empty() const; //return true si une deux cases du target est vide utilie pour determiner ce qui doit ou non etre fait apres le switch
     bool target_cells_empty() const; //return true si le viseur est sur deux cases vides (il n'ya pas de switch a faire alors)
@@ -28,6 +32,7 @@ public:
     bool cells_above() const;//il y'a des cases au dessus de la cases au dessus du target
     std::vector<position>  vertical_alignment();
     std::vector<position> horizontal_alignment();
+    std::vector<position> horizontal_alignment(std::vector<position> const & p); //retourne les alignement horizontale qui sont adjacetn a l'align vertical prit en paramettre
     std::vector<position>  alignment();
     void delete_alignement(std::vector<position>  const & v);
     position getcell1target() const; //recupere la position de la premiere case du viseur
@@ -49,11 +54,13 @@ public:
     size width() const;
     void setColors_numbers(t_number_color const & x);
     void init();
+    bool target_verticale()const;
 
 private:
     grid _grid;
     target _target;
     delta _grid_dy;
+    
 };
 
 

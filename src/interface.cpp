@@ -95,7 +95,18 @@ void interface::play()
                     break;
                 }
                 }
-                s_tile.setPosition(64 * j, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
+                
+                if(_arbitre.getDelays().cells_switch1 and _arbitre.getDelays().cells_switch1->x()==j and _arbitre.getDelays().cells_switch1->y()==i){
+                     s_tile.setPosition(64 * j + _arbitre.getDelays().cell1Dx , 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
+                     std::cout << "4";
+                }
+                else if (_arbitre.getDelays().cells_switch2 and _arbitre.getDelays().cells_switch2->x()==j and _arbitre.getDelays().cells_switch2->y()==i){
+                    s_tile.setPosition(64 * j -  _arbitre.getDelays().cell2Dx, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy()); 
+                    std::cout << "5" ;
+                }
+
+                else
+                    s_tile.setPosition(64 * j, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
                 window.draw(s_tile);
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i)) {
                     s_target.setPosition(64 * j, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());

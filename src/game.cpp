@@ -74,7 +74,7 @@ void game::move_target(t_direction dir)
     }
     case t_direction::right:
     {
-        if (_target.x1() < _grid.max_width() - 2 && _target.x2() < _grid.max_width() - 2)
+        if (_target.x1() < _grid.max_width() - 1 && _target.x2() < _grid.max_width() - 1)
         {
             _target.setX1(_target.x1() + 1);
             _target.setX2(_target.x2() + 1);
@@ -133,10 +133,10 @@ void game::show() const
     std::cout << "|" << std::endl;
 }
 
-bool game::switch_cells_target()
+bool game::switch_cells_target( position p1 , position p2)
 {
     // On echange dans la grille
-   return _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
+   return _grid.switch_cell(p1, p2);
 }
 position game::drop_position(position const &p) const
 {
@@ -171,6 +171,11 @@ void game::drop()
     }
     
 }
+bool game::switch_cells_target()
+{
+    // On echange dans la grille
+   return _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
+}
 std::vector<position > game::vertical_alignment()
 {
     std::vector<position > vec;
@@ -184,7 +189,7 @@ std::vector<position > game::vertical_alignment()
                 if(vec.size()==3){ //cad on a trouvé un alignement verticale
                     unsigned int k(j);
                     //on ajoute tant que c'est la meme couleur
-                    while(_grid(position( i,k))==clr && k<_grid.max_height()){
+                    while( k<_grid.max_height() && _grid(position( i,k))==clr ){
                         vec.push_back(position(i,k));
                         k++;
                     }
@@ -224,7 +229,7 @@ std::vector<position> game::horizontal_alignment()
             if(vec.size()==3){ //cad on a trouvé un alignement verticale
                 unsigned int k(i);
                 //on ajoute tant que c'est la meme couleur
-                while(_grid(position( k,j))==clr && k<_grid.max_width()){
+                while(k<_grid.max_width() && _grid(position( k,j))==clr ){
                     vec.push_back(position(k,j));
                     k++;
                 }
@@ -251,12 +256,55 @@ std::vector<position> game::horizontal_alignment()
     return vec;
 }
 
+std::vector<position> game::horizontal_alignment(std::vector<position> const & p){
+  std::vector<position> vec;
+  bool trouve(false); 
+  t_colors clr=_grid(p[0]);
+
+   for(unsigned int j(p[0].y());j<p[p.size()-1].y();j++) {//on parcours seulement les lignes de l'alignement verticale
+        vec.clear();
+        for(unsigned int i(0);i<_grid.max_width();i++){
+            //vec.size()=2 et non 3 
+            if(trouve && vec.size()>=2){ //on est passee par une case de l'align1 et on a trouvee un alignement
+                unsigned int k(i);
+                while(k<_grid.max_width() && _grid(position( k,j))==clr){
+                    vec.push_back(position(k,j));
+                    k++;
+                }
+                return vec;
+            }
+            else if((_grid(position(i,j))!=clr )) 
+            {  vec.clear();
+            }else if(std::find(p.begin(),p.end(),position(i,j))!=p.end()){ 
+                //on trouve une case qui est deja dans le premiere alignement 
+                trouve=true;
+            }else{//==clr
+            vec.push_back(position(i,j));
+            }
+        }
+      } 
+
+    if(trouve && vec.size()>=2){ //alignement a la fin
+       return vec;
+    }
+    vec.clear();
+    return vec;
+  
+}
+
+
 std::vector<position > game::alignment()
 {
-    if(vertical_alignment().size()>0)
-        return vertical_alignment();
+    auto vec(vertical_alignment());
+    if(vec.size()>0){
+        auto vec1(horizontal_alignment(vec));
+        if(vec1.size()>0) //concat
+            vec.insert(vec.end(), vec1.begin(), vec1.end());
+        return vec;
+    }
     else return horizontal_alignment();
 }
+
 
 void game::delete_alignement(std::vector<position>  const & v){
     for(auto i(v.size()-1);i>0;i--){
@@ -267,7 +315,7 @@ void game::delete_alignement(std::vector<position>  const & v){
 
 void game::rotate_target()
 {
-    if (_target.isVertical() && _target.x1() < _grid.max_width() - 2)
+    if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
         _target.setSense();
     else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
         _target.setSense();
@@ -357,4 +405,9 @@ void game::setColors_numbers(t_number_color const & x){
 }
 void game::init(){
     _grid.init();
+}
+
+bool game::target_verticale() const
+{
+    return _target.isVertical();
 }

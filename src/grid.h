@@ -23,6 +23,8 @@ public:
     void delete_cell(position p);
     void new_row();
     std::vector<cell> generate_random_line(size t) const;
+    
+    
 
 private:
     t_mat _board;

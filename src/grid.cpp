@@ -139,6 +139,7 @@ std::vector<cell> grid::generate_random_line(size t) const
     return v;
 }
 
+
 void grid::new_row()
 {
     for (cordinate i(0); i < _max_width; i++) {
