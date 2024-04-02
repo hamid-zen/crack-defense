@@ -251,45 +251,6 @@ std::vector<position> game::horizontal_alignment()
     return vec;
 }
 
-std::vector<position> horizontal_alignment(std::vector<position> const & positions){
-/*  std::vector<position> vec;
-
-   for(unsigned int j(0);j<_grid.max_height();j++) {
-        t_colors clr=_grid(position( 0,j));
-        vec.clear();
-        vec.push_back(position(0,j)); //on ajoute la position de cette case au vecteur
-            if(vec.size()==3){ //cad on a trouvé un alignement verticale
-                unsigned int k(i);
-                //on ajoute tant que c'est la meme couleur
-                while(_grid(position( k,j))==clr && k<_grid.max_width()){
-                    vec.push_back(position(k,j));
-                    k++;
-                }
-                return vec;
-            }
-            else if(clr==t_colors::empty_cell || (_grid(position( i,j))!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
-            {  vec.clear();
-                vec.push_back(position(i,j));
-                clr=_grid(position( i,j));
-            }else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
-                   vec.push_back(position(i,j));
-
-                }
-            }
-        if(vec.size()==3){ //alignement a la fin
-       return vec;
-    }
-
-    }
-    if(vec.size()==3){ //alignement a la fin
-       return vec;
-    }
-    vec.clear();
-    return vec;
-}*/
-}
-
-
 std::vector<position > game::alignment()
 {
     if(vertical_alignment().size()>0)
