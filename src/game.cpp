@@ -1,7 +1,7 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0), _score(0) { _grid.init(); /* TODO: Enlever */ }
 
 /**
  * @brief check si le game est perdu
@@ -31,7 +31,7 @@ t_colors game::getColor(position const &p) const
     return _grid(p);
 }
 
-t_colors game::operator()(position const &p) const
+t_colors game::operator[](position const &p) const
 {
     return _grid(p);
 }
@@ -74,7 +74,7 @@ void game::move_target(t_direction dir)
     }
     case t_direction::right:
     {
-        if (_target.x1() < _grid.max_width() - 1 && _target.x2() < _grid.max_width() - 1)
+        if (_target.x1() < _grid.max_width() - 2 && _target.x2() < _grid.max_width() - 2)
         {
             _target.setX1(_target.x1() + 1);
             _target.setX2(_target.x2() + 1);
@@ -267,7 +267,7 @@ void game::delete_alignement(std::vector<position>  const & v){
 
 void game::rotate_target()
 {
-    if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
+    if (_target.isVertical() && _target.x1() < _grid.max_width() - 2)
         _target.setSense();
     else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
         _target.setSense();
@@ -357,4 +357,9 @@ void game::setColors_numbers(t_number_color const & x){
 }
 void game::init(){
     _grid.init();
+}
+
+void game::addScore(score x)
+{
+    _score+=x;
 }

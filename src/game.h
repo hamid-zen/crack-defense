@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream>
 
+using score = uint16_t ;
+
 enum class t_direction{
     up,
     down,
@@ -28,15 +30,12 @@ public:
     bool cells_above() const;//il y'a des cases au dessus de la cases au dessus du target
     std::vector<position>  vertical_alignment();
     std::vector<position> horizontal_alignment();
-    //std::vector<position> horizontal_alignment(std::vector<position> const & );
     std::vector<position>  alignment();
-
-
     void delete_alignement(std::vector<position>  const & v);
     position getcell1target() const; //recupere la position de la premiere case du viseur
     position getcell2target() const;
     t_colors getColor(position const & p) const; //recupere la couleur de la case qui a pour position pair
-    t_colors operator()(position const & p)const;
+    t_colors operator[](position const & p)const;
     void rotate_target();
     void slideColumn(cordinate x);
     std::vector<position> slidecolumn_start_position(cordinate const & x); //recupere les position des des cases qui doivent tomber
@@ -52,11 +51,14 @@ public:
     size width() const;
     void setColors_numbers(t_number_color const & x);
     void init();
+    void addScore(score x);
 
 private:
     grid _grid;
     target _target;
     delta _grid_dy;
+    score _score;
+
 };
 
 
