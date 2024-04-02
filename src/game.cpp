@@ -155,6 +155,9 @@ bool game::target_cells_empty() const{
     return (getColor(this->getcell1target())==t_colors::empty_cell)&&(getColor(this->getcell2target())==t_colors::empty_cell);
 }
 
+bool game::cells_above() const{
+    return( (getcell1target().y()-1>0 &&  (getColor(position(getcell1target().x(),getcell1target().y()-1))!=t_colors::empty_cell) )  || (getcell2target().y()-1>0 &&  (getColor(position(getcell2target().x(),getcell2target().y()-1))!=t_colors::empty_cell) )  );
+}
 void game::drop()
 {
     if(getColor(getcell1target())==t_colors::empty_cell){
@@ -259,6 +262,7 @@ void game::delete_alignement(std::vector<position>  const & v){
     for(auto i(v.size()-1);i>0;i--){
         _grid.delete_cell(v[i]);
     }
+
 }
 
 void game::rotate_target()
@@ -281,12 +285,11 @@ void game::slideColumn(cordinate x)
     { // on cherche la premiere case suspendu au dessus du vide
         j--;
     }
-    for (unsigned int k(j); j >= 0; j--)
+    for (unsigned int k(j); k >= 0; k--)
     {                                                      // on parcours toutes les cases restantes au dessus
         if (_grid(position(x, k)) == t_colors::empty_cell) // jusqu'a qu'il n'y en ai plus
             break;
-        else
-        {
+        else{
             auto pst = drop_position(position(x, k)); // on prend la pposition ou la case doit tomber (forcement une case vide)
             _grid.switch_cell(position(x, k), pst);   // on les fait s'echanger
         }

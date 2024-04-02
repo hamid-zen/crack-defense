@@ -25,7 +25,7 @@ public:
     bool target_cells_empty() const; //return true si le viseur est sur deux cases vides (il n'ya pas de switch a faire alors)
     position drop_position(position const & p) const ; // recupere la position ou doit tomber la case qui est suspendu
     void drop(); 
-    //bool cells_above() const;//il y'a des cases au dessus de la cases non vide
+    bool cells_above() const;//il y'a des cases au dessus de la cases au dessus du target
     std::vector<position>  vertical_alignment();
     std::vector<position> horizontal_alignment();
     std::vector<position>  alignment();

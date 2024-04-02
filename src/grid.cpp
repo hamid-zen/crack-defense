@@ -114,10 +114,11 @@ bool grid::switch_cell(position p1,position p2)
 }
 void grid::delete_cell(position p)
 {
-    _board[p.x()+ p.y()*_max_height].reset();
+    _board[p.x()+ p.y()*_max_width].reset();
+    
 }
 void grid::place_cell(cell c,position p){
-    _board[p.x()+p.y()*_max_height] = std::make_unique<cell>(c);
+    _board[p.x()+p.y()*_max_width] = std::make_unique<cell>(c);
 }
 void grid::Setmax_width(cordinate const & x) {
     this->_max_width=x;

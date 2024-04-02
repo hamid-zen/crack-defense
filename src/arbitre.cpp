@@ -36,8 +36,9 @@ void arbitre::play()
 
     // On cree la clock
     sf::Clock clock;
-
+    bool alignement_found = false; // Variable pour indiquer si un alignement a été trouvé
     while (window.isOpen() && !_joueur1->is_lost()) {
+        alignement_found = false;
         // TODO: a chaque fois que dy==30 il faut reelement faire monter la ligne
         // auto fps = 1.0f / (clock.restart().asSeconds());
         // std::cout << "fps: " << fps << "\n";
@@ -64,17 +65,30 @@ void arbitre::play()
                         if(_joueur1->one_case_empty()){ //si une deux cases etaient vide
                             _joueur1->drop();
                             _joueur1->slideColumn(_joueur1->getcell1target().x());
-                            _joueur1->slideColumn(_joueur1->getcell2target().x());
+                           _joueur1->slideColumn(_joueur1->getcell2target().x());
                         }
+                    if(_joueur1->cells_above()){
+                        _joueur1->slideColumn(_joueur1->getcell1target().x());
+                        _joueur1->slideColumn(_joueur1->getcell2target().x());
                     }
-                    auto v(_joueur1->alignment());
-                    if(v.size()!=0){
-                        for(auto i(0);i<v.size();i++){
+                    }
+                    auto v(_joueur1->alignment()); //faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
+                    while(v.size()!=0){ 
+                        
+                         alignement_found = true;
+                        for(std::size_t i(0);i<v.size();i++){
+                            auto col(v[i].x());
                             _joueur1->delete_cell(v[i]);
-                        }
+                            _joueur1->slideColumn(col);
 
-                    }
+                        }
+                        v=_joueur1->alignment();
+
+                    } 
                  }
+                }
+                else if(e.key.code == sf::Keyboard::Key::Enter){
+                    //accelerer
                 }
             }
         }
@@ -150,7 +164,7 @@ void arbitre::play()
             s_tile.setPosition(64 * j, 64 * _joueur1->height() - _vertical_speed * _joueur1->grid_dy()); // adapter la vitesse par rapport a la taille de la fenetre
             window.draw(s_tile);
         }
-
+        
         // On update
         if (_vertical_speed * _joueur1->grid_dy() >= 64) {
             _joueur1->add_new_row();
@@ -159,7 +173,10 @@ void arbitre::play()
         }
         else
             _joueur1->setGrid_dy(_joueur1->grid_dy()+1);
-        _vertical_speed += 0.00001;
+            
+        if(! alignement_found){
+        _vertical_speed += 0.000001;
+        }
         window.display();
     }
 }
