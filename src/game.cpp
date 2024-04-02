@@ -1,7 +1,7 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0), _score(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0) { _grid.init(); /* TODO: Enlever */ }
 
 /**
  * @brief check si le game est perdu
@@ -31,7 +31,7 @@ t_colors game::getColor(position const &p) const
     return _grid(p);
 }
 
-t_colors game::operator[](position const &p) const
+t_colors game::operator()(position const &p) const
 {
     return _grid(p);
 }
@@ -74,7 +74,7 @@ void game::move_target(t_direction dir)
     }
     case t_direction::right:
     {
-        if (_target.x1() < _grid.max_width() - 2 && _target.x2() < _grid.max_width() - 2)
+        if (_target.x1() < _grid.max_width() - 1 && _target.x2() < _grid.max_width() - 1)
         {
             _target.setX1(_target.x1() + 1);
             _target.setX2(_target.x2() + 1);
@@ -251,6 +251,45 @@ std::vector<position> game::horizontal_alignment()
     return vec;
 }
 
+std::vector<position> horizontal_alignment(std::vector<position> const & positions){
+/*  std::vector<position> vec;
+
+   for(unsigned int j(0);j<_grid.max_height();j++) {
+        t_colors clr=_grid(position( 0,j));
+        vec.clear();
+        vec.push_back(position(0,j)); //on ajoute la position de cette case au vecteur
+            if(vec.size()==3){ //cad on a trouvé un alignement verticale
+                unsigned int k(i);
+                //on ajoute tant que c'est la meme couleur
+                while(_grid(position( k,j))==clr && k<_grid.max_width()){
+                    vec.push_back(position(k,j));
+                    k++;
+                }
+                return vec;
+            }
+            else if(clr==t_colors::empty_cell || (_grid(position( i,j))!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+            {  vec.clear();
+                vec.push_back(position(i,j));
+                clr=_grid(position( i,j));
+            }else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
+                   vec.push_back(position(i,j));
+
+                }
+            }
+        if(vec.size()==3){ //alignement a la fin
+       return vec;
+    }
+
+    }
+    if(vec.size()==3){ //alignement a la fin
+       return vec;
+    }
+    vec.clear();
+    return vec;
+}*/
+}
+
+
 std::vector<position > game::alignment()
 {
     if(vertical_alignment().size()>0)
@@ -267,7 +306,7 @@ void game::delete_alignement(std::vector<position>  const & v){
 
 void game::rotate_target()
 {
-    if (_target.isVertical() && _target.x1() < _grid.max_width() - 2)
+    if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
         _target.setSense();
     else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
         _target.setSense();
@@ -357,9 +396,4 @@ void game::setColors_numbers(t_number_color const & x){
 }
 void game::init(){
     _grid.init();
-}
-
-void game::addScore(score x)
-{
-    _score+=x;
 }
