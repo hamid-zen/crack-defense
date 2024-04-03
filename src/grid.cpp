@@ -188,3 +188,25 @@ void grid::new_row()
             vec[i]); //ici j=max_height car on remplie la toute premiere ligne(celle qui est caché pour l'insatnt)
     }
 }
+
+std::vector<position>  grid::max_column() const{
+    std::vector<position> vec;
+    cordinate  i,j;
+    for(cordinate i(0);i<(max_height()*max_width());i++){
+        if(_board[i]!=nullptr){
+            vec.push_back(position(i%max_width(),max_height()- ((i/max_width())+1 )));
+            j=max_height()- ((i/max_width())+1 );
+            i=i%max_width()+1;
+
+            while( i<max_width()) //on ajoute les autres cases qui  ont la mm hauteur donc qui son sur la meme ligne
+            {
+                if(_board[i + j * _max_width]!=nullptr){
+                    vec.push_back(position(i,j));
+                }
+                i++;
+            }
+            return vec;
+        }
+    }
+
+}
