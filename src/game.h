@@ -47,9 +47,9 @@ public:
     std::vector<position> slidecolumn_start_position(cordinate const & x); //recupere les position des des cases qui doivent tomber
     void delete_cell(position const &x);
     void add_new_row();
-    void setGrid_dy(delta newGrid_dy);
+    void setGrid_dy(float newGrid_dy);
     void place_new_case(position p,std::vector<cell> v);
-    delta grid_dy()const;
+    float grid_dy()const;
     void inc_dy(delta const & d);
     void setWidth(size const & x);
     void setHeight(size const & x);
@@ -67,7 +67,7 @@ public:
 private:
     grid _grid;
     target _target;
-    delta _grid_dy;
+    float _grid_dy;
     
 };
 

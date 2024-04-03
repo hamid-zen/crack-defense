@@ -96,10 +96,10 @@ void interface::play()
                 }
                 }
                 
-                s_tile.setPosition(64 * j + dx, 64 * i + dy - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
+                s_tile.setPosition(64 * j + dx, 64 * i + dy - _arbitre.getJoueur().grid_dy());
                 window.draw(s_tile);
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i)) {
-                    s_target.setPosition(64 * j, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
+                    s_target.setPosition(64 * j, 64 * i - _arbitre.getJoueur().grid_dy());
                     window.draw(s_target);
                 }
             }
@@ -133,7 +133,7 @@ void interface::play()
                 break;
             } // cas non possible
             }
-            s_tile.setPosition(64 * j, 64 * _arbitre.getJoueur().height() - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy()); // adapter la vitesse par rapport a la taille de la fenetre
+            s_tile.setPosition(64 * j, 64 * _arbitre.getJoueur().height() -_arbitre.getJoueur().grid_dy()); // adapter la vitesse par rapport a la taille de la fenetre
             window.draw(s_tile);
         }
         

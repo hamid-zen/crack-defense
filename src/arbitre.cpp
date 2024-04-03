@@ -112,8 +112,8 @@ void arbitre::update(t_action x)
 
     if (delays.newline)
     {
-        _vertical_speed += 0.1;
-        if (_joueur1->grid_dy()*_vertical_speed >= 64)
+        
+        if (_joueur1->grid_dy() >= 64)
         {
             _joueur1->add_new_row();
             // On remet a zero grid_dy
@@ -122,10 +122,12 @@ void arbitre::update(t_action x)
              _vertical_speed = delays.oldspeed;
              std::cout<<"2";
         }
+        _vertical_speed += 0.1;
+        _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
     }
 
     else {
-        if (_vertical_speed * _joueur1->grid_dy() >= 64)
+        if (_joueur1->grid_dy() >= 64)
         {
             _joueur1->add_new_row();
             // On remet a zero grid_dy
@@ -135,7 +137,7 @@ void arbitre::update(t_action x)
             std::cout<<"1";
         }
         else{
-            _joueur1->setGrid_dy(_joueur1->grid_dy() + 1);
+            _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed);
             _vertical_speed +=0.00001;
             delays.oldspeed +=0.00001 ;
         }

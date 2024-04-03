@@ -381,7 +381,7 @@ void game::add_new_row(){
     move_target(t_direction::up);
 }
 
-void game::setGrid_dy(delta newGrid_dy)
+void game::setGrid_dy(float newGrid_dy)
 {
     _grid_dy = newGrid_dy;
 }
@@ -398,7 +398,7 @@ void game::place_new_case(position p, std::vector<cell> v)
 
 
 
-delta game::grid_dy() const
+float game::grid_dy() const
 {
     return _grid_dy;
 }
