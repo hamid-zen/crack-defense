@@ -12,7 +12,8 @@ struct delay {
     delta cell1Dx ;
     delta cell2Dx;
     delta cellDxbase;
-    bool swap = false;
+    bool newline = false;
+    float oldspeed ;
     // std::vector<position *> cells_slide ;
     // frame new_line;
 

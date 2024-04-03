@@ -23,6 +23,11 @@ public:
     void delete_cell(position p);
     void new_row();
     std::vector<cell> generate_random_line(size t) const;
+    delta cellDx(position p)const ;
+    delta cellDy(position p)const ; 
+    void setCellDx(position p,delta d);
+    void setCellDy(position p,delta d);
+    void resetCellDelta(position p);
     
     
 

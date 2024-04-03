@@ -4,7 +4,7 @@
 
 using cordinate = uint16_t ;
 using size = uint16_t ;
-using delta = uint16_t ;
+using delta = int16_t ;
 
 
 class position {

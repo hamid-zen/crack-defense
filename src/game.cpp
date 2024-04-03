@@ -133,10 +133,12 @@ void game::show() const
     std::cout << "|" << std::endl;
 }
 
-bool game::switch_cells_target( position p1 , position p2)
+bool game::switch_cells_position( position p1 , position p2)
 {
     // On echange dans la grille
-   return _grid.switch_cell(p1, p2);
+    if(target_verticale() and one_case_empty(p1,p2))
+        return false;
+    return _grid.switch_cell(p1, p2);
 }
 position game::drop_position(position const &p) const
 {
@@ -151,12 +153,20 @@ position game::drop_position(position const &p) const
 bool game::one_case_empty() const{
     return ((getColor(this->getcell1target())==t_colors::empty_cell)&&(getColor(this->getcell2target())!=t_colors::empty_cell))|| ((getColor(this->getcell2target())==t_colors::empty_cell)&&(getColor(this->getcell1target())!=t_colors::empty_cell));
 }
+bool game::one_case_empty(position p1, position p2) const
+{
+    return getColor(p1)==t_colors::empty_cell or getColor(p2)==t_colors::empty_cell ;
+}
 bool game::target_cells_empty() const{
     return (getColor(this->getcell1target())==t_colors::empty_cell)&&(getColor(this->getcell2target())==t_colors::empty_cell);
 }
 
 bool game::cells_above() const{
     return( (getcell1target().y()-1>0 &&  (getColor(position(getcell1target().x(),getcell1target().y()-1))!=t_colors::empty_cell) )  || (getcell2target().y()-1>0 &&  (getColor(position(getcell2target().x(),getcell2target().y()-1))!=t_colors::empty_cell) )  );
+}
+bool game::cells_above(position p1, position p2) const
+{
+    return p1.y()-1>0 && (getColor(position(p1.x(),p1.y()-1))==t_colors::empty_cell or getColor(position(p2.x(),p2.y()-1))==t_colors::empty_cell );
 }
 void game::drop()
 {
@@ -171,12 +181,26 @@ void game::drop()
     }
     
 }
+void game::drop(position p1, position p2)
+{
+   if(one_case_empty(p1,p2)){
+        if(_grid(p1)==t_colors::empty_cell){
+            auto fall_pos = drop_position(p1);
+            _grid.switch_cell(p1,fall_pos);
+        }
+        else {
+            auto fall_pos = drop_position(p2);
+            _grid.switch_cell(p2,fall_pos);
+        }    
+   }
+}
 bool game::switch_cells_target()
 {
     // On echange dans la grille
    return _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
 }
-std::vector<position > game::vertical_alignment()
+
+std::vector<position> game::vertical_alignment()
 {
     std::vector<position > vec;
 
@@ -410,4 +434,27 @@ void game::init(){
 bool game::target_verticale() const
 {
     return _target.isVertical();
+}
+
+delta game::cellDx(position p) const
+{
+    return _grid.cellDx(p);
+}
+
+delta game::cellDy(position p) const
+{
+    return _grid.cellDy(p);
+}
+
+void game::setCellDy(position p, delta d)
+{
+    _grid.setCellDy(p,d);
+}
+void game::resetCellDelta(position p)
+{
+    _grid.resetCellDelta(p);
+}
+void game::setCellDx(position p, delta d)
+{
+    _grid.setCellDx(p,d);
 }

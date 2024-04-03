@@ -105,7 +105,7 @@ cordinate grid::max_height() const
  */
 bool grid::switch_cell(position p1,position p2)
 {
-   if((_board[p1.x()+_max_width*p1.y()]==nullptr || (_board[p1.x()+_max_width*p1.y()]->dx()==0 && _board[p1.x()+_max_width*p1.y()]->dy()==0 ))&& ( (_board[p2.x()+_max_width*p2.y()]==nullptr )||(_board[p2.x()+_max_width*p2.y()]->dx()==0 && _board[p2.x()+_max_width*p2.y()]->dy()==0) )  )
+   //if((_board[p1.x()+_max_width*p1.y()]==nullptr || (_board[p1.x()+_max_width*p1.y()]->dx()==0 && _board[p1.x()+_max_width*p1.y()]->dy()==0 ))&& ( (_board[p2.x()+_max_width*p2.y()]==nullptr )||(_board[p2.x()+_max_width*p2.y()]->dx()==0 && _board[p2.x()+_max_width*p2.y()]->dy()==0) )  )
    { //si les deux case ne sont pas en train de bouger on peut les echanger
         std::swap(_board[p1.x()+_max_width*p1.y()], _board[p2.x()+_max_width*p2.y()]);
         return true;
@@ -138,6 +138,38 @@ std::vector<cell> grid::generate_random_line(size t) const
     }
     return v;
 }
+delta grid::cellDx(position p) const
+{
+    if(_board[p.x() + p.y() * _max_width])
+        return _board[p.x() + p.y() * _max_width]->dx();
+    else 
+        return 0;
+}
+
+delta grid::cellDy(position p) const
+{
+    if(_board[p.x() + p.y() * _max_width])
+        return _board[p.x() + p.y() * _max_width]->dy();
+    else return 0;
+}
+void grid::setCellDy(position p, delta d)
+{
+    if(_board[p.x() + p.y() * _max_width])
+        _board[p.x() + p.y() * _max_width]->setDy(cellDy(p)+d);
+}
+void grid::setCellDx(position p, delta d)
+{
+    if(_board[p.x() + p.y() * _max_width])
+        _board[p.x() + p.y() * _max_width]->setDx(cellDx(p)+d);
+}
+void grid::resetCellDelta(position p)
+{
+    if(_board[p.x() + p.y() * _max_width]){
+        _board[p.x() + p.y() * _max_width]->setDx(0);
+        _board[p.x() + p.y() * _max_width]->setDy(0);
+    }
+}
+
 
 
 void grid::new_row()

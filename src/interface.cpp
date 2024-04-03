@@ -6,8 +6,7 @@ void interface::play()
 {
     arbitre _arbitre;
     _arbitre.init();
-    sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width()*64), (_arbitre.getJoueur().height()*64)), "Habibi");
-    window.setFramerateLimit(30); // Pour set le framerate
+    sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width()*64), (_arbitre.getJoueur().height()*64)), "Habibi");    window.setFramerateLimit(30); // Pour set le framerate
 
     // On charge les textures
     sf::Texture blue_tile_texture, yellow_tile_texture, orange_tile_texture, pink_tile_texture,
@@ -70,7 +69,8 @@ void interface::play()
             for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++) {
                 // On get la couleur actuelle
                 auto color = _arbitre.getJoueur()(position(j, i));
-                auto dx = _arbitre.getJoueur()(position(j, i));
+                auto dx = _arbitre.getJoueur().cellDx(position(j,i));
+                auto dy= _arbitre.getJoueur().cellDy(position(j,i));
 
                 // on check quel sprite afficher
                 switch (color) {
@@ -96,17 +96,7 @@ void interface::play()
                 }
                 }
                 
-                if(_arbitre.getDelays().cells_switch1 and _arbitre.getDelays().cells_switch1->x()==j and _arbitre.getDelays().cells_switch1->y()==i){
-                     s_tile.setPosition(64 * j + _arbitre.getDelays().cell1Dx , 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
-                     std::cout << "4";
-                }
-                else if (_arbitre.getDelays().cells_switch2 and _arbitre.getDelays().cells_switch2->x()==j and _arbitre.getDelays().cells_switch2->y()==i){
-                    s_tile.setPosition(64 * j -  _arbitre.getDelays().cell2Dx, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy()); 
-                    std::cout << "5" ;
-                }
-
-                else
-                    s_tile.setPosition(64 * j, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
+                s_tile.setPosition(64 * j + dx, 64 * i + dy - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
                 window.draw(s_tile);
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i)) {
                     s_target.setPosition(64 * j, 64 * i - _arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy());
@@ -148,16 +138,9 @@ void interface::play()
         }
         
         // On update
-        if (_arbitre.getVerticalSpeed() * _arbitre.getJoueur().grid_dy() >= 64) {
-            _arbitre.getJoueur().add_new_row();
-            //On remet a zero grid_dy
-            _arbitre.getJoueur().setGrid_dy(0);
-        }
-        else
-            _arbitre.getJoueur().setGrid_dy(_arbitre.getJoueur().grid_dy()+1);
         
         
-         _arbitre.update(act);
+        _arbitre.update(act);
         window.display();
     }
 }
