@@ -6,7 +6,7 @@ void interface::play()
 {
     arbitre _arbitre;
     _arbitre.init();
-    sf::RenderWindow window(sf::VideoMode(320, 768), "Habibi");
+    sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width()*64), (_arbitre.getJoueur().height()*64)), "Habibi");
     window.setFramerateLimit(30); // Pour set le framerate
 
     // On charge les textures
