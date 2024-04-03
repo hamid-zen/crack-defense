@@ -63,6 +63,7 @@ public:
     void setCellDx(position p,delta d);
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
+    std::vector<position>  max_column() const;
 
 private:
     grid _grid;
