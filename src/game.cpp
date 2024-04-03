@@ -458,3 +458,6 @@ void game::setCellDx(position p, delta d)
 {
     _grid.setCellDx(p,d);
 }
+std::vector<position>  game::max_column() const{
+    return _grid.max_column();
+}
