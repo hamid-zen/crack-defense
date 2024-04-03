@@ -167,3 +167,20 @@ TEST_CASE("bounds", "[test]")
     REQUIRE(g.getcell1target() == position(4, 11));
     REQUIRE(g.getcell2target() == position(5, 11));
 }
+TEST_CASE("max_column", "[test]")
+{
+    mysrand(3);
+    game g;
+    std::cout<<" habibi come to dubai "<<std::endl;
+    g.show();
+    auto vec=(g.max_column());
+   // std::cout<<" x: "<<vec[0].x()<<" ,y :"<<vec[0].y()<<std::endl;
+
+    REQUIRE(vec.size()==3);
+    REQUIRE(vec[0].x()==3);
+    REQUIRE(vec[1].x()==4);
+    REQUIRE(vec[2].x()==5);
+    REQUIRE(vec[0].y()==6);
+    REQUIRE(vec[0].y()==vec[1].y());
+    REQUIRE(vec[0].y()==vec[2].y());
+}
