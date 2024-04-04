@@ -1,7 +1,7 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0),_score(0) { _grid.init(); /* TODO: Enlever */ }
 
 /**
  * @brief check si le game est perdu
@@ -298,6 +298,7 @@ std::vector<position> game::horizontal_alignment()
                         vec.push_back(position(k, j));
                         k++;
                     }
+                    inc_score(vec.size());
                     return vec;
                 }
                 else if (clr == t_colors::empty_cell || (_grid(position(i, j)) != clr)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
@@ -313,6 +314,7 @@ std::vector<position> game::horizontal_alignment()
             }
             if (vec.size() == 3)
             { // alignement a la fin
+                inc_score(vec.size());
                 return vec;
             }
             else
@@ -324,9 +326,11 @@ std::vector<position> game::horizontal_alignment()
         }
         if (vec.size() == 3)
         { // alignement a la fin
+            inc_score(vec.size());
             return vec;
         }
         vec.clear();
+        inc_score(vec.size());
         return vec;
     }
 }
@@ -392,6 +396,7 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
             auto vec1(horizontal_alignment(vec));
             if (vec1.size() > 0) // concat
                 vec.insert(vec.end(), vec1.begin(), vec1.end());
+            inc_score(vec.size());
             return vec;
         }
         else
@@ -547,4 +552,19 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
         }
         else
             return false;
+    }
+
+    score game::get_score() const
+    {
+        return _score;
+    }
+
+    void game::inc_score(score x)
+    {
+        _score =+ x ;
+    }
+
+    void game::reset_score()
+    {
+        _score = 0;
     }

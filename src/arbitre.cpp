@@ -169,6 +169,7 @@ std::vector<position>  arbitre::update(t_action x)
         v = _joueur1->alignment();
     }
     _nb_frame++; // on incremente le nombre de frame
+    return std::vector<position>();
 }
 
 game &arbitre::getJoueur() const

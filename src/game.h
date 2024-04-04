@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream>
 
+using score = u_int16_t;
+
 
 enum class t_direction{
     up,
@@ -67,10 +69,14 @@ public:
     std::vector<position>  max_column() const;
     void add_garbage();
     bool not_hanging(position const & p) const;
+    score get_score()const;
+    void inc_score(score x);
+    void reset_score();
 private:
     grid _grid;
     target _target;
     float _grid_dy;
+    score _score ;
     
 };
 
