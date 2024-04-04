@@ -20,14 +20,16 @@ TEST_CASE("Echange_case", "test") {
 TEST_CASE("Alignement_horizontale", "[alignement][test]") {
     mysrand(56);
     game g;
+    std::cout<<"horizontallllllllllllllllllllll"<<std::endl;
     g.move_target(t_direction::right);
     g.move_target(t_direction::down);
     g.move_target(t_direction::down);
     g.switch_cells_target();
     g.move_target(t_direction::up);
     g.move_target(t_direction::up);
+    g.show();
 
-    std::vector<position> vec = g.alignment();
+    std::vector<position> vec = g.horizontal_alignment();
     REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
     REQUIRE(g(vec[0])== g(vec[1]) );
     REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
@@ -40,6 +42,7 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
         std::cout << "hehe1 \n";
         grid gd;
         std::cout<<gd.estMalus(position(0,0));
+    std::cout<<"verticallllllllllllllllllllll"<<std::endl;
 
         g.show();
 

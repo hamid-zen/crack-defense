@@ -223,14 +223,17 @@ bool game::switch_cells_target()
 std::vector<position> game::vertical_alignment()
 {
     std::vector<position> vec;
-
+    t_colors clr;
     // alignement verticale
     for (unsigned int i(0); i < _grid.max_width(); i++)
-    {
+    {   auto k(0);
+        do{
         t_colors clr = _grid(position(i, 0));
         vec.clear();
         vec.push_back(position(i, 0)); // on ajoute la position de cette case au vecteur
-        for (unsigned int j(1); j < _grid.max_height(); j++)
+        k++;
+        }while (!not_hanging(position(i,k)) && k<_grid.max_height());
+        for (unsigned int j(k); j < _grid.max_height(); j++)
         {
 
             if (vec.size() == 3)
@@ -242,9 +245,10 @@ std::vector<position> game::vertical_alignment()
                     vec.push_back(position(i, k));
                     k++;
                 }
+                 inc_score(vec.size());
                 return vec;
             }
-            else if (clr == t_colors::empty_cell || (_grid(position(i, j)) != clr)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+            else if (!not_hanging(position(i,j))||clr == t_colors::empty_cell || (_grid(position(i, j)) != clr)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
             {
                 vec.clear();
                 vec.push_back(position(i, j));
@@ -258,11 +262,13 @@ std::vector<position> game::vertical_alignment()
         }
         if (vec.size() == 3)
         { // alignement a la fin
-            return vec;
+         inc_score(3);
+        return vec;
         }
     }
     if (vec.size() == 3)
     { // alignement a la fin
+               inc_score(3);
         return vec;
     }
     vec.clear();
@@ -272,68 +278,49 @@ std::vector<position> game::vertical_alignment()
 std::vector<position> game::horizontal_alignment()
 {
     std::vector<position> vec;
-
-    for (unsigned int j(0); j < _grid.max_height(); j++)
-    {
-        t_number it = 0;
-
-        while (!not_hanging(position(it, j)) and it < _grid.max_width() - 2)
-        {
-            it++;
-        }
-        t_colors clr = _grid(position(it, j));
-
+    t_colors clr;
+   for(unsigned int j(0);j<_grid.max_height();j++) {
+        auto k(0);
+        do{
+         clr=_grid(position( k,j));
         vec.clear();
-        vec.push_back(position(it, j)); // on ajoute la position de cette case au vecteur
-        for (unsigned int i(it + 1); i < _grid.max_width(); i++)
-        {
-            if (not_hanging(position(i, j)))
-            {
-                if (vec.size() == 3)
-                { // cad on a trouvé un alignement verticale
-                    unsigned int k(i);
-                    // on ajoute tant que c'est la meme couleur
-                    while (k < _grid.max_width() && _grid(position(k, j)) == clr)
-                    {
-                        vec.push_back(position(k, j));
-                        k++;
-                    }
-                    inc_score(vec.size());
-                    return vec;
+        vec.push_back(position(k,j)); //on ajoute la position de cette case au vecteur
+        k++;
+        }while (!not_hanging(position(k,j)) && k<_grid.max_width());
+        for(unsigned int i(k);i<_grid.max_width();i++){
+            if(vec.size()==3){ //cad on a trouvé un alignement verticale
+                unsigned int k(i);
+                //on ajoute tant que c'est la meme couleur
+                while(k<_grid.max_width() && _grid(position( k,j))==clr ){
+                    vec.push_back(position(k,j));
+                    k++;
                 }
-                else if (clr == t_colors::empty_cell || (_grid(position(i, j)) != clr)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
-                {
-                    vec.clear();
-                    vec.push_back(position(i, j));
-                    clr = _grid(position(i, j));
-                }
-                else
-                { // si c'est la meme couleur on ajoute la position de la case au vecteur
-                    vec.push_back(position(i, j));
-                }
-            }
-            if (vec.size() == 3)
-            { // alignement a la fin
                 inc_score(vec.size());
                 return vec;
             }
-            else
-            {
-                vec.clear();
-                vec.push_back(position(i + 1, j)); // suivante
-                clr = _grid(position(i + 1, j));
+            else if(!not_hanging(position(i,j))||clr==t_colors::empty_cell || (_grid(position( i,j))!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+            {  vec.clear();
+                vec.push_back(position(i,j));
+                clr=_grid(position( i,j));
+            }else{  //si c'est la meme couleur on ajoute la position de la case au vecteur
+                   vec.push_back(position(i,j));
+
+                }
             }
-        }
-        if (vec.size() == 3)
-        { // alignement a la fin
-            inc_score(vec.size());
+        if(vec.size()==3){ //alignement a la fin
+           inc_score(3);
             return vec;
         }
-        vec.clear();
-        inc_score(vec.size());
-        return vec;
+
     }
+    if(vec.size()==3){ //alignement a la fin
+        inc_score(3);
+       return vec;
+    }
+    vec.clear();
+    return vec;
 }
+
 
 std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
     {
@@ -346,9 +333,8 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
             vec.clear();
             for (unsigned int i(0); i < _grid.max_width(); i++)
             {
-                // vec.size()=2 et non 3
                 if (not_hanging(position(i, j)))
-                {
+                {                // vec.size()=2 et non 3
                     if (trouve && vec.size() >= 2)
                     { // on est passee par une case de l'align1 et on a trouvee un alignement
                         unsigned int k(i);
