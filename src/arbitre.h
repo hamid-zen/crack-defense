@@ -28,12 +28,13 @@ class arbitre
 {
 public:
     arbitre();
-    void update(t_action x);
+    std::vector<position> update(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
     void init ();
     delay getDelays()const;
+    t_number getFrame() const {return _nb_frame;}
 private:
     std::unique_ptr<game> _joueur1;
     float _vertical_speed;

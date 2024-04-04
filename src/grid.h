@@ -29,8 +29,8 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
    std::vector<position>  max_column() const;
-
-    
+    void generate_garbage();
+    bool estMalus(position const & p) const;
 
 private:
     t_mat _board;

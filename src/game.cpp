@@ -104,9 +104,14 @@ void game::show() const
             {
                 std::cout << "| ";
             }
+            
             else
             {
+                if(_grid.estMalus(position(i,j))){
+                std::cout << "|M";
+                }else{
                 std::cout << "|" << toString_color(_grid(position(i, j)));
+                }
             }
         }
         std::cout << "|";
@@ -210,6 +215,7 @@ std::vector<position> game::vertical_alignment()
             vec.clear();
             vec.push_back(position(i,0)); //on ajoute la position de cette case au vecteur
             for(unsigned int j(1);j<_grid.max_height();j++){
+                
                 if(vec.size()==3){ //cad on a trouvé un alignement verticale
                     unsigned int k(j);
                     //on ajoute tant que c'est la meme couleur
@@ -460,4 +466,8 @@ void game::setCellDx(position p, delta d)
 }
 std::vector<position>  game::max_column() const{
     return _grid.max_column();
+}
+
+void game::add_garbage(){
+    _grid.generate_garbage();
 }

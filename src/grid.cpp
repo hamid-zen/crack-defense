@@ -138,6 +138,7 @@ std::vector<cell> grid::generate_random_line(size t) const
     }
     return v;
 }
+
 delta grid::cellDx(position p) const
 {
     if(_board[p.x() + p.y() * _max_width])
@@ -194,8 +195,8 @@ std::vector<position>  grid::max_column() const{
     cordinate  i,j;
     for(cordinate i(0);i<(max_height()*max_width());i++){
         if(_board[i]!=nullptr){
-            vec.push_back(position(i%max_width(),max_height()- ((i/max_width())+1 )));
-            j=max_height()- ((i/max_width())+1 );
+            vec.push_back(position(i%max_width(),i/max_width()));
+            j=(i/max_width()) ;
             i=i%max_width()+1;
 
             while( i<max_width()) //on ajoute les autres cases qui  ont la mm hauteur donc qui son sur la meme ligne
@@ -208,5 +209,44 @@ std::vector<position>  grid::max_column() const{
             return vec;
         }
     }
+    return vec; //juste a cause du warning
+
+}
+
+void grid::generate_garbage(){
+    auto vec(max_column());
+    int taille ;
+    int debut;
+    cordinate j(vec[0].y()-1);
+    std::cout<<"le plus grand : "<<vec[0].y();
+    if(vec[0].x()==max_width()-1){ //si la colone la plus haute est la derniere
+        debut=vec[0].x()-1; //on commence le malus dans la colone d'avant
+        taille=2;
+    }else {
+        debut=vec[0].x();
+        if(vec.size()>1){
+            taille=vec[vec.size()-1].x()-vec[0].x()+1;
+        }else{
+
+            taille= nombreAleatoire(_max_width-vec[0].x());
+        }
+    }
+    std::vector<std::shared_ptr<cell>> cells;
+    for (size i(0); i < taille; i++) {
+       cells.push_back(std::make_shared<cell>(randomColor()));
+    }
+   
+    
+    for(int i(0);i<(taille);i++){
+       _board[(debut+i) + j * _max_width]=std::make_unique<malusCell>(cells[i]->color(),cells);
+    }
+    
+
+}
+
+bool grid::estMalus(position const & p) const{
+    if(_board[p.x() + p.y() * _max_width] !=nullptr)
+    return _board[p.x() + p.y() * _max_width]->estmalus();
+    else return false;
 
 }

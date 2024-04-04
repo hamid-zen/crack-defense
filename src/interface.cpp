@@ -1,9 +1,13 @@
 #include "interface.h"
+#include <cmath>
 
 interface::interface(){}
 
+
+
 void interface::play()
 {
+    auto x(0.001);
     arbitre _arbitre;
     _arbitre.init();
     sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width()*64), (_arbitre.getJoueur().height()*64)), "Habibi");    window.setFramerateLimit(30); // Pour set le framerate
@@ -62,12 +66,16 @@ void interface::play()
                 }
             }
         }
+        auto vec( _arbitre.update(act));
+
         window.clear(sf::Color::White);
 
         // Affichage de la board "jouable"
         for (std::size_t i(0); i < _arbitre.getJoueur().height(); i++) {
             for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++) {
+                    auto x(0.001);
                 // On get la couleur actuelle
+
                 auto color = _arbitre.getJoueur()(position(j, i));
                 auto dx = _arbitre.getJoueur().cellDx(position(j,i));
                 auto dy= _arbitre.getJoueur().cellDy(position(j,i));
@@ -96,14 +104,48 @@ void interface::play()
                 }
                 }
                 
-                s_tile.setPosition(64 * j + dx, 64 * i + dy - _arbitre.getJoueur().grid_dy());
-                window.draw(s_tile);
+                if(vec.size()==0){
+                    s_tile.setPosition(64 * j + dx, 64 * i + dy - _arbitre.getJoueur().grid_dy());
+                                        window.draw(s_tile);
+                }
+                else{
+                    s_tile.setPosition(64 * j , 64 * i );
+                    auto it(std::find(vec.begin(),vec.end(),position(j,i)));
+                   if(it!=vec.end()){
+                    if(x<=360){
+                        s_tile.setOrigin(64/ 2.f, 64 / 2.f);
+                        s_tile.rotate(0.001f);
+
+                        //float scaleFactor =1.f + std::sin(x * 3.14159f / 180) * 0.2f; // Variation de l'échelle en fonction de l'angle de rotation
+                        //s_tile.setScale(scaleFactor, scaleFactor);
+                        x+=0.001f;
+                        window.draw(s_tile);
+
+
+                    }
+
+                    _arbitre.getJoueur().delete_cell(position(j,i));
+                     _arbitre.getJoueur().slideColumn(j);
+        
+                    window.draw(s_tile);
+                    s_tile.setOrigin(0,0);
+                    vec.erase(it);
+                }  
+                    } 
+                    window.draw(s_tile);
+                
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i)) {
-                    s_target.setPosition(64 * j, 64 * i - _arbitre.getJoueur().grid_dy());
+                     if(vec.size()==0){
+                    s_target.setPosition(64 * j, 64 * i - _arbitre.getJoueur().grid_dy());}
+                    else {s_target.setPosition(64 * j, 64 * i );}
                     window.draw(s_target);
                 }
             }
         }
+        
+        if(vec.size()==0){
+
+
 
         // Affichage de la ligne qui monte
         for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++) {
@@ -136,11 +178,10 @@ void interface::play()
             s_tile.setPosition(64 * j, 64 * _arbitre.getJoueur().height() -_arbitre.getJoueur().grid_dy()); // adapter la vitesse par rapport a la taille de la fenetre
             window.draw(s_tile);
         }
-        
+        }
         // On update
+         
         
-        
-        _arbitre.update(act);
         window.display();
     }
 }

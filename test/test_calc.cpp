@@ -38,6 +38,9 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
     mysrand(3);
     game g;
         std::cout << "hehe1 \n";
+        grid gd;
+        std::cout<<gd.estMalus(position(0,0));
+
         g.show();
 
     g.rotate_target();
@@ -180,7 +183,18 @@ TEST_CASE("max_column", "[test]")
     REQUIRE(vec[0].x()==3);
     REQUIRE(vec[1].x()==4);
     REQUIRE(vec[2].x()==5);
-    REQUIRE(vec[0].y()==6);
+    REQUIRE(vec[0].y()==5);
     REQUIRE(vec[0].y()==vec[1].y());
     REQUIRE(vec[0].y()==vec[2].y());
+}
+TEST_CASE("generate_garbage", "[test]")
+{
+    mysrand(3);
+    game g;
+    std::cout<<" before"<<std::endl;
+    g.show();
+    g.add_garbage();
+    std::cout<<" l'after'"<<std::endl;
+    g.show();
+    REQUIRE(1==1);
 }

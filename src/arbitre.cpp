@@ -6,7 +6,7 @@ arbitre::arbitre()
 {
     delays = {nullptr, nullptr, 0, 0, 0, false, _vertical_speed};
 }
-void arbitre::update(t_action x)
+std::vector<position>  arbitre::update(t_action x)
 {
     
 
@@ -147,6 +147,7 @@ void arbitre::update(t_action x)
     auto v(_joueur1->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
     while (v.size() >= 3)
     {
+        return v;
 
         for (std::size_t i(0); i < v.size(); i++)
         {

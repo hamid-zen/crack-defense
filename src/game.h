@@ -64,7 +64,7 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
     std::vector<position>  max_column() const;
-
+    void add_garbage();
 private:
     grid _grid;
     target _target;

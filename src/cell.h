@@ -31,9 +31,21 @@ public:
 
     void setDx(delta newDx);
     void setDy(delta newDy);
+    virtual bool estmalus()const{return false;}
 
 private:
     t_colors _color;
     delta _dx;
     delta _dy;
+};
+
+class malusCell : public cell {
+public:
+    malusCell(t_colors color,std::vector<std::shared_ptr<cell>>  vec) ;
+    void addMalus(std::shared_ptr<cell> newMalus);
+    const std::vector<std::shared_ptr<cell>>& getMalus() const;
+    bool estmalus() const override{return true;}
+
+private:
+    std::vector<std::shared_ptr<cell>> _malus; // Vecteur de pointeurs vers les malus associés à cette cellule}; pour qu'on puissen tles modifier a parit d'une seul acse
 };
