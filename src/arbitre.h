@@ -14,7 +14,7 @@ struct delay {
     delta cellDxbase;
     bool newline = false;
     float oldspeed ;
-    // std::vector<position *> cells_slide ;
+    std::vector<position *> cells_slide ;
     // frame new_line;
 
 };
@@ -33,7 +33,7 @@ public:
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
     void init ();
-    delay getDelays()const;
+    delay & getDelays();
     t_number getFrame() const {return _nb_frame;}
 private:
     std::unique_ptr<game> _joueur1;

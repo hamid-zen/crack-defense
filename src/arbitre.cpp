@@ -8,6 +8,30 @@ arbitre::arbitre()
 }
 std::vector<position>  arbitre::update(t_action x)
 {
+    auto it = delays.cells_slide.begin();
+    while (it != delays.cells_slide.end())
+    {
+        auto cells = *it;
+        if ((*_joueur1)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and _joueur1->cellDy(position(cells->x(),cells->y()+1))==0)
+        {                                      // Supprimer les éléments pairs
+            it = delays.cells_slide.erase(it); // Supprimer l'élément et mettre à jour l'itérateur
+        }
+        else
+        {
+            if (_joueur1->cellDy(*cells) >= 64)
+            {
+                _joueur1->switch_cells_fall(*cells, position(cells->x(), cells->y() + 1));
+                cells->sety(cells->y() + 1);
+                _joueur1->resetCellDelta(*cells);
+            }
+            else
+            {
+                _joueur1->setCellDy(*cells, 16);
+            }
+
+            ++it; // Passer à l'élément suivant
+        }
+    }
     
 
     if (delays.cells_switch1 and delays.cells_switch2)
@@ -37,8 +61,8 @@ std::vector<position>  arbitre::update(t_action x)
                 _joueur1->switch_cells_position(*delays.cells_switch1, *delays.cells_switch2);
                 if (_joueur1->one_case_empty(*delays.cells_switch1, *delays.cells_switch2))
                 { // si une deux cases etaient vide
-                    _joueur1->slideColumn(delays.cells_switch1->x());
-                    _joueur1->slideColumn(delays.cells_switch2->x());
+                   _joueur1->slideColumn(delays.cells_switch1->x(), delays.cells_slide);
+                    _joueur1->slideColumn(delays.cells_switch2->x(), delays.cells_slide);
                 }
                 delays.cells_switch1 = nullptr;
                 delays.cells_switch2 = nullptr;
@@ -86,25 +110,12 @@ std::vector<position>  arbitre::update(t_action x)
                 delays.cells_switch2 = new position(_joueur1->getcell2target().x(), _joueur1->getcell2target().y());
             }
 
-            // if(!_joueur1->target_cells_empty()){
-            //     if(_joueur1->switch_cells_target()){ //le switch a ete effectuee
-            //             if(_joueur1->one_case_empty()){ //si une deux cases etaient vide
-            //                 _joueur1->drop();
-            //             }
-            //          if(_joueur1->cells_above()){
-            //             _joueur1->slideColumn(_joueur1->getcell1target().x());
-            //             _joueur1->slideColumn(_joueur1->getcell2target().x());
-            //         }
-            //         }
-            //     }
             break;
         }
         case t_action::accelerate:
         {
             // accelerer
             delays.newline = true;
-            // _joueur1->add_new_row();
-            // _joueur1->setGrid_dy(0);
             break;
         }
         }
@@ -153,7 +164,7 @@ std::vector<position>  arbitre::update(t_action x)
         {
             auto col(v[i].x());
             _joueur1->delete_cell(v[i]);
-            _joueur1->slideColumn(col);
+            _joueur1->slideColumn(col, delays.cells_slide);
         }
         v = _joueur1->alignment();
     }
@@ -169,7 +180,7 @@ void arbitre::init()
     _joueur1->init();
 }
 
-delay arbitre::getDelays() const
+delay & arbitre::getDelays() 
 {
     return delays;
 }
