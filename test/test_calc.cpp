@@ -20,14 +20,16 @@ TEST_CASE("Echange_case", "test") {
 TEST_CASE("Alignement_horizontale", "[alignement][test]") {
     mysrand(56);
     game g;
+    std::cout<<"horizontallllllllllllllllllllll"<<std::endl;
     g.move_target(t_direction::right);
     g.move_target(t_direction::down);
     g.move_target(t_direction::down);
     g.switch_cells_target();
     g.move_target(t_direction::up);
     g.move_target(t_direction::up);
+    g.show();
 
-    std::vector<position> vec = g.alignment();
+    std::vector<position> vec = g.horizontal_alignment();
     REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
     REQUIRE(g(vec[0])== g(vec[1]) );
     REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
@@ -38,6 +40,10 @@ TEST_CASE("Alignement_verticale", "[alignement][test]") {
     mysrand(3);
     game g;
         std::cout << "hehe1 \n";
+        grid gd;
+        std::cout<<gd.estMalus(position(0,0));
+    std::cout<<"verticallllllllllllllllllllll"<<std::endl;
+
         g.show();
 
     g.rotate_target();
@@ -180,7 +186,29 @@ TEST_CASE("max_column", "[test]")
     REQUIRE(vec[0].x()==3);
     REQUIRE(vec[1].x()==4);
     REQUIRE(vec[2].x()==5);
-    REQUIRE(vec[0].y()==6);
+    REQUIRE(vec[0].y()==5);
     REQUIRE(vec[0].y()==vec[1].y());
     REQUIRE(vec[0].y()==vec[2].y());
+}
+TEST_CASE("generate_garbage", "[test]")
+{
+    mysrand(3);
+    game g;
+    std::cout<<" before"<<std::endl;
+    g.show();
+    g.add_garbage();
+    std::cout<<" l'after'"<<std::endl;
+    g.show();
+    REQUIRE(1==1);
+}
+TEST_CASE("est_malus", "[test]")
+{
+    mysrand(3);
+    game g;
+    g.show();
+    g.add_garbage();
+    g.show();
+    REQUIRE(g.is_garbage(position(3,4))==1);
+    REQUIRE(g.is_garbage(position(4,4))==1);
+    REQUIRE(g.is_garbage(position(5,4))==1);
 }

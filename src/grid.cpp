@@ -106,10 +106,10 @@ cordinate grid::max_height() const
 bool grid::switch_cell(position p1,position p2)
 {
    //if((_board[p1.x()+_max_width*p1.y()]==nullptr || (_board[p1.x()+_max_width*p1.y()]->dx()==0 && _board[p1.x()+_max_width*p1.y()]->dy()==0 ))&& ( (_board[p2.x()+_max_width*p2.y()]==nullptr )||(_board[p2.x()+_max_width*p2.y()]->dx()==0 && _board[p2.x()+_max_width*p2.y()]->dy()==0) )  )
-   { //si les deux case ne sont pas en train de bouger on peut les echanger
+    //si les deux case ne sont pas en train de bouger on peut les echanger
         std::swap(_board[p1.x()+_max_width*p1.y()], _board[p2.x()+_max_width*p2.y()]);
         return true;
-    } 
+    
         return false;
 }
 void grid::delete_cell(position p)
@@ -138,6 +138,7 @@ std::vector<cell> grid::generate_random_line(size t) const
     }
     return v;
 }
+
 delta grid::cellDx(position p) const
 {
     if(_board[p.x() + p.y() * _max_width])
@@ -194,8 +195,8 @@ std::vector<position>  grid::max_column() const{
     cordinate  i,j;
     for(cordinate i(0);i<(max_height()*max_width());i++){
         if(_board[i]!=nullptr){
-            vec.push_back(position(i%max_width(),max_height()- ((i/max_width())+1 )));
-            j=max_height()- ((i/max_width())+1 );
+            vec.push_back(position(i%max_width(),i/max_width()));
+            j=(i/max_width()) ;
             i=i%max_width()+1;
 
             while( i<max_width()) //on ajoute les autres cases qui  ont la mm hauteur donc qui son sur la meme ligne
@@ -208,5 +209,108 @@ std::vector<position>  grid::max_column() const{
             return vec;
         }
     }
+    return vec; //juste a cause du warning
 
 }
+
+void grid::generate_garbage(){
+    auto vec(max_column());
+    int taille ;
+    int debut;
+    cordinate j(vec[0].y()-1);
+    std::cout<<"le plus grand : "<<vec[0].y();
+    if(vec[0].x()==max_width()-1){ //si la colone la plus haute est la derniere
+        debut=vec[0].x()-1; //on commence le malus dans la colone d'avant
+        taille=2;
+    }else {
+        debut=vec[0].x();
+        if(vec.size()>1){
+            taille=vec[vec.size()-1].x()-vec[0].x()+1;
+        }else{
+
+            taille= nombreAleatoire(_max_width-vec[0].x());
+        }
+    }
+    std::vector<std::shared_ptr<cell>> cells;
+    for (size i(0); i < taille; i++) {
+       cells.push_back(std::make_shared<cell>(randomColor()));
+    }
+   
+    
+    for(int i(0);i<(taille);i++){
+       _board[(debut+i) + j * _max_width]=std::make_unique<malusCell>(cells[i]->color(),cells);
+    }
+    
+
+}
+
+bool grid::estMalus(position const & p) const{
+    if(_board[p.x() + p.y() * _max_width] !=nullptr)
+    return _board[p.x() + p.y() * _max_width]->estmalus();
+    else return false;
+
+}
+
+
+bool grid::not_hanging(position const & p) const{ 
+    if (p.y() == max_height() - 1)
+            return true;
+        else if (_board[p.x()+ (p.y() + 1)*_max_width] !=nullptr)
+        {
+            return true;
+        }
+        else
+            return false;
+}
+bool grid::hanging_garbage(position const & p) const{
+ auto j(p.y());  
+    
+    auto size(_board[p.x() + j * _max_width]->getsize());
+  for (unsigned int i(p.x()); i < (p.x()+size); i++)
+    {
+        if(_board[i + j * _max_width]!=nullptr && not_hanging(position(i,j))){
+            return false; // ya une des cases du malus qui est "retenue"
+        }
+    }
+    return true;
+}
+
+cordinate grid::first_empty_line(position const & fst_cell,int size) const{
+bool vide(true);    
+        for(auto j(fst_cell.y());j<max_height();j++){ // pour chaque ligne on verifie si elle es completement vide si c'est le cas on retourne le y
+            vide=true;
+            for(auto i(fst_cell.x());i<(fst_cell.x()+size);i++){
+                if(_board[i + j * _max_width]!=nullptr){
+                    vide=false;
+                    break;
+                }
+            }
+        if(vide){
+            return j;
+        }
+
+    }
+}
+
+void grid::update_garbage(){
+for (cordinate j(0); j < _max_height; j++)  {
+    auto i(0);
+    while(i < _max_width){
+       
+        if(_board[i + j * _max_width] !=nullptr && estMalus(position(i,j))){
+            auto size(_board[i + j * _max_width]->getsize());
+
+            if( hanging_garbage(position (i,j))){
+                auto m(first_empty_line(position (i,j), size));
+                for(int n(i);n<(i+size);n++){
+                    _board[n +m  * _max_width]=std::move(_board[n +j* _max_width] );
+                }        
+            }
+         i=i+size;
+         }
+        i++;
+
+        } 
+    } 
+}
+

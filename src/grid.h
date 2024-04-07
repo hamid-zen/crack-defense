@@ -29,9 +29,12 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
    std::vector<position>  max_column() const;
-
-    
-
+    void generate_garbage();
+    bool estMalus(position const & p) const;
+    bool not_hanging(position const & p) const;
+    void update_garbage();
+    bool hanging_garbage(position const & p) const;
+    cordinate first_empty_line(position const & fst_cell,int size) const; //premiere ligne vide en partant du bas
 private:
     t_mat _board;
     cordinate _max_height;

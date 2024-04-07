@@ -4,10 +4,35 @@ arbitre::arbitre()
     : _joueur1(std::make_unique<game>()), _vertical_speed(0.1), _nb_frame(0)
 
 {
-    delays = {nullptr, nullptr, 0, 0, 0, false, _vertical_speed};
+    delays = {nullptr, nullptr, 0, 0, 0, false, _vertical_speed,-1,0};
 }
-void arbitre::update(t_action x)
+std::vector<position>  arbitre::update(t_action x)
 {
+    _joueur1->update_garbage_height();
+    auto it = delays.cells_slide.begin();
+    while (it != delays.cells_slide.end())
+    {
+        auto cells = *it;
+        if ((*_joueur1)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and _joueur1->cellDy(position(cells->x(),cells->y()+1))==0)
+        {                                      // Supprimer les éléments pairs
+            it = delays.cells_slide.erase(it); // Supprimer l'élément et mettre à jour l'itérateur
+        }
+        else
+        {
+            if (_joueur1->cellDy(*cells) >= 64)
+            {
+                _joueur1->switch_cells_fall(*cells, position(cells->x(), cells->y() + 1));
+                cells->sety(cells->y() + 1);
+                _joueur1->resetCellDelta(*cells);
+            }
+            else
+            {
+                _joueur1->setCellDy(*cells, 16);
+            }
+
+            ++it; // Passer à l'élément suivant
+        }
+    }
     
 
     if (delays.cells_switch1 and delays.cells_switch2)
@@ -37,8 +62,8 @@ void arbitre::update(t_action x)
                 _joueur1->switch_cells_position(*delays.cells_switch1, *delays.cells_switch2);
                 if (_joueur1->one_case_empty(*delays.cells_switch1, *delays.cells_switch2))
                 { // si une deux cases etaient vide
-                    _joueur1->slideColumn(delays.cells_switch1->x());
-                    _joueur1->slideColumn(delays.cells_switch2->x());
+                   _joueur1->slideColumn(delays.cells_switch1->x(), delays.cells_slide);
+                    _joueur1->slideColumn(delays.cells_switch2->x(), delays.cells_slide);
                 }
                 delays.cells_switch1 = nullptr;
                 delays.cells_switch2 = nullptr;
@@ -86,25 +111,12 @@ void arbitre::update(t_action x)
                 delays.cells_switch2 = new position(_joueur1->getcell2target().x(), _joueur1->getcell2target().y());
             }
 
-            // if(!_joueur1->target_cells_empty()){
-            //     if(_joueur1->switch_cells_target()){ //le switch a ete effectuee
-            //             if(_joueur1->one_case_empty()){ //si une deux cases etaient vide
-            //                 _joueur1->drop();
-            //             }
-            //          if(_joueur1->cells_above()){
-            //             _joueur1->slideColumn(_joueur1->getcell1target().x());
-            //             _joueur1->slideColumn(_joueur1->getcell2target().x());
-            //         }
-            //         }
-            //     }
             break;
         }
         case t_action::accelerate:
         {
             // accelerer
             delays.newline = true;
-            // _joueur1->add_new_row();
-            // _joueur1->setGrid_dy(0);
             break;
         }
         }
@@ -145,18 +157,35 @@ void arbitre::update(t_action x)
 
     
     auto v(_joueur1->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
-    while (v.size() >= 3)
-    {
+    if (v.size() >= 3)
+    {  if(delays.last_frame_alignment==-1)//pas encore initialisé
+        {
+            delays.last_frame_alignment=getFrame();
+        }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
+        {   delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+            delays.last_garbage=getFrame();
+            _joueur1->add_garbage();
+
+        }   
+         _nb_frame++; // on incremente le nombre de frame
+
+        /*for(auto const & x :v){
+            auto =_joueur1->malus_adjacent(v)
+            if(auto =_joueur1->malus_adjacent(v))
+        }*/
+
+        return v;
 
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());
             _joueur1->delete_cell(v[i]);
-            _joueur1->slideColumn(col);
+            _joueur1->slideColumn(col, delays.cells_slide);
         }
         v = _joueur1->alignment();
     }
     _nb_frame++; // on incremente le nombre de frame
+    return std::vector<position>();
 }
 
 game &arbitre::getJoueur() const
@@ -168,7 +197,7 @@ void arbitre::init()
     _joueur1->init();
 }
 
-delay arbitre::getDelays() const
+delay & arbitre::getDelays() 
 {
     return delays;
 }

@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <iostream>
 
+using score = u_int16_t;
+
 
 enum class t_direction{
     up,
@@ -24,6 +26,7 @@ public:
     void move_target(t_direction dir);
     void show() const;
     bool switch_cells_position(position p1 ,position p2);
+    void switch_cells_fall(position p1 ,position p2);
     bool switch_cells_target();
     bool one_case_empty(position p1,position p2) const;
     bool one_case_empty() const; //return true si une deux cases du target est vide utilie pour determiner ce qui doit ou non etre fait apres le switch
@@ -43,7 +46,7 @@ public:
     t_colors getColor(position const & p) const; //recupere la couleur de la case qui a pour position pair
     t_colors operator()(position const & p)const;
     void rotate_target();
-    void slideColumn(cordinate x);
+    void slideColumn(cordinate x,std::vector<position *> & cells);
     std::vector<position> slidecolumn_start_position(cordinate const & x); //recupere les position des des cases qui doivent tomber
     void delete_cell(position const &x);
     void add_new_row();
@@ -64,11 +67,18 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
     std::vector<position>  max_column() const;
-
+    void add_garbage();
+    bool not_hanging(position const & p) const;
+    score get_score()const;
+    void inc_score(score x);
+    void reset_score();
+    bool is_garbage (position const & p)const;
+    void update_garbage_height();
 private:
     grid _grid;
     target _target;
     float _grid_dy;
+    score _score ;
     
 };
 

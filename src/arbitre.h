@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include<utility>
 
-using frame = u_int16_t ;
+using frame = int16_t ;
 
 
 struct delay {
@@ -14,8 +14,9 @@ struct delay {
     delta cellDxbase;
     bool newline = false;
     float oldspeed ;
-    // std::vector<position *> cells_slide ;
-    // frame new_line;
+    frame last_frame_alignment;
+    frame last_garbage;
+    std::vector<position *> cells_slide ;
 
 };
 
@@ -28,12 +29,13 @@ class arbitre
 {
 public:
     arbitre();
-    void update(t_action x);
+    std::vector<position> update(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
     void init ();
-    delay getDelays()const;
+    delay & getDelays();
+    t_number getFrame() const {return _nb_frame;}
 private:
     std::unique_ptr<game> _joueur1;
     float _vertical_speed;
