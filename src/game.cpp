@@ -547,7 +547,7 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
 
     void game::inc_score(score x)
     {
-        _score =+ x ;
+        _score += x ;
     }
 
     void game::reset_score()

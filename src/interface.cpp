@@ -11,48 +11,51 @@ interface::interface():_width(6),_difficulty(4) {
 
 void interface::play()
 {
+    arbitre _arbitre;
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
+
+
+    t_number score_tab_width = 500 ;
+    t_number play_tab_width = _arbitre.getJoueur().width() * 64 + 2 * thickness_line;
+    t_number total_width = score_tab_width + play_tab_width;
+    t_number total_height = _arbitre.getJoueur().height() * 64 + 2 * thickness_line ;
+
+    sf::Text _text_score = sf::Text("SCORE",_font,60);
+    _text_score.setOrigin(sf::Vector2f((_text_score.getGlobalBounds().width)/(2*_text_score.getScale().x),(_text_score.getGlobalBounds().height)/(2*_text_score.getScale().y)));
+    _text_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2));
+    _text_score.setFillColor(color_line);
+
+    sf::Text _number_score = sf::Text(std::to_string(_arbitre.getJoueur().get_score()),_font,60);
+    _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
+    _number_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2 + 100));
+    _number_score.setFillColor(color_line);
+
+
     auto x(0.001);
-    arbitre _arbitre;
+    
     _arbitre.init();
-    sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width() * 64 + 2 * thickness_line), (_arbitre.getJoueur().height() * 64 + 2 * thickness_line)), "Habibi");
+    sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width() * 64 + 2 * thickness_line + score_tab_width), (_arbitre.getJoueur().height() * 64 + 2 * thickness_line)), "Habibi");
     window.setFramerateLimit(30); // Pour set le framerate
 
 
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * _arbitre.getJoueur().height()+thickness_line));
     line1.setFillColor(color_line);
-    sf::RectangleShape line2(sf::Vector2f(64 * _arbitre.getJoueur().width()+thickness_line, thickness_line));
+    //sf::RectangleShape line2(sf::Vector2f(64 * _arbitre.getJoueur().width()+thickness_line, thickness_line));
+    sf::RectangleShape line2(sf::Vector2f(total_width, thickness_line));
     line2.setFillColor(color_line);
     sf::RectangleShape line3(sf::Vector2f(thickness_line, 64 * _arbitre.getJoueur().height()+thickness_line*2));
     line3.setFillColor(color_line);
     line3.setPosition(64*_arbitre.getJoueur().width()+thickness_line,0);
-    sf::RectangleShape line4(sf::Vector2f(64 * _arbitre.getJoueur().width()+thickness_line*2, thickness_line));
+    sf::RectangleShape line4(sf::Vector2f(total_width, thickness_line));
     line4.setFillColor(color_line);
     line4.setPosition(0,64*_arbitre.getJoueur().height()+thickness_line);
+    sf::RectangleShape line5(sf::Vector2f(thickness_line, total_height ));
+    line5.setFillColor(color_line);
+    line5.setPosition(total_width-thickness_line,0);
 
             
-
-    
-    // sf::Vertex line1[] =
-    //     {
-    //         sf::Vertex(sf::Vector2f(10, 10)),
-    //         sf::Vertex(sf::Vector2f(150, 150))};
-
-    // window.draw(line1, 2, sf::Lines);
-    // sf::Vertex line1[] =
-    //     {
-    //         sf::Vertex(sf::Vector2f(10, 10)),
-    //         sf::Vertex(sf::Vector2f(150, 150))};
-
-    // window.draw(line1, 2, sf::Lines);
-    // sf::Vertex line1[] =
-    //     {
-    //         sf::Vertex(sf::Vector2f(10, 10)),
-    //         sf::Vertex(sf::Vector2f(150, 150))};
-
-    // window.draw(line1, 2, sf::Lines);
 
 
     // On charge les textures
@@ -120,8 +123,21 @@ void interface::play()
                     act = t_action::nothing;
                 }
             }
+        } 
+        t_number _temp_score = _arbitre.getJoueur().get_score();
+        if(_temp_score>100){
+             _number_score.setString(sf::String(std::to_string(_temp_score/100)+std::to_string(_temp_score%100))); 
         }
+
+        else if(_temp_score>10){
+             _number_score.setString(sf::String(std::to_string(_temp_score/10)+std::to_string(_temp_score%10))); 
+        }
+        else
+            _number_score.setString(sf::String(std::to_string(_temp_score))); 
+        _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
+  
         auto vec(_arbitre.update(act));
+        
 
         window.clear(color_background);
 
@@ -213,7 +229,6 @@ void interface::play()
                 }
             }
         }
-
         if (vec.size() == 0)
         {
 
@@ -258,10 +273,13 @@ void interface::play()
 
         }
         // On update
+        window.draw(_number_score);
+        window.draw(_text_score);
         window.draw(line1);
         window.draw(line2);
         window.draw(line3);
         window.draw(line4);
+        window.draw(line5);
         window.display();
     }
 }
