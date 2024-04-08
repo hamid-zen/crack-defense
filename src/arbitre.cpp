@@ -140,8 +140,13 @@ std::vector<position>  arbitre::update(t_action x)
 
     else {
         if (_joueur1->grid_dy() >= 64)
-        {
-            _joueur1->add_new_row();
+        {   if(getFrame()%2==1)//toute les 5 secondes// a modifier toute les combien on genere une nvl ligne?
+            {
+                 _joueur1->add_new_row(150);
+                 std::cout<<"hello"<<std::endl;
+            }else{
+                _joueur1->add_new_row();
+            }   
             // On remet a zero grid_dy
             _joueur1->setGrid_dy(0);
             delays.newline = false;
@@ -154,8 +159,7 @@ std::vector<position>  arbitre::update(t_action x)
             delays.oldspeed +=0.00001 ;
         }
     }
-
-    
+     
     auto v(_joueur1->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
     if (v.size() >= 3)
     {  if(delays.last_frame_alignment==-1)//pas encore initialisé
@@ -171,7 +175,7 @@ std::vector<position>  arbitre::update(t_action x)
 
        
         if(delays.last_garbage>0){
-         _joueur1->transform_malus_to_cell(v);
+         _joueur1->transform_malus_to_cell(v,delays.cells_slide);
          //ajouter que les cases glissent 
         }
         return v;

@@ -49,7 +49,7 @@ public:
     void slideColumn(cordinate x,std::vector<position *> & cells);
     std::vector<position> slidecolumn_start_position(cordinate const & x); //recupere les position des des cases qui doivent tomber
     void delete_cell(position const &x);
-    void add_new_row();
+    void add_new_row(int frame=0);
     void setGrid_dy(float newGrid_dy);
     void place_new_case(position p,std::vector<cell> v);
     float grid_dy()const;
@@ -74,7 +74,7 @@ public:
     void reset_score();
     bool is_garbage (position const & p)const;
     void update_garbage_height();
-    void transform_malus_to_cell(std::vector<position> const & align_cell);
+    void transform_malus_to_cell(std::vector<position> const & align_cell,std::vector<position *> &pos_cells);
 private:
     grid _grid;
     target _target;

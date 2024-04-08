@@ -21,7 +21,7 @@ public:
     bool switch_cell(position p1, position p2);
     void place_cell(cell c,position p);
     void delete_cell(position p);
-    void new_row();
+    void new_row(int frame);
     std::vector<cell> generate_random_line(size t) const;
     delta cellDx(position p)const ;
     delta cellDy(position p)const ; 
@@ -36,7 +36,7 @@ public:
     bool hanging_garbage(position const & p) const;
     cordinate first_empty_line(position const & fst_cell,int size) const; //premiere ligne vide en partant du bas
     std::vector<position >  adjacent(position const & p) const ;
-    void transform_to_cell(std::vector<position> const & align_cell);
+    void transform_to_cell(std::vector<position> const & align_cell,std::vector<position* > &pos_cells);
 private:
     t_mat _board;
     cordinate _max_height;

@@ -173,7 +173,7 @@ void grid::resetCellDelta(position p)
 
 
 
-void grid::new_row()
+void grid::new_row(int frame)
 {
     for (cordinate i(0); i < _max_width; i++) {
         for (cordinate j(0); j < _max_height; j++) { //on s'arrete a max height et non maxheight+1
@@ -183,10 +183,14 @@ void grid::new_row()
 
     //apres avoir decaler toutes les lignes d'une case vers le haut
     //il faut regenerer un nvl ligne aleatoire
+    auto x(nombreAleatoire(_max_width-1)); //colone de la case special
     auto vec(generate_random_line(_max_width));
     for (cordinate i(0); i < _max_width; i++) {
-        _board[i + _max_height * _max_width] = std::make_unique<cell>(
-            vec[i]); //ici j=max_height car on remplie la toute premiere ligne(celle qui est caché pour l'insatnt)
+        if(frame==150 && i==x){
+            _board[i + _max_height * _max_width] = std::make_unique<cell>(t_colors::all);
+        }else{
+        _board[i + _max_height * _max_width] = std::make_unique<cell>(vec[i]); //ici j=max_height car on remplie la toute premiere ligne(celle qui est caché pour l'insatnt)
+    }
     }
 }
 
@@ -344,7 +348,7 @@ std::vector<position > grid::adjacent(position const & p) const {
 }
 
 //dans le cas ou il ya deux malus qui ont la meme hauteur 
-void grid::transform_to_cell(std::vector<position> const & align_cell) {
+void  grid::transform_to_cell(std::vector<position> const & align_cell, std::vector<position* > & pos_cells) {
     int k(0); 
     for (auto const & e : align_cell) {
         auto v(adjacent(e));
@@ -356,6 +360,7 @@ void grid::transform_to_cell(std::vector<position> const & align_cell) {
                     if(n>=0 && n<max_width()){ 
                     if (auto malus_cell = dynamic_cast<malusCell*>(_board[n + p.y() * _max_width].get())) {
                         _board[n + p.y() * _max_width] = std::make_unique<cell>(*malus_cell);
+                        pos_cells.push_back(new position(n,p.y()));
                         k++;
                     }
                     }else break;
@@ -366,6 +371,8 @@ void grid::transform_to_cell(std::vector<position> const & align_cell) {
                     if(n>=0 && n<max_width()){
                        if (auto malus_cell = dynamic_cast<malusCell*>(_board[n + p.y() * _max_width].get())) {
                         _board[n + p.y() * _max_width] = std::make_unique<cell>(*malus_cell); 
+                        pos_cells.push_back(new position(n,p.y()));
+
                         k++;
 
                     }else break;
@@ -374,4 +381,5 @@ void grid::transform_to_cell(std::vector<position> const & align_cell) {
         }
     }
 
-}}
+}
+}

@@ -61,12 +61,13 @@ void interface::play()
     // On charge les textures
     sf::Texture blue_tile_texture, yellow_tile_texture, orange_tile_texture, pink_tile_texture,
         blue_shade_tile_texture, yellow_shade_tile_texture, orange_shade_tile_texture,
-        pink_shade_tile_texture,red_shade_tile_texture, empty_tile_texture, target_texture;
+        pink_shade_tile_texture,red_shade_tile_texture, empty_tile_texture, target_texture,all_tile_texture;
 
     blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
     yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
     orange_tile_texture.loadFromFile("../textures/single_blocks/Orange_colored.png");
     pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
+    all_tile_texture.loadFromFile("../textures/single_blocks/special.png");
 
     blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
     yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
@@ -185,6 +186,10 @@ void interface::play()
                 case t_colors::empty_cell:
                 {
                     s_tile.setTexture(empty_tile_texture);
+                    break;
+                }
+                case t_colors::all:{
+                    s_tile.setTexture(all_tile_texture);
                     break;
                 }
                 }
