@@ -4,10 +4,11 @@ arbitre::arbitre()
     : _joueur1(std::make_unique<game>()), _vertical_speed(0.1), _nb_frame(0)
 
 {
-    delays = {nullptr, nullptr, 0, 0, 0, false, _vertical_speed};
+    delays = {nullptr, nullptr, 0, 0, 0, false, _vertical_speed,-1,0};
 }
 std::vector<position>  arbitre::update(t_action x)
 {
+    _joueur1->update_garbage_height();
     auto it = delays.cells_slide.begin();
     while (it != delays.cells_slide.end())
     {
@@ -156,8 +157,23 @@ std::vector<position>  arbitre::update(t_action x)
 
     
     auto v(_joueur1->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
-    while (v.size() >= 3)
-    {
+    if (v.size() >= 3)
+    {  if(delays.last_frame_alignment==-1)//pas encore initialisé
+        {
+            delays.last_frame_alignment=getFrame();
+        }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
+        {   delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+            delays.last_garbage=getFrame();
+            _joueur1->add_garbage();
+
+        }   
+         _nb_frame++; // on incremente le nombre de frame
+
+       
+        if(delays.last_garbage>0){
+         _joueur1->transform_malus_to_cell(v);
+         //ajouter que les cases glissent 
+        }
         return v;
 
         for (std::size_t i(0); i < v.size(); i++)

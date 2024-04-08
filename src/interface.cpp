@@ -61,7 +61,7 @@ void interface::play()
     // On charge les textures
     sf::Texture blue_tile_texture, yellow_tile_texture, orange_tile_texture, pink_tile_texture,
         blue_shade_tile_texture, yellow_shade_tile_texture, orange_shade_tile_texture,
-        pink_shade_tile_texture, empty_tile_texture, target_texture;
+        pink_shade_tile_texture,red_shade_tile_texture, empty_tile_texture, target_texture;
 
     blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
     yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
@@ -72,6 +72,7 @@ void interface::play()
     yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
     orange_shade_tile_texture.loadFromFile("../textures/single_blocks/Orange_shade.png");
     pink_shade_tile_texture.loadFromFile("../textures/single_blocks/Pink_shade.png");
+    red_shade_tile_texture.loadFromFile("../textures/single_blocks/Red_shade.png");
 
     empty_tile_texture.loadFromFile("../textures/single_blocks/Ghost.png");
     target_texture.loadFromFile("../textures/single_blocks/Target.png");
@@ -148,10 +149,15 @@ void interface::play()
             {
                 auto x(0.001);
                 // On get la couleur actuelle
-
-                auto color = _arbitre.getJoueur()(position(j, i));
                 auto dx = _arbitre.getJoueur().cellDx(position(j, i));
                 auto dy = _arbitre.getJoueur().cellDy(position(j, i));
+                if(_arbitre.getJoueur().is_garbage(position(j,i))){
+                    s_tile.setTexture(red_shade_tile_texture);
+                    s_tile.setPosition(64 * j + dx +thickness_line, 64 * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
+                    window.draw(s_tile);
+                }else{
+                auto color = _arbitre.getJoueur()(position(j, i));
+
 
                 // on check quel sprite afficher
                 switch (color)
@@ -214,7 +220,7 @@ void interface::play()
                     }
                 }
                 window.draw(s_tile);
-
+                }
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i))
                 {
                     if (vec.size() == 0)

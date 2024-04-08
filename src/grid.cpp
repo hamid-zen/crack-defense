@@ -250,3 +250,128 @@ bool grid::estMalus(position const & p) const{
     else return false;
 
 }
+
+
+bool grid::not_hanging(position const & p) const{ 
+    if (p.y() == max_height() - 1)
+            return true;
+        else if (_board[p.x()+ (p.y() + 1)*_max_width] !=nullptr)
+        {
+            return true;
+        }
+        else
+            return false;
+}
+bool grid::hanging_garbage(position const & p) const{
+ auto j(p.y());  
+    
+    auto size(_board[p.x() + j * _max_width]->getsize());
+  for (unsigned int i(p.x()); i < (p.x()+size); i++)
+    {
+        if(_board[i + j * _max_width]!=nullptr && not_hanging(position(i,j))){
+            return false; // ya une des cases du malus qui est "retenue"
+        }
+    }
+    return true;
+}
+
+cordinate grid::first_empty_line(position const & fst_cell,int size) const{
+bool vide(true);    
+        for(auto j(fst_cell.y());j<max_height();j++){ // pour chaque ligne on verifie si elle es completement vide si c'est le cas on retourne le y
+            vide=true;
+            for(auto i(fst_cell.x());i<(fst_cell.x()+size);i++){
+                if(_board[i + j * _max_width]!=nullptr){
+                    vide=false;
+                    break;
+                }
+            }
+        if(vide){
+            return j;
+        }
+
+    }
+}
+
+void grid::update_garbage(){
+for (cordinate j(0); j < _max_height; j++)  {
+    auto i(0);
+    while(i < _max_width){
+       
+        if(_board[i + j * _max_width] !=nullptr && estMalus(position(i,j))){
+            auto size(_board[i + j * _max_width]->getsize());
+
+            if( hanging_garbage(position (i,j))){
+                auto m(first_empty_line(position (i,j), size));
+                for(int n(i);n<(i+size);n++){
+                    _board[n +m  * _max_width]=std::move(_board[n +j* _max_width] );
+                }        
+            }
+         i=i+size;
+         }
+        i++;
+
+        } 
+    } 
+}
+
+
+std::vector<position > grid::adjacent(position const & p) const {
+   std::vector<position > vec;
+   // Vérification des voisins à droite
+    if(p.x() < max_width() - 1 && _board[(p.x() + 1) + p.y() * _max_width] != nullptr) {
+        vec.push_back(position(p.x() + 1, p.y()));
+        //std::cout << "Right" << std::endl;
+    }
+
+    // Vérification des voisins à gauche
+    if(p.x() >= 1 && _board[(p.x() - 1) + p.y() * _max_width] != nullptr) {
+        vec.push_back(position(p.x() - 1, p.y()));
+        //std::cout << "Left" << std::endl;
+    }
+
+    // Vérification des voisins en bas
+   if(p.y() < max_height() - 1 && _board[p.x() + (p.y() + 1) * _max_width] != nullptr) {
+        vec.push_back(position(p.x(), p.y() + 1));
+        //std::cout << "Down" << std::endl;
+    }
+
+    // Vérification des voisins en haut
+    if(p.y() >= 1 && _board[p.x() + (p.y() - 1) * _max_width] != nullptr) {
+        vec.push_back(position(p.x(), p.y() - 1));
+       // std::cout << "Up" << std::endl;
+    }
+    return vec;
+}
+
+//dans le cas ou il ya deux malus qui ont la meme hauteur 
+void grid::transform_to_cell(std::vector<position> const & align_cell) {
+    int k(0); 
+    for (auto const & e : align_cell) {
+        auto v(adjacent(e));
+        for (auto const & p : v) {
+            if (_board[p.x() + p.y() * _max_width] != nullptr && estMalus(p)) {
+                auto size = _board[p.x() + p.y() * _max_width]->getsize();
+
+                for (int n = p.x(); n < (p.x() + size); ++n) {
+                    if(n>=0 && n<max_width()){ 
+                    if (auto malus_cell = dynamic_cast<malusCell*>(_board[n + p.y() * _max_width].get())) {
+                        _board[n + p.y() * _max_width] = std::make_unique<cell>(*malus_cell);
+                        k++;
+                    }
+                    }else break;
+                }
+                auto n(p.x()); //on ne sait pas si la case adjacente a l'align est la premiere du malus ou pas
+                while(k<size){ //donc si j'ai pa trouvee toute les case du malus a doite je les cherche a gauche je ne peux pas les fussioner il y aurait un risque d'enelever un autre malus dans la meme ligne
+                    n--;
+                    if(n>=0 && n<max_width()){
+                       if (auto malus_cell = dynamic_cast<malusCell*>(_board[n + p.y() * _max_width].get())) {
+                        _board[n + p.y() * _max_width] = std::make_unique<cell>(*malus_cell); 
+                        k++;
+
+                    }else break;
+                }
+            }
+        }
+    }
+
+}}

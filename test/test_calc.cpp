@@ -201,3 +201,56 @@ TEST_CASE("generate_garbage", "[test]")
     g.show();
     REQUIRE(1==1);
 }
+TEST_CASE("est_malus", "[test]")
+{
+    mysrand(3);
+    game g;
+    g.show();
+    g.add_garbage();
+    g.show();
+    REQUIRE(g.is_garbage(position(3,4))==1);
+    REQUIRE(g.is_garbage(position(4,4))==1);
+    REQUIRE(g.is_garbage(position(5,4))==1);
+}
+TEST_CASE("adjacent", "[test]")
+{
+    mysrand(3);
+    grid g;
+    g.init();
+    
+     auto vec(g.adjacent(position(0,g.max_height() - 1 )));
+
+    REQUIRE(vec.size()==2);
+}
+TEST_CASE("transform_to_cell", "[test]")
+{
+        mysrand(3);
+    game g;
+    g.rotate_target();
+    g.move_target(t_direction::right);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.switch_cells_target();
+    g.move_target(t_direction::up);
+    g.move_target(t_direction::up);
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::up);
+    g.add_garbage();
+    g.switch_cells_target();
+    g.move_target(t_direction::left);
+    std::cout<<"avant\n";
+        g.show();
+
+        std::vector<position> vec = g.alignment();
+
+   // g.transform_malus_to_cell(vec);
+    std::cout<<"apres\n";
+    g.show();
+
+    
+    // auto vec(g.adjacent(position(0,g.max_height() - 1 )));
+
+    REQUIRE(2==2);
+}

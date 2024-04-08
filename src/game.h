@@ -72,6 +72,9 @@ public:
     score get_score()const;
     void inc_score(score x);
     void reset_score();
+    bool is_garbage (position const & p)const;
+    void update_garbage_height();
+    void transform_malus_to_cell(std::vector<position> const & align_cell);
 private:
     grid _grid;
     target _target;

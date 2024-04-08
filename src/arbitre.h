@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include<utility>
 
-using frame = u_int16_t ;
+using frame = int16_t ;
 
 
 struct delay {
@@ -14,8 +14,9 @@ struct delay {
     delta cellDxbase;
     bool newline = false;
     float oldspeed ;
+    frame last_frame_alignment;
+    frame last_garbage;
     std::vector<position *> cells_slide ;
-    // frame new_line;
 
 };
 

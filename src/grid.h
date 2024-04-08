@@ -31,7 +31,12 @@ public:
    std::vector<position>  max_column() const;
     void generate_garbage();
     bool estMalus(position const & p) const;
-
+    bool not_hanging(position const & p) const;
+    void update_garbage();
+    bool hanging_garbage(position const & p) const;
+    cordinate first_empty_line(position const & fst_cell,int size) const; //premiere ligne vide en partant du bas
+    std::vector<position >  adjacent(position const & p) const ;
+    void transform_to_cell(std::vector<position> const & align_cell);
 private:
     t_mat _board;
     cordinate _max_height;

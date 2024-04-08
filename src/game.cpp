@@ -245,7 +245,6 @@ std::vector<position> game::vertical_alignment()
                     vec.push_back(position(i, k));
                     k++;
                 }
-                 inc_score(vec.size());
                 return vec;
             }
             else if (!not_hanging(position(i,j))||clr == t_colors::empty_cell || (_grid(position(i, j)) != clr)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
@@ -262,13 +261,11 @@ std::vector<position> game::vertical_alignment()
         }
         if (vec.size() == 3)
         { // alignement a la fin
-         inc_score(3);
         return vec;
         }
     }
     if (vec.size() == 3)
     { // alignement a la fin
-               inc_score(3);
         return vec;
     }
     vec.clear();
@@ -295,7 +292,6 @@ std::vector<position> game::horizontal_alignment()
                     vec.push_back(position(k,j));
                     k++;
                 }
-                inc_score(vec.size());
                 return vec;
             }
             else if(!not_hanging(position(i,j))||clr==t_colors::empty_cell || (_grid(position( i,j))!=clr )) //si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
@@ -308,13 +304,11 @@ std::vector<position> game::horizontal_alignment()
                 }
             }
         if(vec.size()==3){ //alignement a la fin
-           inc_score(3);
             return vec;
         }
 
     }
     if(vec.size()==3){ //alignement a la fin
-        inc_score(3);
        return vec;
     }
     vec.clear();
@@ -385,8 +379,10 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
             inc_score(vec.size());
             return vec;
         }
-        else
-            return horizontal_alignment();
+        else{
+        auto vec2(horizontal_alignment());
+        inc_score(vec2.size());
+            return vec2;}
     }
 
     void game::delete_alignement(std::vector<position> const &v)
@@ -420,7 +416,7 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
         }
         while (y > 0)
         {
-            if (_grid(position(x, y)) != t_colors::empty_cell)
+            if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x,y)))
                 cells.push_back(new position(x, y));
             y--;
         }
@@ -530,14 +526,7 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
 
     bool game::not_hanging(position const &p) const
     {
-        if (p.y() == _grid.max_height() - 1)
-            return true;
-        else if (_grid(position(p.x(), p.y() + 1)) != t_colors::empty_cell)
-        {
-            return true;
-        }
-        else
-            return false;
+        return _grid.not_hanging(p);
     }
 
     score game::get_score() const
@@ -547,10 +536,23 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
 
     void game::inc_score(score x)
     {
-        _score += x ;
+        _score =+ x ;
     }
 
     void game::reset_score()
     {
         _score = 0;
+    }
+
+ bool game::is_garbage (position const & p)const{
+    return _grid.estMalus(p);
+ }
+
+void game::update_garbage_height(){
+    _grid.update_garbage();
+}
+
+
+   void game::transform_malus_to_cell(std::vector<position> const & align_cell){
+        _grid.transform_to_cell(align_cell);
     }
