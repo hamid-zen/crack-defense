@@ -9,9 +9,9 @@ interface::interface():_width(6),_difficulty(4) {
     _font.loadFromFile("../font/cyber_game.ttf");
 }
 
-void interface::play()
+void interface::play(t_number ind)
 {
-    arbitre _arbitre;
+    arbitre _arbitre(ind);
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
@@ -69,6 +69,11 @@ void interface::play()
     pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
     all_tile_texture.loadFromFile("../textures/single_blocks/special.png");
 
+    //   sky_blue_tile_texture.loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
+   // purple_tile_texture.loadFromFile("../textures/single_blocks/Purple_colored.png");
+   // green_tile_texture.loadFromFile("../textures/single_blocks/Green_colored.png");
+    //white_tile_texture.loadFromFile("../textures/single_blocks/White_colored.png");
+
     blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
     yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
     orange_shade_tile_texture.loadFromFile("../textures/single_blocks/Orange_shade.png");
@@ -119,7 +124,7 @@ void interface::play()
                 else if(e.key.code == sf::Keyboard::Key::Escape)
                 {
                     window.close();
-                    menu();
+                    menu(ind);
                 }
                 else
                 {
@@ -296,7 +301,7 @@ void interface::play()
     }
 }
 
-void interface::menu(){
+void interface::menu(t_number ind){
 
     //needed base variable
     t_number thickness_line = 10;
@@ -422,7 +427,7 @@ void interface::menu(){
                 {
                     if(_index_choice_pos == _choices_pos.size()-1){
                         window.close();
-                        play();
+                        play(_index_difficulties_choice);
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
