@@ -28,7 +28,7 @@ enum class t_action{
 class arbitre
 {
 public:
-    arbitre();
+    arbitre(t_number ind);
     std::vector<position> update(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
@@ -36,6 +36,8 @@ public:
     void init ();
     delay & getDelays();
     t_number getFrame() const {return _nb_frame;}
+    void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
+    void setVerticalSpeed_Hard(){_vertical_speed = 2;};
 private:
     std::unique_ptr<game> _joueur1;
     float _vertical_speed;

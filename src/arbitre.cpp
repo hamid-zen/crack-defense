@@ -1,10 +1,20 @@
 #include "arbitre.h"
 
-arbitre::arbitre()
-    : _joueur1(std::make_unique<game>()), _vertical_speed(0.1), _nb_frame(0)
+
+arbitre::arbitre(t_number ind)
+    : _vertical_speed(0.1), _nb_frame(0)
 
 {
     delays = {nullptr, nullptr, 0, 0, 0, false, _vertical_speed,-1,0};
+    if(ind==0){ //easy
+        _joueur1=std::make_unique<game>();
+    }else if(ind==1){ //medium
+        _joueur1=std::make_unique<game>(12,6,6);
+        setVerticalSpeed_Med();
+    }else{ //hard
+        _joueur1=std::make_unique<game>(14,8,6); //a changer
+        setVerticalSpeed_Hard();
+    }
 }
 std::vector<position>  arbitre::update(t_action x)
 {

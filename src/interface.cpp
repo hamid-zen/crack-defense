@@ -9,9 +9,9 @@ interface::interface():_width(6),_difficulty(4) {
     _font.loadFromFile("../font/cyber_game.ttf");
 }
 
-void interface::play()
+void interface::play(t_number ind)
 {
-    arbitre _arbitre;
+    arbitre _arbitre(ind);
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
@@ -61,13 +61,19 @@ void interface::play()
     // On charge les textures
     sf::Texture blue_tile_texture, yellow_tile_texture, orange_tile_texture, pink_tile_texture,
         blue_shade_tile_texture, yellow_shade_tile_texture, orange_shade_tile_texture,
-        pink_shade_tile_texture,red_shade_tile_texture, empty_tile_texture, target_texture,all_tile_texture;
+        pink_shade_tile_texture,red_shade_tile_texture,
+        //sky_blue_tile_texture,purple_tile_texture,green_tile_texture,white_tile_texture
+         empty_tile_texture, target_texture,all_tile_texture;
 
     blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
     yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
     orange_tile_texture.loadFromFile("../textures/single_blocks/Orange_colored.png");
     pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
     all_tile_texture.loadFromFile("../textures/single_blocks/special.png");
+ //   sky_blue_tile_texture.loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
+   // purple_tile_texture.loadFromFile("../textures/single_blocks/Purple_colored.png");
+   // green_tile_texture.loadFromFile("../textures/single_blocks/Green_colored.png");
+    //white_tile_texture.loadFromFile("../textures/single_blocks/White_colored.png");
 
     blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
     yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
@@ -118,7 +124,7 @@ void interface::play()
                 else if(e.key.code == sf::Keyboard::Key::Escape)
                 {
                     window.close();
-                    menu();
+                    menu(ind);
                 }
                 else
                 {
@@ -272,6 +278,23 @@ void interface::play()
                     s_tile.setTexture(orange_shade_tile_texture);
                     break;
                 }
+                  case t_colors::sky_blue:
+                {
+                   // s_tile.setTexture(sky_blue_tile_texture);
+                    break;
+                }case t_colors::purple:
+                {
+                   // s_tile.setTexture(purple_tile_texture);
+                    break;
+                }case t_colors::green:
+                {
+                    //s_tile.setTexture(green_tile_texture);
+                    break;
+                }case t_colors::white:
+                {
+                  //  s_tile.setTexture(white_tile_texture);
+                    break;
+                }
                 case t_colors::empty_cell:
                 {
                     s_tile.setTexture(empty_tile_texture);
@@ -295,7 +318,7 @@ void interface::play()
     }
 }
 
-void interface::menu(){
+void interface::menu(t_number ind){
 
     //needed base variable
     t_number thickness_line = 10;
@@ -421,7 +444,7 @@ void interface::menu(){
                 {
                     if(_index_choice_pos == _choices_pos.size()-1){
                         window.close();
-                        play();
+                        play(_index_difficulties_choice);
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
