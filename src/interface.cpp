@@ -9,18 +9,18 @@ interface::interface():_width(6),_difficulty(4) {
     _font.loadFromFile("../font/cyber_game.ttf");
 }
 
-void interface::play(t_number ind)
+void interface::play()
 {
-    arbitre _arbitre(ind);
+    arbitre _arbitre;
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
 
-
+    t_number _width_cell = 64 ;
     t_number score_tab_width = 500 ;
-    t_number play_tab_width = _arbitre.getJoueur().width() * 64 + 2 * thickness_line;
+    t_number play_tab_width = _arbitre.getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
-    t_number total_height = _arbitre.getJoueur().height() * 64 + 2 * thickness_line ;
+    t_number total_height = _arbitre.getJoueur().height() * _width_cell + 2 * thickness_line ;
 
     sf::Text _text_score = sf::Text("SCORE",_font,60);
     _text_score.setOrigin(sf::Vector2f((_text_score.getGlobalBounds().width)/(2*_text_score.getScale().x),(_text_score.getGlobalBounds().height)/(2*_text_score.getScale().y)));
@@ -36,21 +36,21 @@ void interface::play(t_number ind)
     auto x(0.001);
     
     _arbitre.init();
-    sf::RenderWindow window(sf::VideoMode((_arbitre.getJoueur().width() * 64 + 2 * thickness_line + score_tab_width), (_arbitre.getJoueur().height() * 64 + 2 * thickness_line)), "Habibi");
+    sf::RenderWindow window(sf::VideoMode((total_width), (total_height)), "Habibi");
     window.setFramerateLimit(30); // Pour set le framerate
 
 
-    sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * _arbitre.getJoueur().height()+thickness_line));
+    sf::RectangleShape line1(sf::Vector2f(thickness_line, total_height-thickness_line));
     line1.setFillColor(color_line);
     //sf::RectangleShape line2(sf::Vector2f(64 * _arbitre.getJoueur().width()+thickness_line, thickness_line));
     sf::RectangleShape line2(sf::Vector2f(total_width, thickness_line));
     line2.setFillColor(color_line);
-    sf::RectangleShape line3(sf::Vector2f(thickness_line, 64 * _arbitre.getJoueur().height()+thickness_line*2));
+    sf::RectangleShape line3(sf::Vector2f(thickness_line, total_height-thickness_line));
     line3.setFillColor(color_line);
-    line3.setPosition(64*_arbitre.getJoueur().width()+thickness_line,0);
+    line3.setPosition(play_tab_width-thickness_line,0);
     sf::RectangleShape line4(sf::Vector2f(total_width, thickness_line));
     line4.setFillColor(color_line);
-    line4.setPosition(0,64*_arbitre.getJoueur().height()+thickness_line);
+    line4.setPosition(0,total_height-thickness_line);
     sf::RectangleShape line5(sf::Vector2f(thickness_line, total_height ));
     line5.setFillColor(color_line);
     line5.setPosition(total_width-thickness_line,0);
@@ -61,19 +61,13 @@ void interface::play(t_number ind)
     // On charge les textures
     sf::Texture blue_tile_texture, yellow_tile_texture, orange_tile_texture, pink_tile_texture,
         blue_shade_tile_texture, yellow_shade_tile_texture, orange_shade_tile_texture,
-        pink_shade_tile_texture,red_shade_tile_texture,
-        //sky_blue_tile_texture,purple_tile_texture,green_tile_texture,white_tile_texture
-         empty_tile_texture, target_texture,all_tile_texture;
+        pink_shade_tile_texture,red_shade_tile_texture, empty_tile_texture, target_texture,all_tile_texture;
 
     blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
     yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
     orange_tile_texture.loadFromFile("../textures/single_blocks/Orange_colored.png");
     pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
     all_tile_texture.loadFromFile("../textures/single_blocks/special.png");
- //   sky_blue_tile_texture.loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
-   // purple_tile_texture.loadFromFile("../textures/single_blocks/Purple_colored.png");
-   // green_tile_texture.loadFromFile("../textures/single_blocks/Green_colored.png");
-    //white_tile_texture.loadFromFile("../textures/single_blocks/White_colored.png");
 
     blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
     yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
@@ -86,6 +80,7 @@ void interface::play(t_number ind)
 
     // On cree les sprite
     sf::Sprite s_tile, s_target(target_texture);
+    //s_tile.setOrigin(-_width_cell/2,-_width_cell/2);
 
     // On cree la clock
     sf::Clock clock;
@@ -124,7 +119,7 @@ void interface::play(t_number ind)
                 else if(e.key.code == sf::Keyboard::Key::Escape)
                 {
                     window.close();
-                    menu(ind);
+                    menu();
                 }
                 else
                 {
@@ -154,13 +149,13 @@ void interface::play(t_number ind)
         {
             for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
             {
-                auto x(0.001);
+                t_number x(0);
                 // On get la couleur actuelle
                 auto dx = _arbitre.getJoueur().cellDx(position(j, i));
                 auto dy = _arbitre.getJoueur().cellDy(position(j, i));
                 if(_arbitre.getJoueur().is_garbage(position(j,i))){
                     s_tile.setTexture(red_shade_tile_texture);
-                    s_tile.setPosition(64 * j + dx +thickness_line, 64 * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
+                    s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
                     window.draw(s_tile);
                 }else{
                 auto color = _arbitre.getJoueur()(position(j, i));
@@ -202,18 +197,18 @@ void interface::play(t_number ind)
 
                 if (vec.size() == 0)
                 {
-                    s_tile.setPosition(64 * j + dx +thickness_line, 64 * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
+                    s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
                     window.draw(s_tile);
                 }
                 else
                 {
-                    s_tile.setPosition(64 * j +thickness_line + dx, 64 * i +thickness_line + dy);
+                    s_tile.setPosition(_width_cell * j +thickness_line + dx, _width_cell * i +thickness_line + dy);
                     auto it(std::find(vec.begin(), vec.end(), position(j, i)));
                     if (it != vec.end())
                     {
                         if (x <= 360)
                         {
-                            s_tile.setOrigin(64 / 2.f, 64 / 2.f);
+                            //s_tile.setOrigin(64 / 2.f, 64 / 2.f);
                             s_tile.rotate(0.001f);
 
                             // float scaleFactor =1.f + std::sin(x * 3.14159f / 180) * 0.2f; // Variation de l'échelle en fonction de l'angle de rotation
@@ -226,7 +221,7 @@ void interface::play(t_number ind)
                         _arbitre.getJoueur().slideColumn(j, _arbitre.getDelays().cells_slide);
 
                         window.draw(s_tile);
-                        s_tile.setOrigin(0, 0);
+                        //s_tile.setOrigin(0, 0);
                         vec.erase(it);
                     }
                 }
@@ -240,7 +235,7 @@ void interface::play(t_number ind)
                     }
                     else
                     {
-                        s_target.setPosition(64 * j, 64 * i);
+                        s_target.setPosition(_width_cell * j, _width_cell * i);
                     }
                     window.draw(s_target);
                 }
@@ -278,30 +273,13 @@ void interface::play(t_number ind)
                     s_tile.setTexture(orange_shade_tile_texture);
                     break;
                 }
-                  case t_colors::sky_blue:
-                {
-                   // s_tile.setTexture(sky_blue_tile_texture);
-                    break;
-                }case t_colors::purple:
-                {
-                   // s_tile.setTexture(purple_tile_texture);
-                    break;
-                }case t_colors::green:
-                {
-                    //s_tile.setTexture(green_tile_texture);
-                    break;
-                }case t_colors::white:
-                {
-                  //  s_tile.setTexture(white_tile_texture);
-                    break;
-                }
                 case t_colors::empty_cell:
                 {
                     s_tile.setTexture(empty_tile_texture);
                     break;
                 } // cas non possible
                 }
-                s_tile.setPosition(64 * j+thickness_line, 64 * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line); // adapter la vitesse par rapport a la taille de la fenetre
+                s_tile.setPosition(_width_cell * j+thickness_line, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line); // adapter la vitesse par rapport a la taille de la fenetre
                 window.draw(s_tile);
             }
 
@@ -318,7 +296,7 @@ void interface::play(t_number ind)
     }
 }
 
-void interface::menu(t_number ind){
+void interface::menu(){
 
     //needed base variable
     t_number thickness_line = 10;
@@ -444,7 +422,7 @@ void interface::menu(t_number ind){
                 {
                     if(_index_choice_pos == _choices_pos.size()-1){
                         window.close();
-                        play(_index_difficulties_choice);
+                        play();
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
