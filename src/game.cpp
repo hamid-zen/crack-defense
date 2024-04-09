@@ -1,7 +1,7 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0),_score(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0), _score(0) { _grid.init(); /* TODO: Enlever */ }
 
 /**
  * @brief check si le game est perdu
@@ -220,7 +220,6 @@ bool game::switch_cells_target()
     return _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
 }
 
-
 std::vector<position> game::vertical_alignment()
 {
     std::vector<position> vec;
@@ -235,7 +234,7 @@ std::vector<position> game::vertical_alignment()
             vec.clear();
             vec.push_back(position(i, 0)); // on ajoute la position de cette case au vecteur
             k++;
-        } while (!not_hanging(position(i, k)) && k < _grid.max_height());
+        } while (!not_hanging(position(i, k)) && k < _grid.max_height() && is_garbage(position(i,k-1)));
         for (unsigned int j(k); j < _grid.max_height(); j++)
         {
 
@@ -243,7 +242,7 @@ std::vector<position> game::vertical_alignment()
             { // cad on a trouvé un alignement verticale
                 unsigned int k(j);
                 // on ajoute tant que c'est la meme couleur
-                while (k < _grid.max_height() && (_grid(position(i, k)) == clr || _grid(position(k, j)) == t_colors::all))
+                while (k < _grid.max_height()&& !is_garbage(position(k, j)) && (_grid(position(i, k)) == clr || _grid(position(k, j)) == t_colors::all))
                 {
                     vec.push_back(position(i, k));
                     k++;
@@ -255,7 +254,7 @@ std::vector<position> game::vertical_alignment()
                 vec.push_back(position(i, j));
                 clr = _grid(position(i, j));
             }
-            else if (!not_hanging(position(i, j)) || clr == t_colors::empty_cell || (_grid(position(i, j)) != clr && _grid(position(i, j)) != t_colors::all)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+            else if (!not_hanging(position(i, j)) ||  is_garbage(position(k, j)) ||clr == t_colors::empty_cell || (_grid(position(i, j)) != clr && _grid(position(i, j)) != t_colors::all)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
             {
                 vec.clear();
                 if(i>0 && _grid(position(i-1, j))==t_colors::all){
@@ -296,14 +295,14 @@ std::vector<position> game::horizontal_alignment()
             vec.clear();
             vec.push_back(position(k, j)); // on ajoute la position de cette case au vecteur
             k++;
-        } while (!not_hanging(position(k, j)) && k < _grid.max_width());
+        } while (!not_hanging(position(k, j)) && k < _grid.max_width() && is_garbage(position(k-1, j)));
         for (unsigned int i(k); i < _grid.max_width(); i++)
         {
             if (vec.size() == 3)
             { // cad on a trouvé un alignement verticale
                 unsigned int k(i);
                 // on ajoute tant que c'est la meme couleur
-                while (k < _grid.max_width() && (_grid(position(k, j)) == clr || _grid(position(k, j)) == t_colors::all))
+                while (k < _grid.max_width() && !is_garbage(position(k, j)) && ( _grid(position(k, j)) == clr || _grid(position(k, j)) == t_colors::all))
                 {
                     vec.push_back(position(k, j));
                     k++;
@@ -315,7 +314,7 @@ std::vector<position> game::horizontal_alignment()
                 vec.push_back(position(i, j));
                 clr = _grid(position(i, j));
             }
-            else if (!not_hanging(position(i, j)) || clr == t_colors::empty_cell || (_grid(position(i, j)) != clr && _grid(position(i, j)) != t_colors::all)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
+            else if (!not_hanging(position(i, j)) || clr == t_colors::empty_cell || is_garbage(position(k, j)) ||(_grid(position(i, j)) != clr && _grid(position(i, j)) != t_colors::all)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
             {
                 vec.clear();
                 if(i>0 && _grid(position(i-1, j))==t_colors::all){
@@ -402,191 +401,195 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
     return vec;
 }
 
-    std::vector<position> game::alignment()
+std::vector<position> game::alignment()
+{
+    auto vec(vertical_alignment());
+    if (vec.size() > 0)
     {
-        auto vec(vertical_alignment());
-        if (vec.size() > 0)
-        {
-            auto vec1(horizontal_alignment(vec));
-            if (vec1.size() > 0) // concat
-                vec.insert(vec.end(), vec1.begin(), vec1.end());
-            inc_score(vec.size());
-            return vec;
-        }
-        else{
+        auto vec1(horizontal_alignment(vec));
+        if (vec1.size() > 0) // concat
+            vec.insert(vec.end(), vec1.begin(), vec1.end());
+        inc_score(vec.size());
+        return vec;
+    }
+    else
+    {
         auto vec2(horizontal_alignment());
         inc_score(vec2.size());
-            return vec2;}
+        return vec2;
     }
+}
 
-    void game::delete_alignement(std::vector<position> const &v)
+void game::delete_alignement(std::vector<position> const &v)
+{
+    for (auto i(v.size() - 1); i > 0; i--)
     {
-        for (auto i(v.size() - 1); i > 0; i--)
-        {
-            _grid.delete_cell(v[i]);
-        }
+        _grid.delete_cell(v[i]);
     }
+}
 
-    void game::rotate_target()
-    {
-        if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
-            _target.setSense();
-        else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
-            _target.setSense();
-        // sinn le changement de sense est impossible on en fait rien
-    }
+void game::rotate_target()
+{
+    if (_target.isVertical() && _target.x1() < _grid.max_width() - 1)
+        _target.setSense();
+    else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
+        _target.setSense();
+    // sinn le changement de sense est impossible on en fait rien
+}
 
-    void game::slideColumn(cordinate x, std::vector<position *> & cells)
-    { // x la colone
-        // x la colone
-        u_int16_t y = _grid.max_height() - 1;
-        while (_grid(position(x, y)) != t_colors::empty_cell and y > 0)
-        {
-            y--;
-        }
-        while (_grid(position(x, y)) == t_colors::empty_cell and y > 0)
-        {
-            y--;
-        }
-        while (y > 0)
-        {
-            if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x,y)))
-                cells.push_back(new position(x, y));
-            y--;
-        }
-    }
-    void game::delete_cell(position const &x)
+void game::slideColumn(cordinate x, std::vector<position *> &cells)
+{ // x la colone
+    // x la colone
+    u_int16_t y = _grid.max_height() - 1;
+    while (_grid(position(x, y)) != t_colors::empty_cell and y > 0)
     {
-        _grid.delete_cell(x);
+        y--;
     }
+    while (_grid(position(x, y)) == t_colors::empty_cell and y > 0)
+    {
+        y--;
+    }
+    while (y > 0)
+    {
+        if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y)))
+            cells.push_back(new position(x, y));
+        y--;
+    }
+}
+void game::delete_cell(position const &x)
+{
+    _grid.delete_cell(x);
+}
 
-    void game::add_new_row(int frame)
-    {
-        // On ajoute une nouvelle ligne en faisant monter les cellules
-        _grid.new_row(frame);
+void game::add_new_row(int frame)
+{
+    // On ajoute une nouvelle ligne en faisant monter les cellules
+    _grid.new_row(frame);
 
-        // On fait remonter la target d'un cran
-        move_target(t_direction::up);
-    }
+    // On fait remonter la target d'un cran
+    move_target(t_direction::up);
+}
 
-    void game::setGrid_dy(float newGrid_dy)
-    {
-        _grid_dy = newGrid_dy;
-    }
+void game::setGrid_dy(float newGrid_dy)
+{
+    _grid_dy = newGrid_dy;
+}
 
-    void game::place_new_case(position p, std::vector<cell> v)
+void game::place_new_case(position p, std::vector<cell> v)
+{
+    for (std::size_t c(0); c < v.size(); c++)
     {
-        for (std::size_t c(0); c < v.size(); c++)
-        {
 
-            _grid.place_cell(v[c], position(p.x(), p.y() + c));
-        }
+        _grid.place_cell(v[c], position(p.x(), p.y() + c));
     }
+}
 
-    float game::grid_dy() const
-    {
-        return _grid_dy;
-    }
+float game::grid_dy() const
+{
+    return _grid_dy;
+}
 
-    void game::inc_dy(delta const &d)
-    {
-        _grid_dy += d;
-    }
+void game::inc_dy(delta const &d)
+{
+    _grid_dy += d;
+}
 
-    void game::setWidth(size const &x)
-    {
-        _grid.Setmax_width(x);
-    }
-    void game::setHeight(size const &x)
-    {
-        _grid.Setmax_height(x);
-    }
+void game::setWidth(size const &x)
+{
+    _grid.Setmax_width(x);
+}
+void game::setHeight(size const &x)
+{
+    _grid.Setmax_height(x);
+}
 
-    size game::height() const
-    {
-        return _grid.max_height();
-    }
+size game::height() const
+{
+    return _grid.max_height();
+}
 
-    size game::width() const
-    {
-        return _grid.max_width();
-    }
+size game::width() const
+{
+    return _grid.max_width();
+}
 
-    void game::setColors_numbers(t_number_color const &x)
-    {
-        _grid.SetNbr_colors(x);
-    }
-    void game::init()
-    {
-        _grid.init();
-    }
+void game::setColors_numbers(t_number_color const &x)
+{
+    _grid.SetNbr_colors(x);
+}
+void game::init()
+{
+    _grid.init();
+}
 
-    bool game::target_verticale() const
-    {
-        return _target.isVertical();
-    }
+bool game::target_verticale() const
+{
+    return _target.isVertical();
+}
 
-    delta game::cellDx(position p) const
-    {
-        return _grid.cellDx(p);
-    }
+delta game::cellDx(position p) const
+{
+    return _grid.cellDx(p);
+}
 
-    delta game::cellDy(position p) const
-    {
-        return _grid.cellDy(p);
-    }
+delta game::cellDy(position p) const
+{
+    return _grid.cellDy(p);
+}
 
-    void game::setCellDy(position p, delta d)
-    {
-        _grid.setCellDy(p, d);
-    }
-    void game::resetCellDelta(position p)
-    {
-        _grid.resetCellDelta(p);
-    }
-    void game::setCellDx(position p, delta d)
-    {
-        _grid.setCellDx(p, d);
-    }
-    std::vector<position> game::max_column() const
-    {
-        return _grid.max_column();
-    }
+void game::setCellDy(position p, delta d)
+{
+    _grid.setCellDy(p, d);
+}
+void game::resetCellDelta(position p)
+{
+    _grid.resetCellDelta(p);
+}
+void game::setCellDx(position p, delta d)
+{
+    _grid.setCellDx(p, d);
+}
+std::vector<position> game::max_column() const
+{
+    return _grid.max_column();
+}
 
-    void game::add_garbage()
-    {
-        _grid.generate_garbage();
-    }
+void game::add_garbage()
+{
+    _grid.generate_garbage();
+}
 
-    bool game::not_hanging(position const &p) const
-    {
-        return _grid.not_hanging(p);
-    }
+bool game::not_hanging(position const &p) const
+{
+    return _grid.not_hanging(p);
+}
 
-    score game::get_score() const
-    {
-        return _score;
-    }
+score game::get_score() const
+{
+    return _score;
+}
 
-    void game::inc_score(score x)
-    {
-        _score += x ;
-    }
+void game::inc_score(score x)
+{
+    _score += x;
+}
 
-    void game::reset_score()
-    {
-        _score = 0;
-    }
+void game::reset_score()
+{
+    _score = 0;
+}
 
- bool game::is_garbage (position const & p)const{
+bool game::is_garbage(position const &p) const
+{
     return _grid.estMalus(p);
- }
+}
 
-void game::update_garbage_height(){
+void game::update_garbage_height()
+{
     _grid.update_garbage();
 }
 
-
-   void game::transform_malus_to_cell(std::vector<position> const & align_cell,std::vector<position *> &pos_cells){
-        _grid.transform_to_cell(align_cell,pos_cells);
-    }
+void game::transform_malus_to_cell(std::vector<position> const &align_cell, std::vector<position *> &pos_cells)
+{
+    _grid.transform_to_cell(align_cell, pos_cells);
+}

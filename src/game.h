@@ -75,6 +75,10 @@ public:
     bool is_garbage (position const & p)const;
     void update_garbage_height();
     void transform_malus_to_cell(std::vector<position> const & align_cell,std::vector<position *> &pos_cells);
+    size getsize(position const & p) const{return _grid.getSize(p);}
+
+    bool after(position const & p) const{return _grid.after(p);}
+    bool before(position const & p) const{return _grid.before(p);}
 private:
     grid _grid;
     target _target;

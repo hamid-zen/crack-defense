@@ -37,6 +37,9 @@ public:
     cordinate first_empty_line(position const & fst_cell,int size) const; //premiere ligne vide en partant du bas
     std::vector<position >  adjacent(position const & p) const ;
     void transform_to_cell(std::vector<position> const & align_cell,std::vector<position* > &pos_cells);
+    t_number getSize(position const & p)const;
+    bool before(position const & p) const;
+    bool after(position const & p) const;
 private:
     t_mat _board;
     cordinate _max_height;

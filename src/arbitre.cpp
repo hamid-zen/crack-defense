@@ -140,13 +140,9 @@ std::vector<position>  arbitre::update(t_action x)
 
     else {
         if (_joueur1->grid_dy() >= 64)
-        {   if(getFrame()%2==1)//toute les 5 secondes// a modifier toute les combien on genere une nvl ligne?
-            {
+        {   
                  _joueur1->add_new_row(150);
-                 std::cout<<"hello"<<std::endl;
-            }else{
-                _joueur1->add_new_row();
-            }   
+               
             // On remet a zero grid_dy
             _joueur1->setGrid_dy(0);
             delays.newline = false;

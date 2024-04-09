@@ -199,8 +199,16 @@ TEST_CASE("generate_garbage", "[test]")
     g.add_garbage();
     std::cout<<" l'after'"<<std::endl;
     g.show();
-    REQUIRE(1==1);
+    REQUIRE(g.before(position(3,4))==false);
+    REQUIRE(g.after(position(3,4))==true);
+    REQUIRE(g.before(position(4,4))==true);
+        REQUIRE(g.after(position(4,4))==true);
+
+    REQUIRE(g.before(position(5,4))==true);
+        REQUIRE(g.after(position(5,4))==false);
+
 }
+/**/
 TEST_CASE("est_malus", "[test]")
 {
     mysrand(3);
@@ -227,30 +235,50 @@ TEST_CASE("transform_to_cell", "[test]")
         mysrand(3);
     game g;
     g.rotate_target();
+    g.move_target(t_direction::up);
     g.move_target(t_direction::right);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
     g.switch_cells_target();
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::up);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.rotate_target();
+    g.move_target(t_direction::right);
+    g.switch_cells_target();
     g.move_target(t_direction::left);
     g.move_target(t_direction::left);
-    g.move_target(t_direction::up);
     g.add_garbage();
-    g.switch_cells_target();
-    g.move_target(t_direction::left);
-    std::cout<<"avant\n";
-        g.show();
+    std::cout<<"avant transformation\n";
+    g.show();
+    //std::vector<position> vec = g.alignment();
+    std::vector<position> vec;
+                std::cout<< "alignement : ";
+    vec.push_back(position(5,5));
+    vec.push_back(position(5,6));
+    vec.push_back(position(5,7));
+    for(auto x : vec){
+            std::cout<< "x : "<<x.x()<<" , y : "<<x.y()<<std::endl;
+    }
+   std::vector<position*> pos_cells;
 
-        std::vector<position> vec = g.alignment();
-
-   // g.transform_malus_to_cell(vec);
+    g.transform_malus_to_cell(vec,pos_cells);
     std::cout<<"apres\n";
     g.show();
 
-    
     // auto vec(g.adjacent(position(0,g.max_height() - 1 )));
-
-    REQUIRE(2==2);
+ std::cout<<"x "<<pos_cells[0]->x()<<" y "<<pos_cells[0]->y()<<std::endl;
+ std::cout<<g.before(*pos_cells[0])<<"cc";
+ std::cout<<g.after(*pos_cells[0])<<"cc";
+   REQUIRE(pos_cells.size()==3);
+  REQUIRE(3==3);
+}
+TEST_CASE("getsize", "[test]")
+{
+    mysrand(3);
+    game g;
+    g.show();
+    g.add_garbage();
+    g.show();
+    REQUIRE(g.getsize(position(2,4))==0);
+    REQUIRE(g.getsize(position(3,4))==3);
+    REQUIRE(g.getsize(position(4,4))==3);
+    REQUIRE(g.getsize(position(5,4))==3);
 }

@@ -42,14 +42,6 @@ std::string toString_color(t_colors color)
         _dy = newDy;
     }
 
-malusCell::malusCell(t_colors color,std::vector<std::shared_ptr<cell>>  vec)
-    : cell(color),_malus(std::move(vec)){}
+malusCell::malusCell(t_colors color,bool const &  bfr,bool const & aftr) 
+: cell(color),_before(bfr),_after(aftr){}
 
-    
-void malusCell::addMalus(std::shared_ptr<cell> newMalus) {
-    _malus.push_back(newMalus);
-}
-
-const std::vector<std::shared_ptr<cell>> & malusCell::getMalus() const {
-    return _malus; 
-}
