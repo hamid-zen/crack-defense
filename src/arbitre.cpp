@@ -114,7 +114,7 @@ std::vector<position>  arbitre::update(t_action x)
         }
         case t_action::exchange:
         {
-            if (!_joueur1->target_cells_empty() and delays.cells_switch1 == nullptr and delays.cells_switch2 == nullptr and !(_joueur1->target_verticale() and _joueur1->one_case_empty()))
+            if (!_joueur1->target_cells_empty() and delays.cells_switch1 == nullptr and delays.cells_switch2 == nullptr and !(_joueur1->target_verticale() and _joueur1->one_case_empty())and !(_joueur1->is_garbage(_joueur1->getcell1target()) || _joueur1->is_garbage(_joueur1->getcell2target())))
             {
 
                 delays.cells_switch1 = new position(_joueur1->getcell1target().x(), _joueur1->getcell1target().y());
