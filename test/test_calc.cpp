@@ -226,7 +226,7 @@ TEST_CASE("adjacent", "[test]")
     grid g;
     g.init();
     
-     auto vec(g.adjacent(position(0,g.max_height() - 1 )));
+     auto vec(g.garbage_adjacent(position(0,g.max_height() - 1 )));
 
     REQUIRE(vec.size()==2);
 }
@@ -248,27 +248,11 @@ TEST_CASE("transform_to_cell", "[test]")
     g.add_garbage();
     std::cout<<"avant transformation\n";
     g.show();
-    //std::vector<position> vec = g.alignment();
-    std::vector<position> vec;
-                std::cout<< "alignement : ";
-    vec.push_back(position(5,5));
-    vec.push_back(position(5,6));
-    vec.push_back(position(5,7));
-    for(auto x : vec){
-            std::cout<< "x : "<<x.x()<<" , y : "<<x.y()<<std::endl;
-    }
-   std::vector<position*> pos_cells;
-
+    std::vector<position> vec = g.alignment();
+    std::vector<position*> pos_cells;
     g.transform_malus_to_cell(vec,pos_cells);
-    std::cout<<"apres\n";
     g.show();
-
-    // auto vec(g.adjacent(position(0,g.max_height() - 1 )));
- std::cout<<"x "<<pos_cells[0]->x()<<" y "<<pos_cells[0]->y()<<std::endl;
- std::cout<<g.before(*pos_cells[0])<<"cc";
- std::cout<<g.after(*pos_cells[0])<<"cc";
    REQUIRE(pos_cells.size()==3);
-  REQUIRE(3==3);
 }
 TEST_CASE("getsize", "[test]")
 {
@@ -281,4 +265,14 @@ TEST_CASE("getsize", "[test]")
     REQUIRE(g.getsize(position(3,4))==3);
     REQUIRE(g.getsize(position(4,4))==3);
     REQUIRE(g.getsize(position(5,4))==3);
+}
+TEST_CASE("first", "[test]")
+{
+    mysrand(3);
+    game g;
+    g.show();
+    g.add_garbage();
+    g.show();
+    REQUIRE(g.firstMalus(position(5,4))==position(3,4));
+
 }

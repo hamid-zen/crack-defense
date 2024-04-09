@@ -45,3 +45,4 @@ std::string toString_color(t_colors color)
 malusCell::malusCell(t_colors color,bool const &  bfr,bool const & aftr) 
 : cell(color),_before(bfr),_after(aftr){}
 
+

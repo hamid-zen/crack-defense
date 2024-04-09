@@ -79,6 +79,7 @@ public:
 
     bool after(position const & p) const{return _grid.after(p);}
     bool before(position const & p) const{return _grid.before(p);}
+    position firstMalus(position const & p) const {return _grid.first(p);}
 private:
     grid _grid;
     target _target;

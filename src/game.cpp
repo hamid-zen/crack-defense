@@ -227,14 +227,14 @@ std::vector<position> game::vertical_alignment()
     // alignement verticale
     for (unsigned int i(0); i < _grid.max_width(); i++)
     {
-        auto k(0);
+        auto k(-1);
         do
-        {
-            t_colors clr = _grid(position(i, 0));
+        {            k++;
+
+            t_colors clr = _grid(position(i, k));
             vec.clear();
-            vec.push_back(position(i, 0)); // on ajoute la position de cette case au vecteur
-            k++;
-        } while (!not_hanging(position(i, k)) && k < _grid.max_height() && is_garbage(position(i,k-1)));
+            vec.push_back(position(i, k)); // on ajoute la position de cette case au vecteur
+        } while (k < _grid.max_height() && (!not_hanging(position(i, k)) ||  (is_garbage(position(i,k))|| _grid(position(i, k))==t_colors::empty_cell)));
         for (unsigned int j(k); j < _grid.max_height(); j++)
         {
 
@@ -295,7 +295,7 @@ std::vector<position> game::horizontal_alignment()
             vec.clear();
             vec.push_back(position(k, j)); // on ajoute la position de cette case au vecteur
             k++;
-        } while (!not_hanging(position(k, j)) && k < _grid.max_width() && is_garbage(position(k-1, j)));
+        } while (k < _grid.max_height() && (!not_hanging(position( k,j)) ||  (is_garbage(position(k,j))|| _grid(position( k,j))==t_colors::empty_cell)));
         for (unsigned int i(k); i < _grid.max_width(); i++)
         {
             if (vec.size() == 3)
