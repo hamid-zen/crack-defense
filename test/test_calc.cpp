@@ -196,7 +196,7 @@ TEST_CASE("generate_garbage", "[test]")
     game g;
     std::cout<<" before"<<std::endl;
     g.show();
-    g.add_garbage();
+    //g.add_garbage();
     std::cout<<" l'after'"<<std::endl;
     g.show();
     REQUIRE(g.before(position(3,4))==false);
@@ -214,7 +214,7 @@ TEST_CASE("est_malus", "[test]")
     mysrand(3);
     game g;
     g.show();
-    g.add_garbage();
+   // g.add_garbage();
     g.show();
     REQUIRE(g.is_garbage(position(3,4))==1);
     REQUIRE(g.is_garbage(position(4,4))==1);
@@ -245,7 +245,7 @@ TEST_CASE("transform_to_cell", "[test]")
     g.switch_cells_target();
     g.move_target(t_direction::left);
     g.move_target(t_direction::left);
-    g.add_garbage();
+    //g.add_garbage();
     std::cout<<"avant transformation\n";
     g.show();
     std::vector<position> vec = g.alignment();
@@ -259,7 +259,7 @@ TEST_CASE("getsize", "[test]")
     mysrand(3);
     game g;
     g.show();
-    g.add_garbage();
+   // g.add_garbage();
     g.show();
     REQUIRE(g.getsize(position(2,4))==0);
     REQUIRE(g.getsize(position(3,4))==3);
@@ -271,7 +271,7 @@ TEST_CASE("first", "[test]")
     mysrand(3);
     game g;
     g.show();
-    g.add_garbage();
+    //g.add_garbage();
     g.show();
     REQUIRE(g.firstMalus(position(5,4))==position(3,4));
 

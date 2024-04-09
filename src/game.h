@@ -67,7 +67,8 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
     std::vector<position>  max_column() const;
-    void add_garbage();
+    void add_garbage(std::vector<position*> & malus);
+    bool hanging_malus(position p);
     bool not_hanging(position const & p) const;
     score get_score()const;
     void inc_score(score x);

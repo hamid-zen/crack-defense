@@ -13,7 +13,8 @@ bool game::is_lost()
 {
     for (unsigned int i(0); i < _grid.max_width(); i++)
     {
-        if (_grid(position(i, 0)) != t_colors::empty_cell)
+        position p = position(i,0);
+        if (_grid(p) != t_colors::empty_cell and (is_garbage(p) and not_hanging(p)))
             return true;
     }
     return false;
@@ -453,6 +454,11 @@ void game::slideColumn(cordinate x, std::vector<position *> &cells)
     {
         if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y)))
             cells.push_back(new position(x, y));
+        else if(is_garbage(position(x,y))){
+            for(t_number i(firstMalus(position(x,y)).x());i<=getsize(position(x,y));i++){
+                cells.push_back(new position(i,y));
+            }
+        }
         y--;
     }
 }
@@ -554,9 +560,14 @@ std::vector<position> game::max_column() const
     return _grid.max_column();
 }
 
-void game::add_garbage()
+void game::add_garbage(std::vector<position*> & malus)
 {
-    _grid.generate_garbage();
+    _grid.generate_garbage(malus);
+}
+
+bool game::hanging_malus(position p)
+{
+    return _grid.hanging_garbage(p);
 }
 
 bool game::not_hanging(position const &p) const

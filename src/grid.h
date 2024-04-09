@@ -29,7 +29,7 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
    std::vector<position>  max_column() const;
-    void generate_garbage();
+    void generate_garbage(std::vector<position*> & malus);
     bool estMalus(position const & p) const;
     bool not_hanging(position const & p) const;
     void update_garbage();

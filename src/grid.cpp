@@ -220,7 +220,7 @@ std::vector<position>  grid::max_column() const{
 
 
 
-void grid::generate_garbage(){
+void grid::generate_garbage(std::vector<position*> & malus){
     auto vec(max_column());
     int taille ;
     int debut;
@@ -239,11 +239,15 @@ void grid::generate_garbage(){
         }
     }
     
-     _board[(debut+0) + j * _max_width]=std::make_unique<malusCell>(t_colors::garbage,false,true);
+     _board[(debut+0) + 0]=std::make_unique<malusCell>(t_colors::garbage,false,true);
+     malus.push_back(new position(debut,0));
+     
     for(int i(1);i<(taille-1);i++){
-       _board[(debut+i) + j * _max_width]=std::make_unique<malusCell>(t_colors::garbage,true,true);
+       _board[(debut+i) + 0]=std::make_unique<malusCell>(t_colors::garbage,true,true);
+       malus.push_back(new position(debut+i,0));
     }
-     _board[(debut+taille-1) + j * _max_width]=std::make_unique<malusCell>(t_colors::garbage,true,false);
+    malus.push_back(new position(debut+taille-1,0));
+     _board[(debut+taille-1) + 0]=std::make_unique<malusCell>(t_colors::garbage,true,false);
 
 
 }
@@ -314,9 +318,11 @@ t_number grid::getSize(position const & p)const{
              malus_cell = dynamic_cast<malusCell*>(_board[p.x()-i+ p.y() * _max_width].get());
             i++;
         }
-
+        return k;
     }
-     return k;
+    else {
+     return 1;
+    }
 }
 
 //modifier

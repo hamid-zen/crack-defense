@@ -8,12 +8,12 @@ arbitre::arbitre()
 }
 std::vector<position>  arbitre::update(t_action x)
 {
-    _joueur1->update_garbage_height();
+    //_joueur1->update_garbage_height();
     auto it = delays.cells_slide.begin();
     while (it != delays.cells_slide.end())
     {
         auto cells = *it;
-        if ((*_joueur1)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and _joueur1->cellDy(position(cells->x(),cells->y()+1))==0)
+        if (((*_joueur1)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and _joueur1->cellDy(position(cells->x(),cells->y()+1))==0)||(_joueur1->is_garbage(*cells)and !_joueur1->hanging_malus(*cells)))
         {                                      // Supprimer les éléments pairs
             it = delays.cells_slide.erase(it); // Supprimer l'élément et mettre à jour l'itérateur
         }
@@ -164,7 +164,7 @@ std::vector<position>  arbitre::update(t_action x)
         }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {   delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
             delays.last_garbage=getFrame();
-            _joueur1->add_garbage();
+            _joueur1->add_garbage(delays.cells_slide);
 
         }   
          _nb_frame++; // on incremente le nombre de frame
