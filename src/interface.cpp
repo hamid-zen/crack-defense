@@ -1,7 +1,5 @@
 #include "interface.h"
 
-#include <cmath>
-
 // #E882E8 color target
 // #255,255,255 color case vide
 // 
@@ -12,16 +10,19 @@ interface::interface():_width(6),_difficulty(4) {
 void interface::play(t_number ind)
 {
     arbitre _arbitre(ind);
+    _arbitre.init();
+
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
-
     t_number _width_cell = 64 ;
     t_number score_tab_width = 500 ;
     t_number play_tab_width = _arbitre.getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
     t_number total_height = _arbitre.getJoueur().height() * _width_cell + 2 * thickness_line ;
+    auto x(0.001);
 
+    // On init la partie affichage du score
     sf::Text _text_score = sf::Text("SCORE",_font,60);
     _text_score.setOrigin(sf::Vector2f((_text_score.getGlobalBounds().width)/(2*_text_score.getScale().x),(_text_score.getGlobalBounds().height)/(2*_text_score.getScale().y)));
     _text_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2));
@@ -32,14 +33,11 @@ void interface::play(t_number ind)
     _number_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2 + 100));
     _number_score.setFillColor(color_line);
 
-
-    auto x(0.001);
-    
-    _arbitre.init();
+    // On init la window
     sf::RenderWindow window(sf::VideoMode((total_width), (total_height)), "Habibi");
-    window.setFramerateLimit(30); // Pour set le framerate
+    window.setFramerateLimit(30);
 
-
+    // On dessine les bordures
     sf::RectangleShape line1(sf::Vector2f(thickness_line, total_height-thickness_line));
     line1.setFillColor(color_line);
     //sf::RectangleShape line2(sf::Vector2f(64 * _arbitre.getJoueur().width()+thickness_line, thickness_line));
@@ -55,107 +53,78 @@ void interface::play(t_number ind)
     line5.setFillColor(color_line);
     line5.setPosition(total_width-thickness_line,0);
 
-            
-
-
     // On charge les textures
-    sf::Texture blue_tile_texture, yellow_tile_texture, orange_tile_texture, pink_tile_texture,
-        blue_shade_tile_texture, yellow_shade_tile_texture, orange_shade_tile_texture,
-        pink_shade_tile_texture,red_shade_tile_texture, empty_tile_texture, target_texture,all_tile_texture;
-
-    blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
-    yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
-    orange_tile_texture.loadFromFile("../textures/single_blocks/Orange_colored.png");
-    pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
-    all_tile_texture.loadFromFile("../textures/single_blocks/special.png");
-
-    //   sky_blue_tile_texture.loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
-   // purple_tile_texture.loadFromFile("../textures/single_blocks/Purple_colored.png");
-   // green_tile_texture.loadFromFile("../textures/single_blocks/Green_colored.png");
-    //white_tile_texture.loadFromFile("../textures/single_blocks/White_colored.png");
-
-    blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
-    yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
-    orange_shade_tile_texture.loadFromFile("../textures/single_blocks/Orange_shade.png");
-    pink_shade_tile_texture.loadFromFile("../textures/single_blocks/Pink_shade.png");
-    red_shade_tile_texture.loadFromFile("../textures/single_blocks/Red_shade.png");
-
-    empty_tile_texture.loadFromFile("../textures/single_blocks/Ghost.png");
-    target_texture.loadFromFile("../textures/single_blocks/Target.png");
+    load_textures();
 
     // On cree les sprite
     sf::Sprite s_tile, s_target(target_texture);
     //s_tile.setOrigin(-_width_cell/2,-_width_cell/2);
 
-    // On cree la clock
-    sf::Clock clock;
     while (window.isOpen() && !_arbitre.getJoueur().is_lost())
     {
-        // TODO: a chaque fois que dy==30 il faut reelement faire monter la ligne
-        // auto fps = 1.0f / (clock.restart().asSeconds());
-        // std::cout << "fps: " << fps << "\n";
-
+        window.clear(color_background);
         sf::Event e;
-        t_action act(t_action::nothing);
+        t_action action_utilisateur(t_action::nothing);
         while (window.pollEvent(e))
         {
             if (e.type == sf::Event::Closed)
                 window.close();
             if (e.type == sf::Event::KeyPressed)
             {
-                if (e.key.code == sf::Keyboard::RShift)
-                    act = t_action::change_direction;
-                else if (e.key.code == sf::Keyboard::Up)
-                    act = (t_action::go_up);
-                else if (e.key.code == sf::Keyboard::Left)
-                    act = (t_action::go_left);
-                else if (e.key.code == sf::Keyboard::Right)
-                    act = (t_action::go_right);
-                else if (e.key.code == sf::Keyboard::Down)
-                    act = (t_action::go_down);
-                else if (e.key.code == sf::Keyboard::Key::Space)
-                {
-                    act = (t_action::exchange);
-                }
-                else if (e.key.code == sf::Keyboard::Key::Enter)
-                {
-                    act = (t_action::accelerate);
-                }
-                else if(e.key.code == sf::Keyboard::Key::Escape)
-                {
+                switch (e.key.code) {
+                case sf::Keyboard::RShift:
+                    action_utilisateur = t_action::change_direction;
+                    break;
+                case sf::Keyboard::Up:
+                    action_utilisateur = t_action::go_up;
+                    break;
+                case sf::Keyboard::Left:
+                    action_utilisateur = t_action::go_left;
+                    break;
+                case sf::Keyboard::Right:
+                    action_utilisateur = t_action::go_right;
+                    break;
+                case sf::Keyboard::Down:
+                    action_utilisateur = t_action::go_down;
+                    break;
+                case sf::Keyboard::Space:
+                    action_utilisateur = t_action::exchange;
+                    break;
+                case sf::Keyboard::Enter:
+                    action_utilisateur = t_action::accelerate;
+                    break;
+                case sf::Keyboard::Escape:{
                     window.close();
                     menu(ind);
+                    break;
                 }
-                else
-                {
-                    act = t_action::nothing;
+                default:
+                    action_utilisateur = t_action::nothing;
+                    break;
                 }
             }
-        } 
+        }
+
+        // Traitement du score
         t_number _temp_score = _arbitre.getJoueur().get_score();
-        if(_temp_score>100){
-             _number_score.setString(sf::String(std::to_string(_temp_score/100)+std::to_string(_temp_score%100))); 
-        }
-
-        else if(_temp_score>10){
-             _number_score.setString(sf::String(std::to_string(_temp_score/10)+std::to_string(_temp_score%10))); 
-        }
+        if(_temp_score>100)
+            _number_score.setString(sf::String(std::to_string(_temp_score/100)+std::to_string(_temp_score%100)));
+        else if(_temp_score>10)
+            _number_score.setString(sf::String(std::to_string(_temp_score/10)+std::to_string(_temp_score%10)));
         else
-            _number_score.setString(sf::String(std::to_string(_temp_score))); 
+            _number_score.setString(sf::String(std::to_string(_temp_score)));
         _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
-  
-        auto vec(_arbitre.update(act));
-        
 
-        window.clear(color_background);
+        // On update l'etat du jeu
+        auto vec(_arbitre.update(action_utilisateur));
 
-        // Affichage de la board "jouable"
+        // Affichage de la board
         for (std::size_t i(0); i < _arbitre.getJoueur().height(); i++)
         {
             for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
             {
                 t_number x(0);
-                // On get la couleur actuelle
+
                 auto dx = _arbitre.getJoueur().cellDx(position(j, i));
                 auto dy = _arbitre.getJoueur().cellDy(position(j, i));
                 if(_arbitre.getJoueur().is_garbage(position(j,i))){
@@ -163,85 +132,101 @@ void interface::play(t_number ind)
                     s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
                     window.draw(s_tile);
                 }else{
-                auto color = _arbitre.getJoueur()(position(j, i));
+                    auto color = _arbitre.getJoueur()(position(j, i));
 
 
-                // on check quel sprite afficher
-                switch (color)
-                {
-                case t_colors::blue:
-                {
-                    s_tile.setTexture(blue_tile_texture);
-                    break;
-                }
-                case t_colors::pink:
-                {
-                    s_tile.setTexture(pink_tile_texture);
-                    break;
-                }
-                case t_colors::yellow:
-                {
-                    s_tile.setTexture(yellow_tile_texture);
-                    break;
-                }
-                case t_colors::orange:
-                {
-                    s_tile.setTexture(orange_tile_texture);
-                    break;
-                }
-                case t_colors::empty_cell:
-                {
-                    s_tile.setTexture(empty_tile_texture);
-                    break;
-                }
-                case t_colors::all:{
-                    s_tile.setTexture(all_tile_texture);
-                    break;
-                }
-                }
+                    // on check quel sprite afficher
+                    switch (color)
+                    {
+                    case t_colors::blue:
+                    {
+                        s_tile.setTexture(blue_tile_texture);
+                        break;
+                    }
+                    case t_colors::pink:
+                    {
+                        s_tile.setTexture(pink_tile_texture);
+                        break;
+                    }
+                    case t_colors::yellow:
+                    {
+                        s_tile.setTexture(yellow_tile_texture);
+                        break;
+                    }
+                    case t_colors::orange:
+                    {
+                        s_tile.setTexture(orange_tile_texture);
+                        break;
+                    }
+                    case t_colors::sky_blue:
+                    {
+                        s_tile.setTexture(sky_blue_tile_texture);
+                        break;
+                    }
+                    case t_colors::purple:
+                    {
+                        s_tile.setTexture(purple_tile_texture);
+                        break;
+                    }
+                    case t_colors::green:
+                    {
+                        s_tile.setTexture(green_tile_texture);
+                        break;
+                    }
+                    case t_colors::white:
+                    {
+                        s_tile.setTexture(white_tile_texture);
+                        break;
+                    }
+                    case t_colors::empty_cell:
+                    {
+                        s_tile.setTexture(empty_tile_texture);
+                        break;
+                    }
+                    case t_colors::all:{
+                        s_tile.setTexture(all_tile_texture);
+                        break;
+                    }
+                    default: break;
+                    }
 
-                if (vec.size() == 0)
-                {
-                    s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
+                    if (vec.size() == 0)
+                        s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
+                    else
+                    {
+                        s_tile.setPosition(_width_cell * j +thickness_line + dx, _width_cell * i +thickness_line + dy);
+                        auto it(std::find(vec.begin(), vec.end(), position(j, i)));
+                        if (it != vec.end())
+                        {
+                            if (x <= 360)
+                            {
+                                //s_tile.setOrigin(64 / 2.f, 64 / 2.f);
+                                s_tile.rotate(0.001f);
+
+                                // float scaleFactor =1.f + std::sin(x * 3.14159f / 180) * 0.2f; // Variation de l'échelle en fonction de l'angle de rotation
+                                // s_tile.setScale(scaleFactor, scaleFactor);
+                                x += 0.001f;
+                                window.draw(s_tile);
+                            }
+
+                            _arbitre.getJoueur().delete_cell(position(j, i));
+                            _arbitre.getJoueur().slideColumn(j, _arbitre.getDelays().cells_slide);
+
+                            window.draw(s_tile);
+                            //s_tile.setOrigin(0, 0);
+                            vec.erase(it);
+                        }
+                    }
                     window.draw(s_tile);
                 }
-                else
-                {
-                    s_tile.setPosition(_width_cell * j +thickness_line + dx, _width_cell * i +thickness_line + dy);
-                    auto it(std::find(vec.begin(), vec.end(), position(j, i)));
-                    if (it != vec.end())
-                    {
-                        if (x <= 360)
-                        {
-                            //s_tile.setOrigin(64 / 2.f, 64 / 2.f);
-                            s_tile.rotate(0.001f);
 
-                            // float scaleFactor =1.f + std::sin(x * 3.14159f / 180) * 0.2f; // Variation de l'échelle en fonction de l'angle de rotation
-                            // s_tile.setScale(scaleFactor, scaleFactor);
-                            x += 0.001f;
-                            window.draw(s_tile);
-                        }
-
-                        _arbitre.getJoueur().delete_cell(position(j, i));
-                        _arbitre.getJoueur().slideColumn(j, _arbitre.getDelays().cells_slide);
-
-                        window.draw(s_tile);
-                        //s_tile.setOrigin(0, 0);
-                        vec.erase(it);
-                    }
-                }
-                window.draw(s_tile);
-                }
+                // Dessin de la target
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i))
                 {
                     if (vec.size() == 0)
-                    {
                         s_target.setPosition(64 * j+thickness_line, 64 * i+thickness_line - _arbitre.getJoueur().grid_dy());
-                    }
                     else
-                    {
                         s_target.setPosition(_width_cell * j, _width_cell * i);
-                    }
                     window.draw(s_target);
                 }
             }
@@ -278,18 +263,35 @@ void interface::play(t_number ind)
                     s_tile.setTexture(orange_shade_tile_texture);
                     break;
                 }
-                case t_colors::empty_cell:
+                case t_colors::sky_blue:
                 {
-                    s_tile.setTexture(empty_tile_texture);
+                    s_tile.setTexture(sky_blue_shade_tile_texture);
                     break;
-                } // cas non possible
+                }
+                case t_colors::purple:
+                {
+                    s_tile.setTexture(purple_shade_tile_texture);
+                    break;
+                }
+                case t_colors::green:
+                {
+                    s_tile.setTexture(green_shade_tile_texture);
+                    break;
+                }
+                case t_colors::white:
+                {
+                    s_tile.setTexture(white_shade_tile_texture);
+                    break;
+                }
+                default: break;
                 }
                 s_tile.setPosition(_width_cell * j+thickness_line, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line); // adapter la vitesse par rapport a la taille de la fenetre
                 window.draw(s_tile);
             }
 
         }
-        // On update
+
+        // On display
         window.draw(_number_score);
         window.draw(_text_score);
         window.draw(line1);
@@ -381,7 +383,7 @@ void interface::menu(t_number ind){
     t_number _index_choice_pos = 0; 
 
     //add choice_pos
-   
+
     _choices_pos.push_back(&_number_player_choice);
     _choices_pos.push_back(&_difficulty_choice);
     _choices_pos.push_back(&_text_play);
@@ -502,4 +504,30 @@ void interface::menu(t_number ind){
         window.display();
     }
 
+}
+
+void interface::load_textures()
+{
+    blue_tile_texture.loadFromFile("../textures/single_blocks/Blue_colored.png");
+    yellow_tile_texture.loadFromFile("../textures/single_blocks/Yellow_colored.png");
+    orange_tile_texture.loadFromFile("../textures/single_blocks/Orange_colored.png");
+    pink_tile_texture.loadFromFile("../textures/single_blocks/Pink_colored.png");
+    all_tile_texture.loadFromFile("../textures/single_blocks/special.png");
+    sky_blue_tile_texture.loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
+    purple_tile_texture.loadFromFile("../textures/single_blocks/Purple_colored.png");
+    green_tile_texture.loadFromFile("../textures/single_blocks/Green_colored.png");
+    white_tile_texture.loadFromFile("../textures/single_blocks/White_colored.png");
+
+    blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Blue_shade.png");
+    yellow_shade_tile_texture.loadFromFile("../textures/single_blocks/Yellow_shade.png");
+    orange_shade_tile_texture.loadFromFile("../textures/single_blocks/Orange_shade.png");
+    pink_shade_tile_texture.loadFromFile("../textures/single_blocks/Pink_shade.png");
+    red_shade_tile_texture.loadFromFile("../textures/single_blocks/Red_shade.png");
+    sky_blue_shade_tile_texture.loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
+    purple_shade_tile_texture.loadFromFile("../textures/single_blocks/Purple_colored.png");
+    green_shade_tile_texture.loadFromFile("../textures/single_blocks/Green_colored.png");
+    white_shade_tile_texture.loadFromFile("../textures/single_blocks/White_colored.png");
+
+    empty_tile_texture.loadFromFile("../textures/single_blocks/Ghost.png");
+    target_texture.loadFromFile("../textures/single_blocks/Target.png");
 }

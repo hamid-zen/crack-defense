@@ -72,7 +72,7 @@ std::vector<position>  arbitre::update(t_action x)
                 _joueur1->switch_cells_position(*delays.cells_switch1, *delays.cells_switch2);
                 if (_joueur1->one_case_empty(*delays.cells_switch1, *delays.cells_switch2))
                 { // si une deux cases etaient vide
-                   _joueur1->slideColumn(delays.cells_switch1->x(), delays.cells_slide);
+                    _joueur1->slideColumn(delays.cells_switch1->x(), delays.cells_slide);
                     _joueur1->slideColumn(delays.cells_switch2->x(), delays.cells_slide);
                 }
                 delays.cells_switch1 = nullptr;
@@ -129,6 +129,7 @@ std::vector<position>  arbitre::update(t_action x)
             delays.newline = true;
             break;
         }
+        default: break;
         }
     }
 
@@ -141,8 +142,8 @@ std::vector<position>  arbitre::update(t_action x)
             // On remet a zero grid_dy
             _joueur1->setGrid_dy(0);
             delays.newline = false;
-             _vertical_speed = delays.oldspeed;
-             std::cout<<"2";
+            _vertical_speed = delays.oldspeed;
+            std::cout<<"2";
         }
         _vertical_speed += 0.1;
         _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
@@ -151,8 +152,8 @@ std::vector<position>  arbitre::update(t_action x)
     else {
         if (_joueur1->grid_dy() >= 64)
         {   
-                 _joueur1->add_new_row(150);
-               
+            _joueur1->add_new_row(150);
+
             // On remet a zero grid_dy
             _joueur1->setGrid_dy(0);
             delays.newline = false;
@@ -165,7 +166,7 @@ std::vector<position>  arbitre::update(t_action x)
             delays.oldspeed +=0.00001 ;
         }
     }
-     
+
     auto v(_joueur1->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
     if (v.size() >= 3)
     {  if(delays.last_frame_alignment==-1)//pas encore initialisé
@@ -177,12 +178,12 @@ std::vector<position>  arbitre::update(t_action x)
             _joueur1->add_garbage(delays.cells_slide);
 
         }   
-         _nb_frame++; // on incremente le nombre de frame
+        _nb_frame++; // on incremente le nombre de frame
 
-       
+
         if(delays.last_garbage>0){
-         _joueur1->transform_malus_to_cell(v,delays.cells_slide);
-         //ajouter que les cases glissent 
+            _joueur1->transform_malus_to_cell(v,delays.cells_slide);
+            //ajouter que les cases glissent
         }
         return v;
 

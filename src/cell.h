@@ -12,7 +12,7 @@ using cordinate =uint16_t ;
 
 
 enum class t_colors {
-    blue, pink, yellow, orange,sky_blue,white,purple,green,all, empty_cell,garbage
+    blue, pink, yellow, orange, sky_blue, white, purple, green, all, empty_cell, garbage
 };
 std::string toString_color(t_colors color);
 

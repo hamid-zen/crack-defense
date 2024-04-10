@@ -22,27 +22,31 @@ std::string toString_color(t_colors color)
     case t_colors::pink: return "p";
     case t_colors::yellow: return "y";
     case t_colors::orange: return "o";
+    case t_colors::sky_blue: return "s";
+    case t_colors::white: return "w";
+    case t_colors::purple: return "p";
+    case t_colors::green: return "g";
     default: return "";
     }
 }
-    delta cell::dx() const{
-        return _dx; 
-    }
-    delta cell::dy() const {
-        return _dy;
-    }
+delta cell::dx() const{
+    return _dx;
+}
+delta cell::dy() const {
+    return _dy;
+}
 
-    void cell::setDx(delta newDx)
-    {
-        _dx = newDx;
-    }
+void cell::setDx(delta newDx)
+{
+    _dx = newDx;
+}
 
-    void cell::setDy(delta newDy)
-    {
-        _dy = newDy;
-    }
+void cell::setDy(delta newDy)
+{
+    _dy = newDy;
+}
 
 malusCell::malusCell(t_colors color,bool const &  bfr,bool const & aftr) 
-: cell(color),_before(bfr),_after(aftr){}
+    : cell(color),_before(bfr),_after(aftr){}
 
 
