@@ -20,7 +20,7 @@ void interface::play(t_number ind)
     t_number play_tab_width = _arbitre.getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
     t_number total_height = _arbitre.getJoueur().height() * _width_cell + 2 * thickness_line ;
-    auto x(0.001);
+    auto angle(0);
 
     // On init la partie affichage du score
     sf::Text _text_score = sf::Text("SCORE",_font,60);
@@ -33,9 +33,17 @@ void interface::play(t_number ind)
     _number_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2 + 100));
     _number_score.setFillColor(color_line);
 
+
     // On init la window
     sf::RenderWindow window(sf::VideoMode((total_width), (total_height)), "Habibi");
-    window.setFramerateLimit(30);
+    window.setFramerateLimit(6);
+
+    // test
+    // sf::RectangleShape square(sf::Vector2f(64, 64));
+    // square.setPosition(play_tab_width+32, thickness_line+32);
+    // square.setOrigin(sf::Vector2f((square.getGlobalBounds().width)/(2*square.getScale().x),(square.getGlobalBounds().height)/(2*square.getScale().y)));
+    // square.setFillColor(sf::Color::Blue);
+
 
     // On dessine les bordures
     sf::RectangleShape line1(sf::Vector2f(thickness_line, total_height-thickness_line));
@@ -57,12 +65,12 @@ void interface::play(t_number ind)
     load_textures();
 
     // On cree les sprite
-    sf::Sprite s_tile, s_target(target_texture);
-    //s_tile.setOrigin(-_width_cell/2,-_width_cell/2);
+    sf::Sprite s_tile, s_target(target_texture), s_tile_test(blue_tile_texture);
 
     while (window.isOpen() && !_arbitre.getJoueur().is_lost())
     {
         window.clear(color_background);
+        // square.rotate(1);
         sf::Event e;
         t_action action_utilisateur(t_action::nothing);
         while (window.pollEvent(e))
@@ -93,6 +101,9 @@ void interface::play(t_number ind)
                 case sf::Keyboard::Enter:
                     action_utilisateur = t_action::accelerate;
                     break;
+                case sf::Keyboard::M:
+                    action_utilisateur = t_action::generate_malus;
+                    break;
                 case sf::Keyboard::Escape:{
                     window.close();
                     menu(ind);
@@ -116,7 +127,8 @@ void interface::play(t_number ind)
         _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
 
         // On update l'etat du jeu
-        auto vec(_arbitre.update(action_utilisateur));
+        _arbitre.update(action_utilisateur);
+        auto vec(_arbitre.getDelays().cells_align);
 
         // Affichage de la board
         for (std::size_t i(0); i < _arbitre.getJoueur().height(); i++)
@@ -135,7 +147,6 @@ void interface::play(t_number ind)
                     auto color = _arbitre.getJoueur()(position(j, i));
 
 
-                    // on check quel sprite afficher
                     switch (color)
                     {
                     case t_colors::blue:
@@ -190,34 +201,28 @@ void interface::play(t_number ind)
                     default: break;
                     }
 
+                    if(s_tile.getOrigin().x == 0)
+                        s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
+
                     if (vec.size() == 0)
-                        s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
+                        s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy() + _width_cell/2);
                     else
                     {
-                        s_tile.setPosition(_width_cell * j +thickness_line + dx, _width_cell * i +thickness_line + dy);
+                        s_tile.setPosition(_width_cell * j +thickness_line + dx + _width_cell/2, _width_cell * i +thickness_line + dy  + _width_cell/2);
                         auto it(std::find(vec.begin(), vec.end(), position(j, i)));
                         if (it != vec.end())
                         {
-                            if (x <= 360)
-                            {
-                                //s_tile.setOrigin(64 / 2.f, 64 / 2.f);
-                                s_tile.rotate(0.001f);
-
-                                // float scaleFactor =1.f + std::sin(x * 3.14159f / 180) * 0.2f; // Variation de l'échelle en fonction de l'angle de rotation
-                                // s_tile.setScale(scaleFactor, scaleFactor);
-                                x += 0.001f;
-                                window.draw(s_tile);
-                            }
-
-                            _arbitre.getJoueur().delete_cell(position(j, i));
-                            _arbitre.getJoueur().slideColumn(j, _arbitre.getDelays().cells_slide);
-
-                            window.draw(s_tile);
+                            s_tile.rotate(_arbitre.getDelays().angle);
+                            s_tile.setScale(_arbitre.getDelays().scale, _arbitre.getDelays().scale);
                             //s_tile.setOrigin(0, 0);
                             vec.erase(it);
                         }
                     }
+
                     window.draw(s_tile);
+                    s_tile.setRotation(0);
+                    s_tile.setScale(1, 1);
+                    //s_tile.setOrigin(0, 0);
                 }
 
                 // Dessin de la target
@@ -231,65 +236,66 @@ void interface::play(t_number ind)
                 }
             }
         }
-        if (vec.size() == 0)
-        {
+        // if (vec.size() == 0)
+        // {
 
-            // Affichage de la ligne qui monte
-            for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
-            {
-                // On get la couleur actuelle
-                auto color = _arbitre.getJoueur()(position(j, _arbitre.getJoueur().height()));
+        //     //TODO: deplacer vers la boucle
+        //     // Affichage de la ligne qui monte
+        //     for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
+        //     {
+        //         // On get la couleur actuelle
+        //         auto color = _arbitre.getJoueur()(position(j, _arbitre.getJoueur().height()));
 
-                // on check quel sprite afficher
-                switch (color)
-                {
-                case t_colors::blue:
-                {
-                    s_tile.setTexture(blue_shade_tile_texture);
-                    break;
-                }
-                case t_colors::pink:
-                {
-                    s_tile.setTexture(pink_shade_tile_texture);
-                    break;
-                }
-                case t_colors::yellow:
-                {
-                    s_tile.setTexture(yellow_shade_tile_texture);
-                    break;
-                }
-                case t_colors::orange:
-                {
-                    s_tile.setTexture(orange_shade_tile_texture);
-                    break;
-                }
-                case t_colors::sky_blue:
-                {
-                    s_tile.setTexture(sky_blue_shade_tile_texture);
-                    break;
-                }
-                case t_colors::purple:
-                {
-                    s_tile.setTexture(purple_shade_tile_texture);
-                    break;
-                }
-                case t_colors::green:
-                {
-                    s_tile.setTexture(green_shade_tile_texture);
-                    break;
-                }
-                case t_colors::white:
-                {
-                    s_tile.setTexture(white_shade_tile_texture);
-                    break;
-                }
-                default: break;
-                }
-                s_tile.setPosition(_width_cell * j+thickness_line, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line); // adapter la vitesse par rapport a la taille de la fenetre
-                window.draw(s_tile);
-            }
+        //         // // on check quel sprite afficher
+        //         // switch (color)
+        //         // {
+        //         // case t_colors::blue:
+        //         // {
+        //         //     s_tile.setTexture(blue_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::pink:
+        //         // {
+        //         //     s_tile.setTexture(pink_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::yellow:
+        //         // {
+        //         //     s_tile.setTexture(yellow_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::orange:
+        //         // {
+        //         //     s_tile.setTexture(orange_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::sky_blue:
+        //         // {
+        //         //     s_tile.setTexture(sky_blue_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::purple:
+        //         // {
+        //         //     s_tile.setTexture(purple_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::green:
+        //         // {
+        //         //     s_tile.setTexture(green_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // case t_colors::white:
+        //         // {
+        //         //     s_tile.setTexture(white_shade_tile_texture);
+        //         //     break;
+        //         // }
+        //         // default: break;
+        //         // }
+        //         s_tile.setPosition(_width_cell * j+thickness_line, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line); // adapter la vitesse par rapport a la taille de la fenetre
+        //         window.draw(s_tile);
+        //     }
 
-        }
+        // }
 
         // On display
         window.draw(_number_score);
@@ -299,6 +305,7 @@ void interface::play(t_number ind)
         window.draw(line3);
         window.draw(line4);
         window.draw(line5);
+        angle+=5;
         window.display();
     }
 }

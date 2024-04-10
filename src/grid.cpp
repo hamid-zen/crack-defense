@@ -82,7 +82,7 @@ void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 lign
 
 t_colors grid::operator()(position p) const
 {
-    if(p.x() < _max_width && p.y() <= _max_height && _board[ p.x() + p.y() *_max_width ])
+    if(p.x() < _max_width && p.y() <= _max_height && _board[ p.x() + p.y() *_max_width])
         return _board[ p.x() + p.y() * _max_width ] -> color();
     else return t_colors::empty_cell;
 
@@ -190,11 +190,10 @@ void grid::new_row(int frame)
     auto x(nombreAleatoire(_max_width-1)); //colone de la case special
     auto vec(generate_random_line(_max_width));
     for (cordinate i(0); i < _max_width; i++) {
-        if(frame==150 && i==x){
-            _board[i + _max_height * _max_width] = std::make_unique<cell>(t_colors::all);
-        }else{
+        // if(frame==150 && i==x)
+        //     _board[i + _max_height * _max_width] = std::make_unique<cell>(t_colors::all);
+        // else
             _board[i + _max_height * _max_width] = std::make_unique<cell>(vec[i]); //ici j=max_height car on remplie la toute premiere ligne(celle qui est caché pour l'insatnt)
-        }
     }
 }
 
@@ -259,7 +258,6 @@ bool grid::estMalus(position const & p) const{
     if(_board[p.x() + p.y() * _max_width] !=nullptr)
         return _board[p.x() + p.y() * _max_width]->estmalus();
     else return false;
-
 }
 
 
@@ -275,12 +273,14 @@ bool grid::not_hanging(position const & p) const{
 }
 
 bool grid::hanging_garbage(position const & p) const{
-    auto j(p.y());
-    
-    auto size(getSize(position (p.x(),j)));
-    for (unsigned int i(p.x()); i < (p.x()+size); i++)
+
+    auto y(p.y());
+    auto x(first(p).x());
+    auto size(getSize(position (p.x(), y)));
+
+    for (unsigned int i(x); i < (x+size); i++)
     {
-        if(_board[i + j * _max_width]!=nullptr && not_hanging(position(i,j))){
+        if(_board[i + y * _max_width]!=nullptr && not_hanging(position(i,y))){
             return false; // ya une des cases du malus qui est "retenue"
         }
     }

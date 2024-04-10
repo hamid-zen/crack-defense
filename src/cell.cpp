@@ -26,6 +26,8 @@ std::string toString_color(t_colors color)
     case t_colors::white: return "w";
     case t_colors::purple: return "p";
     case t_colors::green: return "g";
+    case t_colors::garbage: return "m";
+    case t_colors::all: return "a";
     default: return "";
     }
 }
@@ -48,5 +50,3 @@ void cell::setDy(delta newDy)
 
 malusCell::malusCell(t_colors color,bool const &  bfr,bool const & aftr) 
     : cell(color),_before(bfr),_after(aftr){}
-
-
