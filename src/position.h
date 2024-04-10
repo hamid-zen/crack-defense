@@ -1,6 +1,6 @@
 #pragma once
-#include<cstdint>
-#include<iostream>
+#include <cstdint>
+#include <iostream>
 
 using cordinate = uint16_t ;
 using size = uint16_t ;

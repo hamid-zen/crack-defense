@@ -93,6 +93,9 @@ void interface::play(t_number ind)
                 case sf::Keyboard::Enter:
                     action_utilisateur = t_action::accelerate;
                     break;
+                case sf::Keyboard::M:
+                    action_utilisateur = t_action::generate_malus;
+                    break;
                 case sf::Keyboard::Escape:{
                     window.close();
                     menu(ind);

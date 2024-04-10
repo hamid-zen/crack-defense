@@ -14,7 +14,7 @@ bool game::is_lost()
     for (unsigned int i(0); i < _grid.max_width(); i++)
     {
         position p = position(i,0);
-        if (_grid(p) != t_colors::empty_cell and (is_garbage(p) and not_hanging(p)))
+        if ((_grid(p) != t_colors::empty_cell && !is_garbage(p)) || (is_garbage(p) && not_hanging(p)))
             return true;
     }
     return false;
@@ -374,8 +374,8 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
                 {                    vec.clear();
 
                     if(i>0 && _grid(position(i-1, j))==t_colors::all){
-                    vec.push_back(position(i-1, j));
-                }
+                        vec.push_back(position(i-1, j));
+                    }
                 }
                 else if (std::find(p.begin(), p.end(), position(i, j)) != p.end())
                 {
@@ -452,13 +452,25 @@ void game::slideColumn(cordinate x, std::vector<position *> &cells)
     }
     while (y > 0)
     {
-        if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y)))
-            cells.push_back(new position(x, y));
-        else if(is_garbage(position(x,y))){
-            for(t_number i(firstMalus(position(x,y)).x());i<=getsize(position(x,y));i++){
-                cells.push_back(new position(i,y));
+        auto position_to_add(new position(x, y));
+        if (std::find(cells.begin(), cells.end(), position_to_add) == cells.end()){
+            if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y)))
+                cells.push_back(new position(x, y));
+            else if (is_garbage(position(x,y))) {
+                std::cout << "position: x= " << x << ", y= "<< y << "\n";
+                std::cout << "garbage: " << is_garbage(position(x,y)) << ", hanging: "<< hanging_malus(position(x,y)) << "\n";
+            }
+            if(is_garbage(position(x,y)) and hanging_malus(position(x,y))){
+                std::cout << "garbage: x= " << x << ", y= "<< y << "\n";
+                auto x_first_malus = firstMalus(position(x,y)).x();
+                auto malus_size = getsize(position(x,y));
+                for(t_number i(x_first_malus);i < malus_size+x_first_malus;i++){
+                    std::cout << "added: " << toString_color(_grid(position(i,y))) << ", at position " << i << ", " << y << "\n";
+                    cells.push_back(new position(i,y));
+                }
             }
         }
+        delete position_to_add;
         y--;
     }
 }
@@ -484,10 +496,7 @@ void game::setGrid_dy(float newGrid_dy)
 void game::place_new_case(position p, std::vector<cell> v)
 {
     for (std::size_t c(0); c < v.size(); c++)
-    {
-
         _grid.place_cell(v[c], position(p.x(), p.y() + c));
-    }
 }
 
 float game::grid_dy() const

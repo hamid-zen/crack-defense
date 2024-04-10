@@ -21,7 +21,7 @@ struct delay {
 };
 
 enum class t_action{
-    go_right,go_left,go_up,go_down,change_direction,accelerate,exchange,nothing
+    go_right, go_left, go_up, go_down, change_direction, accelerate, exchange, nothing, generate_malus
 };
 
 //TODO: Pourrait prendre le srand

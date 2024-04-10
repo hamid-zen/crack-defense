@@ -28,3 +28,4 @@ void position::setx(cordinate x) {
 void position::sety(cordinate y) {
 	_y = y;
 }
+

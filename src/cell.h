@@ -20,9 +20,7 @@ class cell {
 
 public:
     cell(t_colors color) ;
-
     t_colors color() const;
-
 
     void setColor(t_colors newColor);
     delta dx() const;
@@ -30,7 +28,8 @@ public:
 
     void setDx(delta newDx);
     void setDy(delta newDy);
-    virtual bool estmalus()const{return false;}
+    virtual bool estmalus() const {return (_color == t_colors::garbage);} //TODO: Bonne pratique de la mettre en virtuel ?
+
 private:
     t_colors _color;
     delta _dx;
@@ -40,9 +39,10 @@ private:
 class malusCell : public cell {
 public:
     malusCell(t_colors color,bool const &  bfr,bool const & aftr) ;
-    bool estmalus() const override{return true;}
     bool next_left() const {return _before;}
     bool next_right() const {return _after;}
+    bool estmalus() const override {return (color() == t_colors::garbage);}
+
 private:
     bool _before;
     bool _after;

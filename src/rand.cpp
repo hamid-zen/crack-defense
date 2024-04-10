@@ -1,5 +1,5 @@
 #include "rand.h"
-static std::uint32_t next= 1;
+static std::uint32_t next= 2;
 
 t_number myrand(void) {
     next = next * 1103515245 + 12345;
