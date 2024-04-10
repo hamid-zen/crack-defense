@@ -33,9 +33,17 @@ void interface::play(t_number ind)
     _number_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2 + 100));
     _number_score.setFillColor(color_line);
 
+
     // On init la window
     sf::RenderWindow window(sf::VideoMode((total_width), (total_height)), "Habibi");
     window.setFramerateLimit(30);
+
+    // test
+    sf::RectangleShape square(sf::Vector2f(64, 64));
+    square.setPosition(play_tab_width+32, thickness_line+32);
+    square.setOrigin(sf::Vector2f((square.getGlobalBounds().width)/(2*square.getScale().x),(square.getGlobalBounds().height)/(2*square.getScale().y)));
+    square.setFillColor(sf::Color::Blue);
+
 
     // On dessine les bordures
     sf::RectangleShape line1(sf::Vector2f(thickness_line, total_height-thickness_line));
@@ -58,11 +66,13 @@ void interface::play(t_number ind)
 
     // On cree les sprite
     sf::Sprite s_tile, s_target(target_texture);
+    s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
     //s_tile.setOrigin(-_width_cell/2,-_width_cell/2);
 
     while (window.isOpen() && !_arbitre.getJoueur().is_lost())
     {
         window.clear(color_background);
+        square.rotate(15);
         sf::Event e;
         t_action action_utilisateur(t_action::nothing);
         while (window.pollEvent(e))
@@ -119,7 +129,8 @@ void interface::play(t_number ind)
         _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
 
         // On update l'etat du jeu
-        auto vec(_arbitre.update(action_utilisateur));
+        _arbitre.update(action_utilisateur);
+        auto vec(_arbitre.getDelays().cells_align);
 
         // Affichage de la board
         for (std::size_t i(0); i < _arbitre.getJoueur().height(); i++)
@@ -302,6 +313,7 @@ void interface::play(t_number ind)
         window.draw(line3);
         window.draw(line4);
         window.draw(line5);
+        window.draw(square);
         window.display();
     }
 }

@@ -16,7 +16,7 @@ arbitre::arbitre(t_number ind)
         setVerticalSpeed_Hard();
     }
 }
-std::vector<position>  arbitre::update(t_action x)
+void  arbitre::update(t_action x)
 {
     //_joueur1->update_garbage_height();
     auto it = delays.cells_slide.begin();
@@ -209,7 +209,7 @@ std::vector<position>  arbitre::update(t_action x)
         // v = _joueur1->alignment();
     }
     _nb_frame++; // on incremente le nombre de frame
-    return v;
+    delays.cells_align = v;
 }
 
 game &arbitre::getJoueur() const

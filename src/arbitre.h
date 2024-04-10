@@ -17,6 +17,8 @@ struct delay {
     frame last_frame_alignment;
     frame last_garbage;
     std::vector<position *> cells_slide ;
+    std::vector<position > cells_align ;
+
 
 };
 
@@ -29,7 +31,7 @@ class arbitre
 {
 public:
     arbitre(t_number ind);
-    std::vector<position> update(t_action x);
+    void update(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
