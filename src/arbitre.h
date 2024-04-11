@@ -35,7 +35,7 @@ public:
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
-    void init ();
+    virtual void init ();
     delay & getDelays();
     t_number getFrame() const {return _nb_frame;}
     void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
@@ -45,4 +45,12 @@ private:
     float _vertical_speed;
     t_number _nb_frame;
     delay delays ;
+};
+class arbitreDuo : public arbitre{
+public:
+    arbitreDuo(t_number ind);
+    void init() override;
+private:
+    std::unique_ptr<game> _joueur2;
+
 };

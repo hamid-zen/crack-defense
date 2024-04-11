@@ -410,13 +410,13 @@ std::vector<position> game::alignment()
         auto vec1(horizontal_alignment(vec));
         if (vec1.size() > 0) // concat
             vec.insert(vec.end(), vec1.begin(), vec1.end());
-        //inc_score(vec.size());
+        inc_score(vec.size());
         return vec;
     }
     else
     {
         auto vec2(horizontal_alignment());
-        //inc_score(vec2.size());
+        inc_score(vec2.size());
         return vec2;
     }
 }

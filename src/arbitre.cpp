@@ -159,10 +159,8 @@ void  arbitre::update(t_action x)
             _vertical_speed = delays.oldspeed;
             std::cout<<"2";
         }
-        if(delays.cells_align.size()==0){
-            _vertical_speed += 0.1;
-            _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
-        }
+        _vertical_speed += 0.1;
+        _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
     }
 
     else {
@@ -176,10 +174,10 @@ void  arbitre::update(t_action x)
             _vertical_speed = delays.oldspeed;
             std::cout<<"1";
         }
-        else if(delays.cells_align.size()==0){
+        else{
             _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed);
             _vertical_speed +=0.00001;
-            //delays.oldspeed +=0.00001 ;
+            delays.oldspeed +=0.00001 ;
         }
     }
 
@@ -190,11 +188,11 @@ void  arbitre::update(t_action x)
             delays.last_frame_alignment=getFrame();
         }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {
-            // delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-            // delays.last_garbage=getFrame();
-            // _joueur1->add_garbage(delays.cells_slide);
+            delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+             delays.last_garbage=getFrame();
+             _joueur1->add_garbage(delays.cells_slide);
         }   
-        // _nb_frame++; // on incremente le nombre de frame
+       //  _nb_frame++; // on incremente le nombre de frame
 
 
         if(delays.last_garbage>0){
@@ -203,14 +201,13 @@ void  arbitre::update(t_action x)
         }
 
 
-        // v = _joueur1->alignment();
+         v = _joueur1->alignment();
     }
     _nb_frame++; // on incremente le nombre de frame
     delays.cells_align = v;
     if (delays.angle >= 360 || delays.scale <= 0) {
         delays.angle = 0;
         delays.scale = 1;
-        _joueur1->inc_score(getDelays().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());
@@ -236,4 +233,9 @@ void arbitre::init()
 delay & arbitre::getDelays() 
 {
     return delays;
+}
+
+void arbitreDuo::init() {
+    arbitre::init();
+    _joueur2->init();
 }

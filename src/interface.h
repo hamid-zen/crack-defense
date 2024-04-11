@@ -6,8 +6,9 @@ using dimension = u_int16_t;
 class interface{
 public:
     interface();
-    void play(t_number ind=0);
-    void menu(t_number ind=0);
+    void play(t_number indDif=0);
+    void play2(t_number indDif=0);
+    void menu();
     void load_textures();
 
 private:
