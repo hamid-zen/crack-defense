@@ -208,6 +208,7 @@ void  arbitre::update(t_action x)
     if (delays.angle >= 360 || delays.scale <= 0) {
         delays.angle = 0;
         delays.scale = 1;
+        _joueur1->inc_score(getDelays().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());
