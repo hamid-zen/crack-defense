@@ -1,9 +1,9 @@
 #include "arbiter.h"
 
-arbiter::arbiter()
+/*arbiter::arbiter()
     :_joueur1(std::make_unique<game> ()){}
 
-void arbiter::play(){
+void arbiter::play(){*/
     //recuperer les paramettre
    /* int i=0;
     char input;
@@ -42,4 +42,3 @@ void arbiter::play(){
     }
 
     endwin(); */
-}

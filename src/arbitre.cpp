@@ -188,9 +188,9 @@ void  arbitre::update(t_action x)
             delays.last_frame_alignment=getFrame();
         }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {
-            delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-             delays.last_garbage=getFrame();
-             _joueur1->add_garbage(delays.cells_slide);
+            // delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+            //  delays.last_garbage=getFrame();
+            //  _joueur1->add_garbage(delays.cells_slide);
         }   
        //  _nb_frame++; // on incremente le nombre de frame
 
@@ -235,6 +235,18 @@ delay & arbitre::getDelays()
     return delays;
 }
 
+arbitreDuo::arbitreDuo(t_number ind)
+    : arbitre(ind)
+
+{
+    if(ind==0){ //easy
+        _joueur2=std::make_unique<game>();
+    }else if(ind==1){ //medium
+        _joueur2=std::make_unique<game>(12,6,6);
+    }else{ //hard
+        _joueur2=std::make_unique<game>(14,8,6); //a changer
+    }
+}
 void arbitreDuo::init() {
     arbitre::init();
     _joueur2->init();

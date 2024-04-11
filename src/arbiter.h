@@ -19,7 +19,6 @@ struct delay {
     std::vector<position *> cells_slide ;
     std::vector<position > cells_align ;
 
-
 };
 
 enum class t_action{

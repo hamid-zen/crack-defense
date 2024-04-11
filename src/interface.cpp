@@ -758,4 +758,4 @@ void interface::load_textures()
 }
 
 
-
+ void interface::play2(t_number indDiff ){}
