@@ -36,7 +36,7 @@ void interface::play(t_number ind)
 
     // On init la window
     sf::RenderWindow window(sf::VideoMode((total_width), (total_height)), "Habibi");
-    window.setFramerateLimit(6);
+    window.setFramerateLimit(30);
 
     // test
     // sf::RectangleShape square(sf::Vector2f(64, 64));
@@ -208,7 +208,7 @@ void interface::play(t_number ind)
                         s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy() + _width_cell/2);
                     else
                     {
-                        s_tile.setPosition(_width_cell * j +thickness_line + dx + _width_cell/2, _width_cell * i +thickness_line + dy  + _width_cell/2);
+                        s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy() + _width_cell/2);
                         auto it(std::find(vec.begin(), vec.end(), position(j, i)));
                         if (it != vec.end())
                         {
@@ -236,66 +236,69 @@ void interface::play(t_number ind)
                 }
             }
         }
-        // if (vec.size() == 0)
-        // {
+        if (vec.size() == 0)
+        {
+            //   if(s_tile.getOrigin().x == 0)
+            //             s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
 
-        //     //TODO: deplacer vers la boucle
-        //     // Affichage de la ligne qui monte
-        //     for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
-        //     {
-        //         // On get la couleur actuelle
-        //         auto color = _arbitre.getJoueur()(position(j, _arbitre.getJoueur().height()));
 
-        //         // // on check quel sprite afficher
-        //         // switch (color)
-        //         // {
-        //         // case t_colors::blue:
-        //         // {
-        //         //     s_tile.setTexture(blue_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::pink:
-        //         // {
-        //         //     s_tile.setTexture(pink_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::yellow:
-        //         // {
-        //         //     s_tile.setTexture(yellow_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::orange:
-        //         // {
-        //         //     s_tile.setTexture(orange_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::sky_blue:
-        //         // {
-        //         //     s_tile.setTexture(sky_blue_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::purple:
-        //         // {
-        //         //     s_tile.setTexture(purple_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::green:
-        //         // {
-        //         //     s_tile.setTexture(green_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // case t_colors::white:
-        //         // {
-        //         //     s_tile.setTexture(white_shade_tile_texture);
-        //         //     break;
-        //         // }
-        //         // default: break;
-        //         // }
-        //         s_tile.setPosition(_width_cell * j+thickness_line, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line); // adapter la vitesse par rapport a la taille de la fenetre
-        //         window.draw(s_tile);
-        //     }
+            //TODO: deplacer vers la boucle
+            // Affichage de la ligne qui monte
+            for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
+            {
+                // On get la couleur actuelle
+                auto color = _arbitre.getJoueur()(position(j, _arbitre.getJoueur().height()));
 
-        // }
+                // on check quel sprite afficher
+                switch (color)
+                {
+                case t_colors::blue:
+                {
+                    s_tile.setTexture(blue_shade_tile_texture);
+                    break;
+                }
+                case t_colors::pink:
+                {
+                    s_tile.setTexture(pink_shade_tile_texture);
+                    break;
+                }
+                case t_colors::yellow:
+                {
+                    s_tile.setTexture(yellow_shade_tile_texture);
+                    break;
+                }
+                case t_colors::orange:
+                {
+                    s_tile.setTexture(orange_shade_tile_texture);
+                    break;
+                }
+                case t_colors::sky_blue:
+                {
+                    s_tile.setTexture(sky_blue_shade_tile_texture);
+                    break;
+                }
+                case t_colors::purple:
+                {
+                    s_tile.setTexture(purple_shade_tile_texture);
+                    break;
+                }
+                case t_colors::green:
+                {
+                    s_tile.setTexture(green_shade_tile_texture);
+                    break;
+                }
+                case t_colors::white:
+                {
+                    s_tile.setTexture(white_shade_tile_texture);
+                    break;
+                }
+                default: break;
+                }
+                s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
+                window.draw(s_tile);
+            }
+
+        }
 
         // On display
         window.draw(_number_score);

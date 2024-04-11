@@ -159,8 +159,10 @@ void  arbitre::update(t_action x)
             _vertical_speed = delays.oldspeed;
             std::cout<<"2";
         }
-        _vertical_speed += 0.1;
-        _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
+        if(delays.cells_align.size()==0){
+            _vertical_speed += 0.1;
+            _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
+        }
     }
 
     else {
@@ -174,10 +176,10 @@ void  arbitre::update(t_action x)
             _vertical_speed = delays.oldspeed;
             std::cout<<"1";
         }
-        else{
+        else if(delays.cells_align.size()==0){
             _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed);
             _vertical_speed +=0.00001;
-            delays.oldspeed +=0.00001 ;
+            //delays.oldspeed +=0.00001 ;
         }
     }
 
@@ -205,9 +207,10 @@ void  arbitre::update(t_action x)
     }
     _nb_frame++; // on incremente le nombre de frame
     delays.cells_align = v;
-    if (delays.angle >= 360 || delays.scale <= 0) {
+    if (delays.angle >= 360 || delays.scale <= 0) {
         delays.angle = 0;
         delays.scale = 1;
+        _joueur1->inc_score(getDelays().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());
