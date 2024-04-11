@@ -491,6 +491,11 @@ void interface::menu(){
                         
                     }
                 }
+                else if(e.key.code == sf::Keyboard::Key::H)
+                {
+                    window.close();
+                    menu_regle();
+                }
             }
         }
         _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
@@ -556,7 +561,7 @@ void interface::menu_lan(){
     //text declaration
     sf::Text _text_difficulty(sf::String("DIFFICULTY"),_font);
     sf::Text _text_number_player(sf::String("NUMBER OF PLAYER"),_font);
-    sf::Text _text_menu(sf::String("MENU"),_font);
+    sf::Text _text_menu(sf::String("MULTIPLAYER"),_font);
     sf::Text _difficulty_choice(sf::String("EASY"),_font);
     sf::Text _number_player_choice(sf::String("SOLO"),_font);
     sf::Text _text_play(sf::String("PLAY"),_font);
@@ -694,6 +699,11 @@ void interface::menu_lan(){
                         
                     }
                 }
+                else if(e.key.code == sf::Keyboard::Key::H)
+                {
+                    window.close();
+                    menu_regle();
+                }
             }
         }
         _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
@@ -758,4 +768,214 @@ void interface::load_textures()
 }
 
 
- void interface::play2(t_number indDiff ){}
+void interface::play2(t_number indDiff ){}
+
+
+void interface::menu_regle(){
+    //needed base variable
+    t_number thickness_line = 10;
+    t_number width_window = _width * 64 + 2 * thickness_line;
+    t_number height_window = 12 * 64 + 2 * thickness_line; 
+    sf::Color color_background = sf::Color::Black;
+    sf::Color color_line = sf::Color(255, 87, 217);
+
+    //window
+    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
+    window.setFramerateLimit(30); // Pour set le framerate
+
+    //border
+    sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
+    line1.setFillColor(color_line);
+    sf::RectangleShape line2(sf::Vector2f(width_window-thickness_line, thickness_line));
+    line2.setFillColor(color_line);
+    sf::RectangleShape line3(sf::Vector2f(thickness_line, height_window + thickness_line)); 
+    line3.setFillColor(color_line);
+    line3.setPosition(width_window-thickness_line,0);
+    sf::RectangleShape line4(sf::Vector2f(width_window, thickness_line));
+    line4.setFillColor(color_line);
+    line4.setPosition(0,height_window-thickness_line);
+
+    //srpite load texture
+
+    sf::Sprite _key_space;
+    // sf::Texture 
+    // _key_space.setTexture()
+
+
+    //text declaration
+    sf::Text _text_joueur1(sf::String("JOUEUR 1"),_font);
+    sf::Text _text_joueur2(sf::String("JOUEUR 2"),_font);
+    sf::Text _text_menu(sf::String("RULES"),_font);
+    sf::Text _text_explication(sf::String(""),_font);
+    // sf::Text _number_player_choice(sf::String("SOLO"),_font);
+    // sf::Text _text_play(sf::String("PLAY"),_font);
+
+
+    //text scale
+    
+    _text_menu.setScale(2,2);
+    _text_joueur2.setScale(1.5,1.5);
+    _text_joueur1.setScale(1.5,1.5);
+   // _text_play.setScale(1.5,1.5);
+    // _difficulty_choice.setScale(1.5,1.5);
+    // _number_player_choice.setScale(1.5,1.5);
+    
+
+
+
+    //textorigin 
+    _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
+    _text_joueur2.setOrigin(sf::Vector2f((_text_joueur2.getGlobalBounds().width)/(2*_text_joueur2.getScale().x),(_text_joueur2.getGlobalBounds().height)/(2*_text_joueur2.getScale().y)));
+    _text_joueur1.setOrigin(sf::Vector2f((_text_joueur1.getGlobalBounds().width)/(2*_text_joueur1.getScale().x),(_text_joueur1.getGlobalBounds().height)/(2*_text_joueur1.getScale().y)));
+   // _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
+    // _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
+    // _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
+
+
+    //textposition 
+    _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
+    _text_joueur2.setPosition(width_window/2  ,thickness_line + height_window / 10);
+    _text_joueur1.setPosition(width_window/2  ,thickness_line  + height_window / 17);
+    //_text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
+    // _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
+    // _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
+
+
+    //text_color
+    _text_menu.setFillColor(color_line);
+    _text_joueur2.setFillColor(color_line);
+    _text_joueur1.setFillColor(color_line);
+    //_text_play.setFillColor(color_line);
+    // _difficulty_choice.setFillColor(color_line);
+    // _number_player_choice.setFillColor(color_line);
+
+
+
+    //vector choice_pos 
+    std::vector<sf::Transformable *> _choices_pos;
+    t_number _index_choice_pos = 0; 
+
+    //add choice_pos
+
+    // _choices_pos.push_back(&_number_player_choice);
+    // _choices_pos.push_back(&_difficulty_choice);
+    // _choices_pos.push_back(&_text_play);
+
+    //rectangle_choice
+    // sf::RectangleShape _choice_target(sf::Vector2f(_text_joueur1.getGlobalBounds().width + 40,_text_joueur1.getGlobalBounds().height + 20));
+    // _choice_target.setFillColor(sf::Color::Transparent);
+    // _choice_target.setOutlineThickness(5);
+    // _choice_target.setOutlineColor(sf::Color::Yellow);
+    // _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
+    // _choice_target.setPosition(sf::Vector2f( _choices_pos[_index_choice_pos]->getPosition().x+5,_choices_pos[_index_choice_pos]->getPosition().y+17));
+
+    //difficulty_choice
+    std::vector<sf::String> _vector_difficulties_choice;
+    t_number _index_difficulties_choice=0;
+    // _vector_difficulties_choice.push_back(sf::String("EASY"));
+    // _vector_difficulties_choice.push_back(sf::String("MIDD"));
+    // _vector_difficulties_choice.push_back(sf::String("HARD"));
+
+    //number_player_choice
+    std::vector<sf::String>_vector_number_player_choice;
+    t_number _index_number_player_choice=0;
+    // _vector_number_player_choice.push_back(sf::String("SOLO"));
+    // _vector_number_player_choice.push_back(sf::String("DUAL"));
+    // _vector_number_player_choice.push_back(sf::String("W-LAN"));
+
+    
+
+
+    while(window.isOpen()){
+        sf::Event e;
+        
+
+
+
+        while (window.pollEvent(e))
+        {
+            if (e.type == sf::Event::Closed)
+                window.close();
+            if (e.type == sf::Event::KeyPressed)
+            {
+                
+                if (e.key.code == sf::Keyboard::Key::Enter)
+                {
+                    if(_index_choice_pos == _choices_pos.size()-1){
+                        window.close();
+                        play(_index_difficulties_choice);
+                    }
+                }
+                else if(e.key.code == sf::Keyboard::Key::Escape)
+                {
+                    window.close();
+                    menu();
+                }
+                else if(e.key.code == sf::Keyboard::Key::Up)
+                {   
+                    if(_index_choice_pos>0)
+                        _index_choice_pos--;;
+                }
+                else if(e.key.code == sf::Keyboard::Key::Down)
+                {
+                    if(_index_choice_pos<_choices_pos.size()-1)
+                        _index_choice_pos++ ;
+                }
+                else if(e.key.code == sf::Keyboard::Key::Left)
+                {
+                    if(_index_choice_pos == 0 and _index_number_player_choice > 0){
+                        _index_number_player_choice--;
+                        
+                    }
+                    else if(_index_choice_pos == 1 and _index_difficulties_choice > 0){
+                        _index_difficulties_choice--;
+                        
+                    }
+                }
+                else if(e.key.code == sf::Keyboard::Key::Right)
+                {
+                    if(_index_choice_pos == 0 and _index_number_player_choice < _vector_number_player_choice.size()-1){
+                        _index_number_player_choice++;
+                        
+                    }
+                    else if(_index_choice_pos == 1 and _index_difficulties_choice < _vector_difficulties_choice.size()-1){
+                        _index_difficulties_choice++;
+                        
+                    }
+                }
+            }
+        }
+        _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
+        _text_joueur2.setOrigin(sf::Vector2f((_text_joueur2.getGlobalBounds().width)/(2*_text_joueur2.getScale().x),(_text_joueur2.getGlobalBounds().height)/(2*_text_joueur2.getScale().y)));
+        _text_joueur1.setOrigin(sf::Vector2f((_text_joueur1.getGlobalBounds().width)/(2*_text_joueur1.getScale().x),(_text_joueur1.getGlobalBounds().height)/(2*_text_joueur1.getScale().y)));
+        //_text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
+        // _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
+        // _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
+
+
+       // _choice_target.setPosition(sf::Vector2f( _choices_pos[_index_choice_pos]->getPosition().x+5,_choices_pos[_index_choice_pos]->getPosition().y+17));
+        _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
+        _text_joueur2.setPosition(width_window/2  ,thickness_line + height_window / 2.25);
+        _text_joueur1.setPosition(width_window/2  ,thickness_line  + height_window / 7);
+        //_text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
+        // _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
+        // _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
+
+        // _difficulty_choice.setString(_vector_difficulties_choice[_index_difficulties_choice]);
+        // _number_player_choice.setString(_vector_number_player_choice[_index_number_player_choice]);
+
+        window.clear(color_background);
+        window.draw(line1);
+        window.draw(line2);
+        window.draw(line3);
+        window.draw(line4);
+        window.draw(_text_joueur2);
+        window.draw(_text_menu);
+        window.draw(_text_joueur1);
+        //window.draw(_text_play);
+        // window.draw(_difficulty_choice);
+        // window.draw(_number_player_choice);
+        //window.draw(_choice_target);
+        window.display();
+    }
+}

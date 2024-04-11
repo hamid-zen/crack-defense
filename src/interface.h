@@ -10,6 +10,7 @@ public:
     void menu();
     void menu_lan();
     void play2(t_number indDiff=0);
+    void menu_regle();
     void load_textures();
 
 private:
