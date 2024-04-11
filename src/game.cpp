@@ -405,10 +405,10 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
 std::vector<position> game::alignment()
 {
     auto vec(vertical_alignment());
-    if (vec.size() > 0)
+    if (vec.size() >= 3)
     {
         auto vec1(horizontal_alignment(vec));
-        if (vec1.size() > 0) // concat
+        if (vec1.size() >=3) // concat
             vec.insert(vec.end(), vec1.begin(), vec1.end());
         inc_score(vec.size());
         return vec;
