@@ -6,9 +6,10 @@ using dimension = u_int16_t;
 class interface{
 public:
     interface();
-    void play(t_number indDif=0);
-    void play2(t_number indDif=0);
+    void play(t_number indDiff=0);
     void menu();
+    void menu_lan();
+    void play2(t_number indDiff=0);
     void load_textures();
 
 private:
