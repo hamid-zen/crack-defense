@@ -1,5 +1,6 @@
 #include "arbitre.h"
-#include<iostream>
+#include <iostream>
+#include <map>
 using dimension = u_int16_t;
 
 
@@ -12,6 +13,7 @@ public:
     void play2(t_number indDiff=0);
     void menu_regle();
     void load_textures();
+    void load_texture(sf::Sprite &sprite, t_colors color, bool shade) const;
 
 private:
     dimension _width;
@@ -20,27 +22,5 @@ private:
 
     // Est-ce une bonne pratique
     // est-ce que je dois la mettre en static ? (logiquement)
-    sf::Texture
-                blue_tile_texture,
-                yellow_tile_texture,
-                orange_tile_texture,
-                pink_tile_texture,
-                sky_blue_tile_texture,//
-                purple_tile_texture,
-                green_tile_texture,
-                white_tile_texture,
-
-                blue_shade_tile_texture,
-                yellow_shade_tile_texture,
-                orange_shade_tile_texture,
-                pink_shade_tile_texture,
-                red_shade_tile_texture,
-                sky_blue_shade_tile_texture,
-                purple_shade_tile_texture,
-                green_shade_tile_texture,
-                white_shade_tile_texture,
-
-                empty_tile_texture,
-                target_texture,
-                all_tile_texture;
+    std::map<std::string, sf::Texture> _textures;
 };
