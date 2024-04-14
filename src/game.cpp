@@ -228,116 +228,64 @@ std::vector<position> game::vertical_alignment()
     // alignement verticale
     for (unsigned int i(0); i < _grid.max_width(); i++)
     {
-        auto k(-1);
-        do
-        {            k++;
-
-            t_colors clr = _grid(position(i, k));
-            vec.clear();
-            vec.push_back(position(i, k)); // on ajoute la position de cette case au vecteur
-        } while (k < _grid.max_height() && (!not_hanging(position(i, k)) ||  (is_garbage(position(i,k))|| _grid(position(i, k))==t_colors::empty_cell)));
-        for (unsigned int j(k); j < _grid.max_height(); j++)
+        for (unsigned int j(0); j < _grid.max_height()-2; j++)
         {
-
-            if (vec.size() == 3)
-            { // cad on a trouvé un alignement verticale
-                unsigned int k(j);
+            if ( _grid(position(i,j))!=t_colors::empty_cell && _grid(position(i,j+1))!=t_colors::empty_cell && _grid(position(i,j+2))!=t_colors::empty_cell)
+            { 
+                if( _grid(position(i,j))==_grid(position(i,j+1)) && _grid(position(i,j))==_grid(position(i,j+2)) && !is_garbage(position(i, j)) && !is_garbage(position(i, j+1)) && !is_garbage(position(i, j+2)) && not_hanging(position(i, j)) && not_hanging(position(i, j+1)) && not_hanging(position(i, j+2))){ //alignement trouvé 
+                    vec.push_back(position(i,j));
+                    vec.push_back(position(i,j+1));
+                    vec.push_back(position(i,j+2));
+                    unsigned int k(j+1);
+                    auto clr(_grid(position(i,j)));
                 // on ajoute tant que c'est la meme couleur
-                while (k < _grid.max_height()&& !is_garbage(position(k, j)) && (_grid(position(i, k)) == clr || _grid(position(k, j)) == t_colors::all))
+                while (k < _grid.max_height()&& !is_garbage(position(i,k)) && (_grid(position(i, k)) == clr || _grid(position(i,k)) == t_colors::all))
                 {
                     vec.push_back(position(i, k));
                     k++;
                 }
                 return vec;
-            }
-            else if (clr == t_colors::all)
-            {
-                vec.push_back(position(i, j));
-                clr = _grid(position(i, j));
-            }
-            else if (!not_hanging(position(i, j)) ||  is_garbage(position(k, j)) ||clr == t_colors::empty_cell || (_grid(position(i, j)) != clr && _grid(position(i, j)) != t_colors::all)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
-            {
-                vec.clear();
-                if(i>0 && _grid(position(i-1, j))==t_colors::all){
-                    vec.push_back(position(i-1, j));
                 }
-                vec.push_back(position(i, j));
-                clr = _grid(position(i, j));
             }
+         
+        }
+        
+    }
 
-            else
-            { // si c'est la meme couleur on ajoute la position de la case au vecteur ou que cest une casec aall
-                vec.push_back(position(i, j));
-            }
-        }
-        if (vec.size() == 3)
-        { // alignement a la fin
-            return vec;
-        }
-    }
-    if (vec.size() == 3)
-    { // alignement a la fin
-        return vec;
-    }
     vec.clear();
     return vec;
 }
 
 std::vector<position> game::horizontal_alignment()
 {
-    std::vector<position> vec;
+   std::vector<position> vec;
     t_colors clr;
     for (unsigned int j(0); j < _grid.max_height(); j++)
-    {
-        auto k(0);
-        do
         {
-            clr = _grid(position(k, j));
-            vec.clear();
-            vec.push_back(position(k, j)); // on ajoute la position de cette case au vecteur
-            k++;
-        } while (k < _grid.max_height() && (!not_hanging(position( k,j)) ||  (is_garbage(position(k,j))|| _grid(position( k,j))==t_colors::empty_cell)));
-        for (unsigned int i(k); i < _grid.max_width(); i++)
+        for (unsigned int i(0); i < _grid.max_width()-2; i++)
         {
-            if (vec.size() == 3)
-            { // cad on a trouvé un alignement verticale
-                unsigned int k(i);
+            if ( _grid(position(i,j))!=t_colors::empty_cell && _grid(position(i+1,j))!=t_colors::empty_cell && _grid(position(i+2,j))!=t_colors::empty_cell)
+            { 
+                if( _grid(position(i,j))==_grid(position(i+1,j)) && _grid(position(i,j))==_grid(position(i+2,j)) && !is_garbage(position(i, j)) && !is_garbage(position(i+1, j)) && !is_garbage(position(i+2, j)) && not_hanging(position(i, j)) && not_hanging(position(i+1, j)) && not_hanging(position(i+2, j))){ //alignement trouvé 
+                    vec.push_back(position(i,j));
+                    vec.push_back(position(i+1,j));
+                    vec.push_back(position(i+2,j));
+                    unsigned int k(i+1);
+                    auto clr(_grid(position(i,j)));
                 // on ajoute tant que c'est la meme couleur
-                while (k < _grid.max_width() && !is_garbage(position(k, j)) && ( _grid(position(k, j)) == clr || _grid(position(k, j)) == t_colors::all))
+                while (k < _grid.max_width() && !is_garbage(position(k,j)) && (_grid(position(k,j)) == clr || _grid(position(k, j)) == t_colors::all))
                 {
-                    vec.push_back(position(k, j));
+                    vec.push_back(position(k,j));
                     k++;
                 }
                 return vec;
-            }
-            else if (clr == t_colors::all)
-            {
-                vec.push_back(position(i, j));
-                clr = _grid(position(i, j));
-            }
-            else if (!not_hanging(position(i, j)) || clr == t_colors::empty_cell || is_garbage(position(k, j)) ||(_grid(position(i, j)) != clr && _grid(position(i, j)) != t_colors::all)) // si c'est une case vide ou que c'est pas la meme couleur on remet le vec d'alignement  vide et on met a jour la couleur courante
-            {
-                vec.clear();
-                if(i>0 && _grid(position(i-1, j))==t_colors::all){
-                    vec.push_back(position(i-1, j));
                 }
-                vec.push_back(position(i, j));
-                clr = _grid(position(i, j));
             }
-            else
-            { // si c'est la meme couleur on ajoute la position de la case au vecteur ou case all
-                vec.push_back(position(i, j));
-            }
+         
         }
-        if (vec.size() == 3)
-        { // alignement a la fin
-            return vec;
-        }
+        
     }
-    if (vec.size() == 3)
-    { // alignement a la fin
-        return vec;
-    }
+
     vec.clear();
     return vec;
 }

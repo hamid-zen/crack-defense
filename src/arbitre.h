@@ -30,27 +30,25 @@ enum class t_action{
 class arbitre
 {
 public:
-    arbitre(t_number ind);
-    void update(t_action x);
+    arbitre(t_number ind,bool jeu_duo=false);
+    void update(t_action x, bool first_player=true);
+    void updateFirstPlayer(t_action x);
+    void updateSecondPlayer(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
-    virtual void init ();
-    delay & getDelays();
+    void init ();
+    delay & getDelays(bool first_player=true);
     t_number getFrame() const {return _nb_frame;}
     void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
     void setVerticalSpeed_Hard(){_vertical_speed = 2;};
 private:
     std::unique_ptr<game> _joueur1;
+    std::unique_ptr<game> _joueur2;
+
     float _vertical_speed;
     t_number _nb_frame;
     delay delays ;
+    delay delays2 ;
 };
-class arbitreDuo : public arbitre{
-public:
-    arbitreDuo(t_number ind);
-    void init() override;
-private:
-    std::unique_ptr<game> _joueur2;
 
-};

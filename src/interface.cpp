@@ -10,14 +10,17 @@ interface::interface():_width(6), _difficulty(4), _textures() {
 
 void interface::play(t_number ind)
 {
+    std::cout<<"whats the problem ! \n";
     arbitre _arbitre(ind);
     _arbitre.init();
+
 
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
     t_number _width_cell = 64 ;
     t_number score_tab_width = 500 ;
+    
     t_number play_tab_width = _arbitre.getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
     t_number total_height = _arbitre.getJoueur().height() * _width_cell + 2 * thickness_line ;
@@ -120,7 +123,9 @@ void interface::play(t_number ind)
         _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
 
         // On update l'etat du jeu
+
         _arbitre.update(action_utilisateur);
+
         auto vec(_arbitre.getDelays().cells_align);
 
         // Affichage de la board
@@ -332,13 +337,13 @@ void interface::menu(){
                     if(_index_choice_pos == _choices.size()-1){
                         if(_index_number_player_choice==1){
                             window.close();
-                            play2();
+                            play2(_index_difficulties_choice);
                         }
 
-                        else if(_index_number_player_choice==2){
+                       /* else if(_index_number_player_choice==2){
                             window.close();
                             menu_lan();
-                        }
+                        }*/
 
                         else {
                             window.close();
@@ -746,7 +751,9 @@ void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) con
 }
 
 
-void interface::play2(t_number indDiff ){}
+void interface::play2(t_number indDiff ){
+    std::cout<<"sa rentre "<<std::endl;
+}
 
 
 void interface::menu_regle(){
