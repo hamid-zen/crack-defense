@@ -13,7 +13,7 @@ void interface::play(t_number ind)
     std::cout<<"whats the problem ! \n";
     arbitre _arbitre(ind);
     _arbitre.init();
-
+    bool first_player(true);
 
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
@@ -79,27 +79,63 @@ void interface::play(t_number ind)
                 case sf::Keyboard::RShift:
                     action_utilisateur = t_action::change_direction;
                     break;
+                case sf::Keyboard::LShift:
+                    action_utilisateur = t_action::change_direction;
+                    first_player=false;
+                    break;
                 case sf::Keyboard::Up:
                     action_utilisateur = t_action::go_up;
                     break;
+                case sf::Keyboard::Z:{
+                    action_utilisateur = t_action::go_up;
+                    first_player=false;
+                    break;
+                }
+
                 case sf::Keyboard::Left:
                     action_utilisateur = t_action::go_left;
                     break;
+                case sf::Keyboard::Q:{
+                    action_utilisateur = t_action::go_left;
+                    first_player=false;
+                    break;
+                }
                 case sf::Keyboard::Right:
                     action_utilisateur = t_action::go_right;
                     break;
+                case sf::Keyboard::D:{
+                    action_utilisateur = t_action::go_right;
+                    first_player=false;
+                    break;
+                }
                 case sf::Keyboard::Down:
                     action_utilisateur = t_action::go_down;
                     break;
+                case sf::Keyboard::S:{
+                    action_utilisateur = t_action::go_down;
+                    first_player=false;
+                    break;
+                }
                 case sf::Keyboard::Space:
                     action_utilisateur = t_action::exchange;
                     break;
+                case sf::Keyboard::LControl:{
+                    action_utilisateur = t_action::exchange;
+                    first_player=false;
+                    break;
+                }
                 case sf::Keyboard::Enter:
                     action_utilisateur = t_action::accelerate;
                     break;
+                case sf::Keyboard::Tab:{
+                    action_utilisateur = t_action::accelerate;
+                    first_player=false;
+                    break;
+                }
                 case sf::Keyboard::M:
                     action_utilisateur = t_action::generate_malus;
                     break;
+                
                 case sf::Keyboard::Escape:{
                     window.close();
                     menu();
@@ -124,7 +160,7 @@ void interface::play(t_number ind)
 
         // On update l'etat du jeu
 
-        _arbitre.update(action_utilisateur);
+        _arbitre.update(action_utilisateur,first_player);
 
         auto vec(_arbitre.getDelays().cells_align);
 
