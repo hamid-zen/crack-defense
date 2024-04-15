@@ -149,7 +149,7 @@ void interface::play(t_number ind)
                 auto dx = _arbitre.getJoueur().cellDx(position(j, i));
                 auto dy = _arbitre.getJoueur().cellDy(position(j, i));
                 if(_arbitre.getJoueur().is_garbage(position(j,i))){
-                    load_texture(s_tile, t_colors::garbage, true);
+                    load_texture(s_tile, t_colors::garbage, false);
                     s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
                     window.draw(s_tile);
                 }else{
