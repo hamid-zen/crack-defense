@@ -42,6 +42,7 @@ public:
     t_number getFrame() const {return _nb_frame;}
     void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
     void setVerticalSpeed_Hard(){_vertical_speed = 2;};
+    bool jeu_duo() const ;
 private:
     std::unique_ptr<game> _joueur1;
     std::unique_ptr<game> _joueur2;
