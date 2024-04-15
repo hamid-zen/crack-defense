@@ -466,6 +466,8 @@ void interface::menu(){
 
 }
 void interface::menu_lan(){
+
+    // TODO: creation des text avec une methode
     //needed base variable
     t_number thickness_line = 10;
     t_number width_window = _width * 64 + 2 * thickness_line;
@@ -489,188 +491,165 @@ void interface::menu_lan(){
     line4.setFillColor(color_line);
     line4.setPosition(0,height_window-thickness_line);
 
+    // texts
+    sf::Text _text_title(sf::String("CONNECTION"), _font);
+    sf::Text _text_type(sf::String("TYPE"), _font);
+    sf::Text _type_choice(sf::String("SERVER"), _font);
+    sf::Text _text_ip(sf::String("IP"), _font);
+    sf::Text _ip(sf::String(sf::IpAddress::getLocalAddress().toString()), _font);
+    sf::Text _text_port(sf::String("PORT"), _font);
+    sf::Text _port(sf::String("8080"), _font);
+    sf::Text _text_connect(sf::String("CONNECT"), _font);
 
-    //text declaration
-    sf::Text _text_difficulty(sf::String("DIFFICULTY"),_font);
-    sf::Text _text_number_player(sf::String("NUMBER OF PLAYER"),_font);
-    sf::Text _text_menu(sf::String("MULTIPLAYER"),_font);
-    sf::Text _difficulty_choice(sf::String("EASY"),_font);
-    sf::Text _number_player_choice(sf::String("SOLO"),_font);
-    sf::Text _text_play(sf::String("PLAY"),_font);
+    // text_scale
+    _text_title.setScale(2, 2);
+    _text_type.setScale(1.5, 1.5);
+    _text_ip.setScale(1.5, 1.5);
+    _text_port.setScale(1.5, 1.5);
+    _text_connect.setScale(1.5, 1.5);
 
+    // text_color
+    _text_title.setFillColor(color_line);
+    _text_type.setFillColor(color_line);
+    _type_choice.setFillColor(color_line);
+    _text_ip.setFillColor(color_line);
+    _ip.setFillColor(sf::Color::White);
+    _port.setFillColor(sf::Color::White);
+    _text_port.setFillColor(color_line);
+    _text_connect.setFillColor(color_line);
 
-    //text scale
-    
-    _text_menu.setScale(2,2);
-    _text_difficulty.setScale(1.5,1.5);
-    _text_number_player.setScale(1.5,1.5);
-    _text_play.setScale(1.5,1.5);
-    _difficulty_choice.setScale(1.5,1.5);
-    _number_player_choice.setScale(1.5,1.5);
-    
+    // text_origin
+    _text_title.setOrigin(sf::Vector2f((_text_title.getGlobalBounds().width)/(2*_text_title.getScale().x),(_text_title.getGlobalBounds().height)/(2*_text_title.getScale().y)));
+    _text_type.setOrigin(sf::Vector2f((_text_type.getGlobalBounds().width)/(2*_text_type.getScale().x),(_text_type.getGlobalBounds().height)/(2*_text_type.getScale().y)));
+    _type_choice.setOrigin(sf::Vector2f((_type_choice.getGlobalBounds().width)/(2*_type_choice.getScale().x),(_type_choice.getGlobalBounds().height)/(2*_type_choice.getScale().y)));
+    _text_ip.setOrigin(sf::Vector2f((_text_ip.getGlobalBounds().width)/(2*_text_ip.getScale().x),(_text_ip.getGlobalBounds().height)/(2*_text_ip.getScale().y)));
+    _ip.setOrigin(sf::Vector2f((_ip.getGlobalBounds().width)/(2*_ip.getScale().x),(_ip.getGlobalBounds().height)/(2*_ip.getScale().y)));
+    _text_port.setOrigin(sf::Vector2f((_text_port.getGlobalBounds().width)/(2*_text_port.getScale().x),(_text_port.getGlobalBounds().height)/(2*_text_port.getScale().y)));
+    _port.setOrigin(sf::Vector2f((_port.getGlobalBounds().width)/(2*_port.getScale().x),(_port.getGlobalBounds().height)/(2*_port.getScale().y)));
+    _text_connect.setOrigin(sf::Vector2f((_text_connect.getGlobalBounds().width)/(2*_text_connect.getScale().x),(_text_connect.getGlobalBounds().height)/(2*_text_connect.getScale().y)));
 
+    // text_position
+    _text_title.setPosition(width_window/2, thickness_line + height_window / 20);
+    _text_type.setPosition(width_window/2, thickness_line  + height_window / 4);
+    _type_choice.setPosition(width_window/2, thickness_line  + height_window / 3);
+    _text_ip.setPosition(width_window/2, thickness_line  + height_window / 2.25);
+    _ip.setPosition(width_window/2, thickness_line  + height_window / 1.95);
+    _text_port.setPosition(width_window/2, thickness_line  + height_window / 1.6);
+    _port.setPosition(width_window/2, thickness_line  + height_window / 1.45);
+    _text_connect.setPosition(width_window/2, thickness_line  + height_window / 1.2);
 
-
-    //textorigin 
-    _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
-    _text_difficulty.setOrigin(sf::Vector2f((_text_difficulty.getGlobalBounds().width)/(2*_text_difficulty.getScale().x),(_text_difficulty.getGlobalBounds().height)/(2*_text_difficulty.getScale().y)));
-    _text_number_player.setOrigin(sf::Vector2f((_text_number_player.getGlobalBounds().width)/(2*_text_number_player.getScale().x),(_text_number_player.getGlobalBounds().height)/(2*_text_number_player.getScale().y)));
-    _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
-    _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-    _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
-
-
-    //textposition 
-    _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
-    _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
-    _text_number_player.setPosition(width_window/2  ,thickness_line  + height_window / 3);
-    _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
-    _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-    _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
-
-
-    //text_color
-    _text_menu.setFillColor(color_line);
-    _text_difficulty.setFillColor(color_line);
-    _text_number_player.setFillColor(color_line);
-    _text_play.setFillColor(color_line);
-    _difficulty_choice.setFillColor(color_line);
-    _number_player_choice.setFillColor(color_line);
-
-
-
-    //vector choice_pos 
+    // choices
     std::vector<sf::Transformable *> _choices;
-    t_number _index_choice_pos = 0; 
+    t_number _index_choice_pos = 0;
+    _choices.push_back(&_type_choice);
+    _choices.push_back(&_ip);
+    _choices.push_back(&_port);
+    _choices.push_back(&_text_connect);
 
-    //add choice_pos
+    // type_choice
+    std::vector<sf::String> _vector_type_choice;
+    t_number _index_type_choice=0;
+    _vector_type_choice.push_back(sf::String("SERVER"));
+    _vector_type_choice.push_back(sf::String("CLIENT"));
 
-    _choices.push_back(&_number_player_choice);
-    _choices.push_back(&_difficulty_choice);
-    _choices.push_back(&_text_play);
-
-    //rectangle_choice
-    sf::RectangleShape _choice_target(sf::Vector2f(_difficulty_choice.getGlobalBounds().width + 40,_difficulty_choice.getGlobalBounds().height + 20));
+    // rectangle_choice
+    sf::RectangleShape _choice_target(sf::Vector2f(_type_choice.getGlobalBounds().width + 75, _type_choice.getGlobalBounds().height + 30));
     _choice_target.setFillColor(sf::Color::Transparent);
     _choice_target.setOutlineThickness(5);
     _choice_target.setOutlineColor(sf::Color::Yellow);
     _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
     _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
 
-    //difficulty_choice
-    std::vector<sf::String> _vector_difficulties_choice;
-    t_number _index_difficulties_choice=0;
-    _vector_difficulties_choice.push_back(sf::String("EASY"));
-    _vector_difficulties_choice.push_back(sf::String("MIDD"));
-    _vector_difficulties_choice.push_back(sf::String("HARD"));
-
-    //number_player_choice
-    std::vector<sf::String>_vector_number_player_choice;
-    t_number _index_number_player_choice=0;
-    _vector_number_player_choice.push_back(sf::String("SOLO"));
-    _vector_number_player_choice.push_back(sf::String("DUAL"));
-    _vector_number_player_choice.push_back(sf::String("W-LAN"));
-
-    
-
-
+    sf::String _ip_input, _port_input;
     while(window.isOpen()){
         sf::Event e;
-        
 
-
-
-        while (window.pollEvent(e))
-        {
+        while (window.pollEvent(e)){
             if (e.type == sf::Event::Closed)
                 window.close();
-            if (e.type == sf::Event::KeyPressed)
+            else if (e.type == sf::Event::KeyPressed)
             {
-                
-                if (e.key.code == sf::Keyboard::Key::Enter)
+                if(e.key.code == sf::Keyboard::Key::Enter)
                 {
-                    if(_index_choice_pos == _choices.size()-1){
-                        window.close();
-                        play(_index_difficulties_choice);
-                    }
-                }
-                else if(e.key.code == sf::Keyboard::Key::Escape)
-                {
-                    window.close();
-                    menu();
+                    // Connect the socket
                 }
                 else if(e.key.code == sf::Keyboard::Key::Up)
-                {   
+                {
                     if(_index_choice_pos>0)
-                        _index_choice_pos--;;
+                        _index_choice_pos--;
                 }
                 else if(e.key.code == sf::Keyboard::Key::Down)
                 {
-                    if(_index_choice_pos<_choices.size()-1)
-                        _index_choice_pos++ ;
+                    if(_index_choice_pos < _choices.size()-1)
+                        _index_choice_pos++;
                 }
                 else if(e.key.code == sf::Keyboard::Key::Left)
                 {
-                    if(_index_choice_pos == 0 and _index_number_player_choice > 0){
-                        _index_number_player_choice--;
-                        
-                    }
-                    else if(_index_choice_pos == 1 and _index_difficulties_choice > 0){
-                        _index_difficulties_choice--;
-                        
-                    }
+                    if(_index_choice_pos == 0 and _index_type_choice > 0)
+                        _index_type_choice--;
                 }
                 else if(e.key.code == sf::Keyboard::Key::Right)
                 {
-                    if(_index_choice_pos == 0 and _index_number_player_choice < _vector_number_player_choice.size()-1){
-                        _index_number_player_choice++;
-                        
-                    }
-                    else if(_index_choice_pos == 1 and _index_difficulties_choice < _vector_difficulties_choice.size()-1){
-                        _index_difficulties_choice++;
-                        
-                    }
+                    if(_index_choice_pos == 0 and _index_type_choice < _vector_type_choice.size()-1 )
+                        _index_type_choice++;
                 }
-                else if(e.key.code == sf::Keyboard::Key::H)
+                else if(e.key.code == sf::Keyboard::Key::BackSpace)
                 {
-                    window.close();
-                    menu_regle();
+                    // effacer l'input
+                    if (_index_choice_pos == 1 && _ip_input.getSize() != 0)
+                        _ip_input = _ip_input.substring(0, _ip_input.getSize()-1);
+                    else if (_index_choice_pos == 2 && _port_input.getSize() != 0)
+                        _ip_input = _port_input.substring(0, _port_input.getSize()-1);
+                }
+            }
+            else if (e.type == sf::Event::TextEntered){
+                if ((e.text.unicode <= 57 && e.text.unicode >= 48) || e.text.unicode == 46){
+                    if (_index_choice_pos == 1)
+                        _ip_input += e.text.unicode;
+                    else if (_index_choice_pos == 2) // port
+                        _port_input += e.text.unicode;
                 }
             }
         }
-        _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
-        _text_difficulty.setOrigin(sf::Vector2f((_text_difficulty.getGlobalBounds().width)/(2*_text_difficulty.getScale().x),(_text_difficulty.getGlobalBounds().height)/(2*_text_difficulty.getScale().y)));
-        _text_number_player.setOrigin(sf::Vector2f((_text_number_player.getGlobalBounds().width)/(2*_text_number_player.getScale().x),(_text_number_player.getGlobalBounds().height)/(2*_text_number_player.getScale().y)));
-        _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
-        _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-        _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
 
+        // updating target position
+        _choice_target.setPosition(sf::Vector2f(_choices[_index_choice_pos]->getPosition().x+5, _choices[_index_choice_pos]->getPosition().y+17));
 
-        _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
-        _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
-        _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
-        _text_number_player.setPosition(width_window/2  ,thickness_line  + height_window / 3);
-        _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
-        _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-        _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
+        // updating type_choice (server/client)
+        _type_choice.setString(_vector_type_choice[_index_type_choice]);
 
-        _difficulty_choice.setString(_vector_difficulties_choice[_index_difficulties_choice]);
-        _number_player_choice.setString(_vector_number_player_choice[_index_number_player_choice]);
+        // on affiche l'ip local et le port default (8080) que si serveur est choisi
+        if (_index_type_choice == 0){
+            _ip.setString(sf::String(sf::IpAddress::getLocalAddress().toString()));
+            _port.setString("8080");
+
+            // On remet l'input a zero
+            _ip_input = "";
+            _port_input = "";
+        }
+        else {
+            _ip.setString(_ip_input);
+            _port.setString(_port_input);
+        }
+
 
         window.clear(color_background);
+        window.draw(_text_title);
+        window.draw(_choice_target);
+        window.draw(_text_type);
+        window.draw(_type_choice);
+        window.draw(_text_ip);
+        window.draw(_ip);
+        window.draw(_text_port);
+        window.draw(_port);
+        window.draw(_text_connect);
         window.draw(line1);
         window.draw(line2);
         window.draw(line3);
         window.draw(line4);
-        window.draw(_text_difficulty);
-        window.draw(_text_menu);
-        window.draw(_text_number_player);
-        window.draw(_text_play);
-        window.draw(_difficulty_choice);
-        window.draw(_number_player_choice);
-        window.draw(_choice_target);
         window.display();
     }
+
 }
 
 void interface::load_textures()
