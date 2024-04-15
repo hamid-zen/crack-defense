@@ -75,45 +75,45 @@ void interface::play(t_number ind)
                 window.close();
             if (e.type == sf::Event::KeyPressed)
             {
-                switch (e.key.code) {
-                case sf::Keyboard::RShift:
+                if (e.key.code == sf::Keyboard::RShift)
                     action_utilisateur1 = t_action::change_direction;
-                case sf::Keyboard::LShift:
-                    action_utilisateur2 = t_action::change_direction;
-                case sf::Keyboard::Up:
+                else if (e.key.code == sf::Keyboard::Up)
                     action_utilisateur1 = t_action::go_up;
-                case sf::Keyboard::Z:
-                    action_utilisateur2 = t_action::go_up;
-                case sf::Keyboard::Left:
+                else if (e.key.code == sf::Keyboard::Left)
                     action_utilisateur1 = t_action::go_left;
-                case sf::Keyboard::Q:
-                    action_utilisateur2 = t_action::go_left;
-                case sf::Keyboard::Right:
+                else if (e.key.code == sf::Keyboard::Right)
                     action_utilisateur1 = t_action::go_right;
-                case sf::Keyboard::D:
-                    action_utilisateur2 = t_action::go_right;
-                case sf::Keyboard::Down:
+                else if (e.key.code == sf::Keyboard::Down)
                     action_utilisateur1 = t_action::go_down;
-                case sf::Keyboard::S:
-                    action_utilisateur2 = t_action::go_down;
-                case sf::Keyboard::Space:
+                else if (e.key.code == sf::Keyboard::Space)
                     action_utilisateur1 = t_action::exchange;
-                case sf::Keyboard::LControl:
-                    action_utilisateur2 = t_action::exchange;
-                case sf::Keyboard::Enter:
+                else if (e.key.code == sf::Keyboard::Enter)
                     action_utilisateur1 = t_action::accelerate;
-                case sf::Keyboard::Tab:
-                    action_utilisateur2 = t_action::accelerate;
-                case sf::Keyboard::M:
+                else if (e.key.code == sf::Keyboard::M)
                     action_utilisateur1 = t_action::generate_malus;
-                case sf::Keyboard::Escape:
+                else if (e.key.code == sf::Keyboard::Escape){
                     window.close();
                     menu();
-                    break;
-                default:
-                    action_utilisateur1 = t_action::nothing;
-                    break;
                 }
+                else
+                    action_utilisateur1 = t_action::nothing;
+                
+                if (e.key.code == sf::Keyboard::LShift)
+                    action_utilisateur2 = t_action::change_direction;
+                else if (e.key.code == sf::Keyboard::Z)
+                    action_utilisateur2 = t_action::go_up;
+                else if (e.key.code == sf::Keyboard::Q)
+                    action_utilisateur2 = t_action::go_left;
+                else if (e.key.code == sf::Keyboard::D)
+                    action_utilisateur2 = t_action::go_right;
+                else if (e.key.code == sf::Keyboard::S)
+                    action_utilisateur2 = t_action::go_down;
+                else if (e.key.code == sf::Keyboard::LControl)
+                    action_utilisateur2 = t_action::exchange;
+                else if (e.key.code == sf::Keyboard::Tab)
+                    action_utilisateur2 = t_action::accelerate;
+                else
+                    action_utilisateur2 = t_action::nothing;
             }
         }
 
