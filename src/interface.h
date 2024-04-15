@@ -1,5 +1,6 @@
 #include "arbitre.h"
 #include <iostream>
+#include <SFML/Network.hpp>
 #include <map>
 using dimension = u_int16_t;
 
