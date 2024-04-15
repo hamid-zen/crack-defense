@@ -11,7 +11,7 @@ enable_testing()
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 add_subdirectory(src)
 add_executable(crack-attack main.cpp)
-target_link_libraries(crack-attack PRIVATE gamelib sfml-graphics sfml-audio sfml-window sfml-system)
+target_link_libraries(crack-attack PRIVATE gamelib sfml-graphics sfml-audio sfml-window sfml-system sfml-network)
 add_subdirectory(test)
 
 
