@@ -470,3 +470,8 @@ delay & arbitre::getDelays(bool first_player)
     return delays;
 }
 
+
+bool arbitre::jeu_duo() const
+{
+    return _joueur2!=nullptr;
+}
