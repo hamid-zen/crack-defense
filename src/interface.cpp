@@ -10,10 +10,8 @@ interface::interface():_width(6), _difficulty(4), _textures() {
 
 void interface::play(t_number ind)
 {
-    std::cout<<"whats the problem ! \n";
     arbitre _arbitre(ind);
     _arbitre.init();
-    bool first_player(true);
 
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
@@ -68,88 +66,63 @@ void interface::play(t_number ind)
         window.clear(color_background);
         // square.rotate(1);
         sf::Event e;
-        t_action action_utilisateur(t_action::nothing);
+        t_action action_utilisateur1(t_action::nothing);
+        t_action action_utilisateur2(t_action::nothing);
         while (window.pollEvent(e))
         {
+            //TODO: remplacer par un appel a une methode meth(event, &first_player):t_action
             if (e.type == sf::Event::Closed)
                 window.close();
             if (e.type == sf::Event::KeyPressed)
             {
                 switch (e.key.code) {
                 case sf::Keyboard::RShift:
-                    action_utilisateur = t_action::change_direction;
-                    break;
+                    action_utilisateur1 = t_action::change_direction;
                 case sf::Keyboard::LShift:
-                    action_utilisateur = t_action::change_direction;
-                    first_player=false;
-                    break;
+                    action_utilisateur2 = t_action::change_direction;
                 case sf::Keyboard::Up:
-                    action_utilisateur = t_action::go_up;
-                    break;
-                case sf::Keyboard::Z:{
-                    action_utilisateur = t_action::go_up;
-                    first_player=false;
-                    break;
-                }
-
+                    action_utilisateur1 = t_action::go_up;
+                case sf::Keyboard::Z:
+                    action_utilisateur2 = t_action::go_up;
                 case sf::Keyboard::Left:
-                    action_utilisateur = t_action::go_left;
-                    break;
-                case sf::Keyboard::Q:{
-                    action_utilisateur = t_action::go_left;
-                    first_player=false;
-                    break;
-                }
+                    action_utilisateur1 = t_action::go_left;
+                case sf::Keyboard::Q:
+                    action_utilisateur2 = t_action::go_left;
                 case sf::Keyboard::Right:
-                    action_utilisateur = t_action::go_right;
-                    break;
-                case sf::Keyboard::D:{
-                    action_utilisateur = t_action::go_right;
-                    first_player=false;
-                    break;
-                }
+                    action_utilisateur1 = t_action::go_right;
+                case sf::Keyboard::D:
+                    action_utilisateur2 = t_action::go_right;
                 case sf::Keyboard::Down:
-                    action_utilisateur = t_action::go_down;
-                    break;
-                case sf::Keyboard::S:{
-                    action_utilisateur = t_action::go_down;
-                    first_player=false;
-                    break;
-                }
+                    action_utilisateur1 = t_action::go_down;
+                case sf::Keyboard::S:
+                    action_utilisateur2 = t_action::go_down;
                 case sf::Keyboard::Space:
-                    action_utilisateur = t_action::exchange;
-                    break;
-                case sf::Keyboard::LControl:{
-                    action_utilisateur = t_action::exchange;
-                    first_player=false;
-                    break;
-                }
+                    action_utilisateur1 = t_action::exchange;
+                case sf::Keyboard::LControl:
+                    action_utilisateur2 = t_action::exchange;
                 case sf::Keyboard::Enter:
-                    action_utilisateur = t_action::accelerate;
-                    break;
-                case sf::Keyboard::Tab:{
-                    action_utilisateur = t_action::accelerate;
-                    first_player=false;
-                    break;
-                }
+                    action_utilisateur1 = t_action::accelerate;
+                case sf::Keyboard::Tab:
+                    action_utilisateur2 = t_action::accelerate;
                 case sf::Keyboard::M:
-                    action_utilisateur = t_action::generate_malus;
-                    break;
-                
-                case sf::Keyboard::Escape:{
+                    action_utilisateur1 = t_action::generate_malus;
+                case sf::Keyboard::Escape:
                     window.close();
                     menu();
                     break;
-                }
                 default:
-                    action_utilisateur = t_action::nothing;
+                    action_utilisateur1 = t_action::nothing;
                     break;
                 }
             }
         }
 
+        //TODO: remmetre
+        // if (!jeu_duo() && first_player == false)
+
         // Traitement du score
         t_number _temp_score = _arbitre.getJoueur().get_score();
+
         if(_temp_score>100)
             _number_score.setString(sf::String(std::to_string(_temp_score/100)+std::to_string(_temp_score%100)));
         else if(_temp_score>10)
@@ -160,8 +133,10 @@ void interface::play(t_number ind)
 
         // On update l'etat du jeu
 
-        _arbitre.update(action_utilisateur,first_player);
-
+        _arbitre.update(action_utilisateur1);
+        if(_arbitre.jeu_duo()){
+            _arbitre.update(action_utilisateur2,false);
+        }
         auto vec(_arbitre.getDelays().cells_align);
 
         // Affichage de la board
