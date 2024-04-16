@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <SFML/Network.hpp>
+#include <SFML/Audio.hpp>
 #include <map>
 
 using dimension = u_int16_t;
@@ -22,6 +23,10 @@ private:
     dimension _width;
     t_number_color _difficulty ;
     sf::Font _font;
+    sf::SoundBuffer _buffer_sound_choice_move;
+    sf::SoundBuffer _buffer_sound_loose ;
+    sf::SoundBuffer _buffer_sound_play ;
+    
 
     // Est-ce une bonne pratique
     // est-ce que je dois la mettre en static ? (logiquement)

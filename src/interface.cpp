@@ -1,5 +1,6 @@
 #include "interface.h"
 
+
 // #E882E8 color target
 // #255,255,255 color case vide
 //
@@ -10,6 +11,16 @@ interface::interface():_width(6), _difficulty(4), _textures() {
 
 void interface::play(t_number ind,bool jeu_duo)
 {
+    sf::Music _music ;
+    _music.openFromFile("../msc/EWD.ogg");
+    _music.setLoop(true);
+    _music.play();
+    
+    
+
+    
+
+    
     arbitre _arbitre(ind, jeu_duo);
     _arbitre.init();
 
@@ -108,8 +119,8 @@ void interface::play(t_number ind,bool jeu_duo)
                 else if (e.key.code == sf::Keyboard::M)
                     action_utilisateur1 = t_action::generate_malus;
                 else if (e.key.code == sf::Keyboard::Escape){
+                    _music.stop();
                     window.close();
-                    menu();
                 }
                 else
                     action_utilisateur1 = t_action::nothing;
@@ -306,9 +317,27 @@ void interface::play(t_number ind,bool jeu_duo)
         angle+=5;
         window.display();
     }
+    std::cout << "play\n" ;
+    sf::Sound _sound_loose ;
+    _sound_loose.setBuffer(_buffer_sound_loose);
+    _sound_loose.setVolume(10);
+    _sound_loose.play();
+    std::cout << "play\n" ;
+    window.close();
+    menu();
 }
 
 void interface::menu(){
+
+    
+    sf::Sound _sound ;
+    _sound.setBuffer(_buffer_sound_choice_move);
+    _sound.setVolume(5);
+    _sound.setAttenuation(0.5);
+
+    sf::Sound _sound_play ; 
+    _sound_play.setBuffer(_buffer_sound_play);
+    _sound_play.setVolume(5);
 
     //needed base variable
     t_number thickness_line = 10;
@@ -429,29 +458,41 @@ void interface::menu(){
                 window.close();
             if (e.type == sf::Event::KeyPressed)
             {
+                if(_sound.getStatus()!=sf::Music::Status::Playing){
+                    _sound.play();
+                    //_sound.stop();
+                }
                 
                 if (e.key.code == sf::Keyboard::Key::Enter)
                 {
                     if(_index_choice_pos == _choices.size()-1){
                         if(_index_number_player_choice==1){
                             window.close();
+                            _sound.stop();
+                            _sound_play.play();
                             play(_index_difficulties_choice,true);
+                            
                         }
 
-                        /* else if(_index_number_player_choice==2){
+                         else if(_index_number_player_choice==2){
                             window.close();
                             menu_lan();
-                        }*/
+                        }
 
                         else {
                             window.close();
+                            _sound.stop();
+                            _sound_play.play();
                             play(_index_difficulties_choice);
+                            
+                            
                         }
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
                 {
                     window.close();
+                    
                 }
                 else if(e.key.code == sf::Keyboard::Key::Up)
                 {   
@@ -529,6 +570,11 @@ void interface::menu(){
 
 }
 void interface::menu_lan(){
+
+    sf::Sound _sound_move ;
+    _sound_move.setBuffer(_buffer_sound_choice_move);
+    _sound_move.setVolume(5);
+
 
     // TODO: creation des text avec une methode
     //needed base variable
@@ -632,6 +678,8 @@ void interface::menu_lan(){
                 window.close();
             else if (e.type == sf::Event::KeyPressed)
             {
+                if(_sound_move.getStatus()!=sf::Music::Status::Playing)
+                    _sound_move.play();
                 if(e.key.code == sf::Keyboard::Key::Enter)
                 {
                     // Connect the socket
@@ -663,6 +711,11 @@ void interface::menu_lan(){
                         _ip_input = _ip_input.substring(0, _ip_input.getSize()-1);
                     else if (_index_choice_pos == 2 && _port_input.getSize() != 0)
                         _ip_input = _port_input.substring(0, _port_input.getSize()-1);
+                }
+                else if(e.key.code == sf::Keyboard::Key::Escape)
+                {
+                    window.close();
+                    menu();
                 }
             }
             else if (e.type == sf::Event::TextEntered){
@@ -756,6 +809,11 @@ void interface::load_textures()
     _textures["Esc"].loadFromFile("../textures/keycaps/Esc.png");
     _textures["Right"].loadFromFile("../textures/keycaps/Right.png");
     _textures["Touches_directionelles"].loadFromFile("../textures/keycaps/Touches_directionelles.png");
+
+    _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
+    _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");
+    _buffer_sound_play.loadFromFile("../sound/Menu_Sounds_Load_Savefile.wav");
+    
 }
 
 
@@ -826,12 +884,17 @@ void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) con
             break;
         }
     }
+    
 
 }
 
 
 
 void interface::menu_regle(){
+
+    sf::Sound _sound_move ;
+    _sound_move.setBuffer(_buffer_sound_choice_move);
+    _sound_move.setVolume(5);
 
     //needed base variable
     t_number thickness_line = 10;
@@ -935,6 +998,9 @@ void interface::menu_regle(){
                 window.close();
             if (e.type == sf::Event::KeyPressed)
             {
+                if(_sound_move.getStatus()!=sf::Music::Status::Playing)
+                    _sound_move.play();
+                
                 
                 if(e.key.code == sf::Keyboard::Key::Escape)
                 {
