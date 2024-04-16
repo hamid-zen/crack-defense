@@ -358,7 +358,7 @@ void  arbitre::updateSecondPlayer(t_action x )
         {
             if (!_joueur2->target_cells_empty() and delays2.cells_switch1 == nullptr and delays2.cells_switch2 == nullptr and !(_joueur2->target_verticale() and _joueur2->one_case_empty())and !(_joueur2->is_garbage(_joueur2->getcell1target()) || _joueur2->is_garbage(_joueur2->getcell2target())))
             {
-                if(_joueur1->target_verticale())
+                if(_joueur2->target_verticale())
                     delays2.switch_vertical = true;
                 else delays2.switch_vertical = false;
 

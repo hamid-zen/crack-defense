@@ -335,23 +335,26 @@ void interface::menu(){
 
 
     //text declaration
-    sf::Text _text_difficulty(sf::String("DIFFICULTY"),_font);
-    sf::Text _text_number_player(sf::String("NUMBER OF PLAYER"),_font);
-    sf::Text _text_menu(sf::String("MENU"),_font);
-    sf::Text _difficulty_choice(sf::String("EASY"),_font);
-    sf::Text _number_player_choice(sf::String("SOLO"),_font);
-    sf::Text _text_play(sf::String("PLAY"),_font);
+    sf::Text _text_difficulty(sf::String("DIFFICULTY"), _font);
+    sf::Text _text_help(sf::String("press H For Help"), _font);
+    sf::Text _text_number_player(sf::String("NUMBER OF PLAYER"), _font);
+    sf::Text _text_menu(sf::String("MENU"), _font);
+    sf::Text _difficulty_choice(sf::String("EASY"), _font);
+    sf::Text _number_player_choice(sf::String("SOLO"), _font);
+    sf::Text _text_play(sf::String("PLAY"), _font);
 
     //text scale
-    _text_menu.setScale(2,2);
-    _text_difficulty.setScale(1.5,1.5);
-    _text_number_player.setScale(1.5,1.5);
-    _text_play.setScale(1.5,1.5);
-    _difficulty_choice.setScale(1.5,1.5);
-    _number_player_choice.setScale(1.5,1.5);
+    _text_menu.setScale(2, 2);
+    _text_difficulty.setScale(1.5, 1.5);
+    _text_help.setScale(0.75, 0.75);
+    _text_number_player.setScale(1.5, 1.5);
+    _text_play.setScale(1.5, 1.5);
+    _difficulty_choice.setScale(1.5, 1.5);
+    _number_player_choice.setScale(1.5, 1.5);
     
     //textorigin 
     _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
+    _text_help.setOrigin(sf::Vector2f((_text_help.getGlobalBounds().width)/(2*_text_help.getScale().x),(_text_help.getGlobalBounds().height)/(2*_text_help.getScale().y)));
     _text_difficulty.setOrigin(sf::Vector2f((_text_difficulty.getGlobalBounds().width)/(2*_text_difficulty.getScale().x),(_text_difficulty.getGlobalBounds().height)/(2*_text_difficulty.getScale().y)));
     _text_number_player.setOrigin(sf::Vector2f((_text_number_player.getGlobalBounds().width)/(2*_text_number_player.getScale().x),(_text_number_player.getGlobalBounds().height)/(2*_text_number_player.getScale().y)));
     _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
@@ -360,6 +363,7 @@ void interface::menu(){
 
     //textposition 
     _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
+    _text_help.setPosition(width_window/2  , thickness_line + height_window / 1.05);
     _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
     _text_number_player.setPosition(width_window/2  ,thickness_line  + height_window / 3);
     _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
@@ -369,6 +373,7 @@ void interface::menu(){
 
     //text_color
     _text_menu.setFillColor(color_line);
+    _text_help.setFillColor(sf::Color::Yellow);
     _text_difficulty.setFillColor(color_line);
     _text_number_player.setFillColor(color_line);
     _text_play.setFillColor(color_line);
@@ -507,6 +512,7 @@ void interface::menu(){
         _number_player_choice.setString(_vector_number_player_choice[_index_number_player_choice]);
 
         window.clear(color_background);
+        window.draw(_text_help);
         window.draw(line1);
         window.draw(line2);
         window.draw(line3);
@@ -741,7 +747,8 @@ void interface::load_textures()
     _textures["Up"].loadFromFile("../textures/keycaps/Up.png");
     _textures["Down"].loadFromFile("../textures/keycaps/Down.png");
     _textures["Left"].loadFromFile("../textures/keycaps/Left.png");
-    _textures["Space"].loadFromFile("../textures/keycaps/Space.png");
+    _textures["Tab"].loadFromFile("../textures/keycaps/Tab.png");
+    _textures["Enter"].loadFromFile("../textures/keycaps/Enter.png");
     _textures["Z"].loadFromFile("../textures/keycaps/Z.png");
     _textures["D"].loadFromFile("../textures/keycaps/D.png");
     _textures["Q"].loadFromFile("../textures/keycaps/Q.png");
@@ -863,27 +870,18 @@ void interface::menu_regle(){
     _text_menu.setScale(2,2);
     _text_joueur2.setScale(1.5,1.5);
     _text_joueur1.setScale(1.5,1.5);
-    // _text_play.setScale(1.5,1.5);
-    // _difficulty_choice.setScale(1.5,1.5);
-    // _number_player_choice.setScale(1.5,1.5);
     
 
     //textorigin 
     _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
     _text_joueur2.setOrigin(sf::Vector2f((_text_joueur2.getGlobalBounds().width)/(2*_text_joueur2.getScale().x),(_text_joueur2.getGlobalBounds().height)/(2*_text_joueur2.getScale().y)));
     _text_joueur1.setOrigin(sf::Vector2f((_text_joueur1.getGlobalBounds().width)/(2*_text_joueur1.getScale().x),(_text_joueur1.getGlobalBounds().height)/(2*_text_joueur1.getScale().y)));
-    // _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
-    // _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-    // _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
 
 
     //textposition 
     _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
     _text_joueur2.setPosition(width_window/2  ,thickness_line + height_window / 10);
     _text_joueur1.setPosition(width_window/2  ,thickness_line  + height_window / 17);
-    //_text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
-    // _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-    // _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
 
 
     //text_color
@@ -892,40 +890,40 @@ void interface::menu_regle(){
     _text_joueur1.setFillColor(color_line);
 
     // sprites
-    sf::Sprite s_fleches, s_ctrl_1, s_ctrl_2, s_shift_1, s_shift_2, s_space_1, s_space_2, s_touches;
+    sf::Sprite s_fleches, s_ctrl_1, s_ctrl_2, s_shift_1, s_shift_2, s_enter, s_tab, s_touches;
     s_fleches.setTexture(_textures.at("Fleches_directionelles"));
     s_ctrl_1.setTexture(_textures.at("Crtl"));
     s_shift_1.setTexture(_textures.at("Shift"));
-    s_space_1.setTexture(_textures.at("Space"));
+    s_enter.setTexture(_textures.at("Enter"));
     s_touches.setTexture(_textures.at("Touches_directionelles"));
     s_ctrl_2.setTexture(_textures.at("Crtl"));
     s_shift_2.setTexture(_textures.at("Shift"));
-    s_space_2.setTexture(_textures.at("Space"));
+    s_tab.setTexture(_textures.at("Tab"));
 
     //vector choice_pos
     std::vector<sf::Sprite *> _choices;
 
     //add choice_pos
     _choices.push_back(&s_fleches);
-    _choices.push_back(&s_ctrl_1);
-    _choices.push_back(&s_shift_1);
-    _choices.push_back(&s_space_1);
-    _choices.push_back(&s_touches);
     _choices.push_back(&s_ctrl_2);
     _choices.push_back(&s_shift_2);
-    _choices.push_back(&s_space_2);
+    _choices.push_back(&s_tab);
+    _choices.push_back(&s_touches);
+    _choices.push_back(&s_ctrl_1);
+    _choices.push_back(&s_shift_1);
+    _choices.push_back(&s_enter);
 
     //number_player_choice
     std::vector<sf::String> _controls;
     t_number _index_controls_choice=0;
-    _controls.push_back(sf::String("Move j1"));
-    _controls.push_back(sf::String("rotate j1"));
-    _controls.push_back(sf::String("switch j1"));
-    _controls.push_back(sf::String("accelerate j1"));
     _controls.push_back(sf::String("Move j2"));
     _controls.push_back(sf::String("rotate j2"));
     _controls.push_back(sf::String("switch j2"));
     _controls.push_back(sf::String("accelerate j2"));
+    _controls.push_back(sf::String("Move j1"));
+    _controls.push_back(sf::String("rotate j1"));
+    _controls.push_back(sf::String("switch j1"));
+    _controls.push_back(sf::String("accelerate j1"));
 
     
     while(window.isOpen()){
@@ -969,43 +967,33 @@ void interface::menu_regle(){
         _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
         _text_joueur2.setOrigin(sf::Vector2f((_text_joueur2.getGlobalBounds().width)/(2*_text_joueur2.getScale().x),(_text_joueur2.getGlobalBounds().height)/(2*_text_joueur2.getScale().y)));
         _text_joueur1.setOrigin(sf::Vector2f((_text_joueur1.getGlobalBounds().width)/(2*_text_joueur1.getScale().x),(_text_joueur1.getGlobalBounds().height)/(2*_text_joueur1.getScale().y)));
-        //_text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
-        // _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-        // _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
 
-
-        // _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
         _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
         _text_joueur2.setPosition(width_window/2  ,thickness_line + height_window / 2.25);
         _text_joueur1.setPosition(width_window/2  ,thickness_line  + height_window / 7);
-        //_text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
-        // _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-        // _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
 
-        // _difficulty_choice.setString(_vector_difficulties_choice[_index_difficulties_choice]);
-        // _number_player_choice.setString(_vector_number_player_choice[_index_number_player_choice]);
 
         window.clear(color_background);
 
         // sprite display joueur 1
         s_fleches.setPosition(thickness_line, s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         window.draw(s_fleches);
-        s_ctrl_1.setPosition(s_ctrl_1.getGlobalBounds().width*3 + thickness_line, s_ctrl_1.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_ctrl_1);
-        s_shift_1.setPosition(s_shift_1.getGlobalBounds().width*4 + thickness_line, s_shift_1.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_shift_1);
-        s_space_1.setPosition(s_space_1.getGlobalBounds().width*5 + thickness_line, s_space_1.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_space_1);
+        s_ctrl_2.setPosition(s_ctrl_2.getGlobalBounds().width*3 + thickness_line, s_ctrl_2.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        window.draw(s_ctrl_2);
+        s_shift_2.setPosition(s_shift_2.getGlobalBounds().width*4 + thickness_line, s_shift_2.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        window.draw(s_shift_2);
+        s_tab.setPosition(s_tab.getGlobalBounds().width*5 + thickness_line, s_tab.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        window.draw(s_tab);
 
         // sprite display joueur 2
         s_touches.setPosition(thickness_line, s_touches.getGlobalBounds().height + thickness_line + height_window / 2.75);
         window.draw(s_touches);
-        s_ctrl_2.setPosition(s_ctrl_2.getGlobalBounds().width*3 + thickness_line, s_touches.getGlobalBounds().height+s_ctrl_2.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_ctrl_2);
-        s_shift_2.setPosition(s_shift_2.getGlobalBounds().width*4 + thickness_line, s_touches.getGlobalBounds().height+s_shift_2.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_shift_2);
-        s_space_2.setPosition(s_space_2.getGlobalBounds().width*5 + thickness_line, s_touches.getGlobalBounds().height+s_space_2.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_space_2);
+        s_ctrl_1.setPosition(s_ctrl_1.getGlobalBounds().width*3 + thickness_line, s_touches.getGlobalBounds().height+s_ctrl_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        window.draw(s_ctrl_1);
+        s_shift_1.setPosition(s_shift_1.getGlobalBounds().width*4 + thickness_line, s_touches.getGlobalBounds().height+s_shift_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        window.draw(s_shift_1);
+        s_enter.setPosition(s_enter.getGlobalBounds().width*5 + thickness_line, s_touches.getGlobalBounds().height+s_enter.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        window.draw(s_enter);
 
         // line_choice
         sf::RectangleShape line_choice(sf::Vector2f(30, 5));
