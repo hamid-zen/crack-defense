@@ -7,6 +7,7 @@ using frame = int16_t ;
 
 
 struct delay {
+    bool switch_vertical ;
     position * cells_switch1 ;
     position * cells_switch2 ;
     delta cell1Dx ;
@@ -37,6 +38,7 @@ public:
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
+    game& getJoueur2() const;
     void init ();
     delay & getDelays(bool first_player=true);
     t_number getFrame() const {return _nb_frame;}

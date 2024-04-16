@@ -1,14 +1,16 @@
 #include "arbitre.h"
+
 #include <iostream>
 #include <SFML/Network.hpp>
 #include <map>
+
 using dimension = u_int16_t;
 
 
 class interface{
 public:
     interface();
-    void play(t_number indDiff=0);
+    void play(t_number indDiff=0,bool jeu_duo=false);
     void menu();
     void menu_lan();
     void play2(t_number indDiff=0);

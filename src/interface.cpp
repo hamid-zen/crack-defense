@@ -8,9 +8,9 @@ interface::interface():_width(6), _difficulty(4), _textures() {
     load_textures();
 }
 
-void interface::play(t_number ind)
+void interface::play(t_number ind,bool jeu_duo)
 {
-    arbitre _arbitre(ind);
+    arbitre _arbitre(ind, jeu_duo);
     _arbitre.init();
 
     sf::Color color_background = sf::Color::Black;
@@ -21,19 +21,31 @@ void interface::play(t_number ind)
     
     t_number play_tab_width = _arbitre.getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
+    if(_arbitre.jeu_duo())
+        total_width += play_tab_width;
     t_number total_height = _arbitre.getJoueur().height() * _width_cell + 2 * thickness_line ;
     auto angle(0);
 
     // On init la partie affichage du score
-    sf::Text _text_score = sf::Text("SCORE",_font,60);
-    _text_score.setOrigin(sf::Vector2f((_text_score.getGlobalBounds().width)/(2*_text_score.getScale().x),(_text_score.getGlobalBounds().height)/(2*_text_score.getScale().y)));
-    _text_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2));
-    _text_score.setFillColor(color_line);
+    sf::Text _text_score_1 = sf::Text("SCORE JOUEUR 1",_font,60);
+    _text_score_1.setOrigin(sf::Vector2f((_text_score_1.getGlobalBounds().width)/(2*_text_score_1.getScale().x),(_text_score_1.getGlobalBounds().height)/(2*_text_score_1.getScale().y)));
+    _text_score_1.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/20));
+    _text_score_1.setFillColor(color_line);
 
-    sf::Text _number_score = sf::Text(std::to_string(_arbitre.getJoueur().get_score()),_font,60);
-    _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
-    _number_score.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2),total_height/2 + 100));
-    _number_score.setFillColor(color_line);
+    sf::Text _number_score_1 = sf::Text(std::to_string(_arbitre.getJoueur().get_score()),_font,60);
+    _number_score_1.setOrigin(sf::Vector2f((_number_score_1.getGlobalBounds().width)/(2*_number_score_1.getScale().x),(_number_score_1.getGlobalBounds().height)/(2*_number_score_1.getScale().y)));
+    _number_score_1.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/20 + 100));
+    _number_score_1.setFillColor(color_line);
+
+    sf::Text _text_score_2 = sf::Text("SCORE JOUEUR 2",_font,60);
+    _text_score_2.setOrigin(sf::Vector2f((_text_score_2.getGlobalBounds().width)/(2*_text_score_2.getScale().x),(_text_score_2.getGlobalBounds().height)/(2*_text_score_2.getScale().y)));
+    _text_score_2.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/1.3));
+    _text_score_2.setFillColor(color_line);
+
+    sf::Text _number_score_2 = sf::Text(std::to_string(_arbitre.getJoueur().get_score()),_font,60);
+    _number_score_2.setOrigin(sf::Vector2f((_number_score_2.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(_number_score_2.getGlobalBounds().height)/(2*_number_score_2.getScale().y)));
+    _number_score_2.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/1.3 + 100));
+    _number_score_2.setFillColor(color_line);
 
 
     // On init la window
@@ -56,6 +68,9 @@ void interface::play(t_number ind)
     sf::RectangleShape line5(sf::Vector2f(thickness_line, total_height ));
     line5.setFillColor(color_line);
     line5.setPosition(total_width-thickness_line,0);
+    sf::RectangleShape line6(sf::Vector2f(thickness_line, total_height ));
+    line6.setFillColor(color_line);
+    line6.setPosition(total_width-play_tab_width,0);
 
 
     // On cree les sprite
@@ -68,6 +83,7 @@ void interface::play(t_number ind)
         sf::Event e;
         t_action action_utilisateur1(t_action::nothing);
         t_action action_utilisateur2(t_action::nothing);
+
         while (window.pollEvent(e))
         {
             //TODO: remplacer par un appel a une methode meth(event, &first_player):t_action
@@ -97,7 +113,7 @@ void interface::play(t_number ind)
                 }
                 else
                     action_utilisateur1 = t_action::nothing;
-                
+
                 if (e.key.code == sf::Keyboard::LShift)
                     action_utilisateur2 = t_action::change_direction;
                 else if (e.key.code == sf::Keyboard::Z)
@@ -117,26 +133,25 @@ void interface::play(t_number ind)
             }
         }
 
-        //TODO: remmetre
-        // if (!jeu_duo() && first_player == false)
 
         // Traitement du score
         t_number _temp_score = _arbitre.getJoueur().get_score();
+        _number_score_1.setString(sf::String(std::to_string(_temp_score)));
+        _number_score_1.setOrigin(sf::Vector2f((_number_score_1.getGlobalBounds().width)/(2*_number_score_1.getScale().x),(_number_score_1.getGlobalBounds().height)/(2*_number_score_1.getScale().y)));
 
-        if(_temp_score>100)
-            _number_score.setString(sf::String(std::to_string(_temp_score/100)+std::to_string(_temp_score%100)));
-        else if(_temp_score>10)
-            _number_score.setString(sf::String(std::to_string(_temp_score/10)+std::to_string(_temp_score%10)));
-        else
-            _number_score.setString(sf::String(std::to_string(_temp_score)));
-        _number_score.setOrigin(sf::Vector2f((_number_score.getGlobalBounds().width)/(2*_number_score.getScale().x),(_number_score.getGlobalBounds().height)/(2*_number_score.getScale().y)));
+        if (_arbitre.jeu_duo()){
+            t_number _temp_score = _arbitre.getJoueur2().get_score();
+            _number_score_2.setString(sf::String(std::to_string(_temp_score)));
+            _number_score_2.setOrigin(sf::Vector2f((_number_score_2.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(_number_score_2.getGlobalBounds().height)/(2*_number_score_2.getScale().y)));
+        }
+
 
         // On update l'etat du jeu
 
         _arbitre.update(action_utilisateur1);
-        if(_arbitre.jeu_duo()){
-            _arbitre.update(action_utilisateur2,false);
-        }
+        if(_arbitre.jeu_duo())
+            _arbitre.update(action_utilisateur2, false);
+
         auto vec(_arbitre.getDelays().cells_align);
 
         // Affichage de la board
@@ -148,11 +163,8 @@ void interface::play(t_number ind)
 
                 auto dx = _arbitre.getJoueur().cellDx(position(j, i));
                 auto dy = _arbitre.getJoueur().cellDy(position(j, i));
-                if(_arbitre.getJoueur().is_garbage(position(j,i))){
-                    load_texture(s_tile, t_colors::garbage, false);
-                    s_tile.setPosition(_width_cell * j + dx +thickness_line, _width_cell * i + dy +thickness_line - _arbitre.getJoueur().grid_dy());
-                    window.draw(s_tile);
-                }else{
+                
+                
                     auto color = _arbitre.getJoueur()(position(j, i));
 
                     load_texture(s_tile, color, false);
@@ -179,7 +191,7 @@ void interface::play(t_number ind)
                     s_tile.setRotation(0);
                     s_tile.setScale(1, 1);
                     //s_tile.setOrigin(0, 0);
-                }
+                
 
                 // Dessin de la target
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i))
@@ -210,17 +222,87 @@ void interface::play(t_number ind)
                 s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
                 window.draw(s_tile);
             }
+        }
 
+        // Affichage second joueur
+
+        if (_arbitre.jeu_duo()){
+            vec = _arbitre.getDelays(false).cells_align;
+            for (std::size_t i(0); i < _arbitre.getJoueur2().height(); i++)
+            {
+                for (std::size_t j(0); j < _arbitre.getJoueur2().width(); j++)
+                {
+                    t_number x(0);
+
+                    auto dx = _arbitre.getJoueur2().cellDx(position(j, i));
+                    auto dy = _arbitre.getJoueur2().cellDy(position(j, i));
+                    
+                        auto color = _arbitre.getJoueur2()(position(j, i));
+
+                        load_texture(s_tile, color, false);
+
+                        if(s_tile.getOrigin().x == 0)
+                            s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
+
+                        if (vec.size() == 0)
+                            s_tile.setPosition( play_tab_width+score_tab_width + _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre.getJoueur2().grid_dy() + _width_cell/2);
+                        else
+                        {
+                            s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre.getJoueur2().grid_dy() + _width_cell/2);
+                            auto it(std::find(vec.begin(), vec.end(), position(j, i)));
+                            if (it != vec.end())
+                            {
+                                s_tile.rotate(_arbitre.getDelays(false).angle);
+                                s_tile.setScale(_arbitre.getDelays(false).scale, _arbitre.getDelays(false).scale);
+                                //s_tile.setOrigin(0, 0);
+                                vec.erase(it);
+                            }
+                        }
+
+                        window.draw(s_tile);
+                        s_tile.setRotation(0);
+                        s_tile.setScale(1, 1);
+                        //s_tile.setOrigin(0, 0);
+                    
+
+                    // Dessin de la target
+                    if (_arbitre.getJoueur2().getcell1target() == position(j, i) || _arbitre.getJoueur2().getcell2target() == position(j, i))
+                    {
+                        if (vec.size() == 0)
+                            s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre.getJoueur2 ().grid_dy());
+                        else
+                            s_target.setPosition(play_tab_width+score_tab_width + _width_cell * j, _width_cell * i);
+                        window.draw(s_target);
+                    }
+                }
+            }
+
+            // Affichage de la ligne qui monte joueur 2
+            for (std::size_t j(0); j < _arbitre.getJoueur2().width(); j++)
+            {
+                // On get la couleur actuelle
+                auto color = _arbitre.getJoueur2()(position(j, _arbitre.getJoueur2().height()));
+
+                load_texture(s_tile, color, true);
+
+                s_tile.setPosition(play_tab_width+score_tab_width + _width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre.getJoueur2().height() - _arbitre.getJoueur2().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
+                window.draw(s_tile);
+            }
         }
 
         // On display
-        window.draw(_number_score);
-        window.draw(_text_score);
+        window.draw(_number_score_1);
+        window.draw(_text_score_1);
         window.draw(line1);
         window.draw(line2);
         window.draw(line3);
         window.draw(line4);
         window.draw(line5);
+        if(_arbitre.jeu_duo()){
+            window.draw(_number_score_2);
+            window.draw(_text_score_2);
+            window.draw(line6);
+        }
         angle+=5;
         window.display();
     }
@@ -348,10 +430,10 @@ void interface::menu(){
                     if(_index_choice_pos == _choices.size()-1){
                         if(_index_number_player_choice==1){
                             window.close();
-                            play2(_index_difficulties_choice);
+                            play(_index_difficulties_choice,true);
                         }
 
-                       /* else if(_index_number_player_choice==2){
+                        /* else if(_index_number_player_choice==2){
                             window.close();
                             menu_lan();
                         }*/
@@ -740,10 +822,6 @@ void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) con
 
 }
 
-
-void interface::play2(t_number indDiff ){
-    std::cout<<"sa rentre "<<std::endl;
-}
 
 
 void interface::menu_regle(){
