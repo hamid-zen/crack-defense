@@ -236,7 +236,7 @@ std::vector<position> game::vertical_alignment()
                     vec.push_back(position(i,j));
                     vec.push_back(position(i,j+1));
                     vec.push_back(position(i,j+2));
-                    unsigned int k(j+1);
+                    unsigned int k(j+3);
                     auto clr(_grid(position(i,j)));
                 // on ajoute tant que c'est la meme couleur
                 while (k < _grid.max_height()&& !is_garbage(position(i,k)) && (_grid(position(i, k)) == clr || _grid(position(i,k)) == t_colors::all))
@@ -270,7 +270,7 @@ std::vector<position> game::horizontal_alignment()
                     vec.push_back(position(i,j));
                     vec.push_back(position(i+1,j));
                     vec.push_back(position(i+2,j));
-                    unsigned int k(i+1);
+                    unsigned int k(i+3);
                     auto clr(_grid(position(i,j)));
                 // on ajoute tant que c'est la meme couleur
                 while (k < _grid.max_width() && !is_garbage(position(k,j)) && (_grid(position(k,j)) == clr || _grid(position(k, j)) == t_colors::all))
