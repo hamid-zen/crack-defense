@@ -3,10 +3,17 @@
 #include <iostream>
 #include <SFML/Network.hpp>
 #include <SFML/Audio.hpp>
-#include <map>
+#include <vector>
 
 using dimension = u_int16_t;
 
+enum class t_textures {
+    Blue, Red, Yellow, Orange, Pink, All, SkyBlue, Purple, Green, White,
+    BlueShade, YellowShade, OrangeShade, PinkShade, RedShade, SkyBlueShade, PurpleShade, GreenShade, WhiteShade,
+    Ghost, Target, Ctrl, DirectionalArrows, Shift, Tab, Enter, Esc, DirectionalKeys
+};
+
+t_number t_textures_to_index(t_textures texture);
 
 class interface{
 public:
@@ -30,5 +37,5 @@ private:
 
     // Est-ce une bonne pratique
     // est-ce que je dois la mettre en static ? (logiquement)
-    std::map<std::string, sf::Texture> _textures;
+    std::vector<sf::Texture> _textures;
 };

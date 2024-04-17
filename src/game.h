@@ -15,9 +15,6 @@ enum class t_direction{
     left
 };
 
-
-
-
 class game{
 
 public:

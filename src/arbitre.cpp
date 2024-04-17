@@ -193,7 +193,8 @@ void  arbitre::updateFirstPlayer(t_action x )
             std::cout<<"2";
         }
         _vertical_speed += 0.1;
-        _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
+        if(delays.cells_align.size()==0)
+            _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed + 5);
     }
 
     else {
@@ -209,7 +210,8 @@ void  arbitre::updateFirstPlayer(t_action x )
             std::cout<<"1";
         }
         else{
-            _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed);
+            if(delays.cells_align.size()==0)
+                _joueur1->setGrid_dy(_joueur1->grid_dy() + _vertical_speed);
             _vertical_speed +=0.00001;
             delays.oldspeed +=0.00001 ;
         }
@@ -242,9 +244,6 @@ void  arbitre::updateFirstPlayer(t_action x )
         delays.angle = 0;
         delays.scale = 1;
         _joueur1->inc_score(getDelays().cells_align.size());
-        for(auto it : delays.cells_align){
-            std::cout<<std::endl<<it.x()<<"//"<<it.y()<<std::endl;
-        }
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());
@@ -405,7 +404,8 @@ void  arbitre::updateSecondPlayer(t_action x )
             std::cout<<"2";
         }
         _vertical_speed += 0.1;
-        _joueur2->setGrid_dy(_joueur2->grid_dy() + _vertical_speed + 5);
+        if(delays2.cells_align.size()==0)
+            _joueur2->setGrid_dy(_joueur2->grid_dy() + _vertical_speed + 5);
     }
 
     else {
@@ -421,7 +421,8 @@ void  arbitre::updateSecondPlayer(t_action x )
             std::cout<<"1";
         }
         else{
-            _joueur2->setGrid_dy(_joueur2->grid_dy() + _vertical_speed);
+            if(delays2.cells_align.size()==0)
+                _joueur2->setGrid_dy(_joueur2->grid_dy() + _vertical_speed);
             _vertical_speed +=0.00001;
             delays2.oldspeed +=0.00001 ;
         }

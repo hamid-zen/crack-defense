@@ -4,7 +4,7 @@
 // #E882E8 color target
 // #255,255,255 color case vide
 //
-interface::interface():_width(6), _difficulty(4), _textures() {
+interface::interface():_width(6), _difficulty(4), _textures(35, sf::Texture()) {
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
 }
@@ -14,13 +14,8 @@ void interface::play(t_number ind,bool jeu_duo)
     sf::Music _music ;
     _music.openFromFile("../msc/EWD.ogg");
     _music.setLoop(true);
-    _music.play();
-    
-    
+    // _music.play();
 
-    
-
-    
     arbitre _arbitre(ind, jeu_duo);
     _arbitre.init();
 
@@ -85,7 +80,7 @@ void interface::play(t_number ind,bool jeu_duo)
 
 
     // On cree les sprite
-    sf::Sprite s_tile, s_target(_textures.at("target"));
+    sf::Sprite s_tile, s_target(_textures[t_textures_to_index(t_textures::Target)]);
 
     while (window.isOpen() && !_arbitre.getJoueur().is_lost())
     {
@@ -114,7 +109,7 @@ void interface::play(t_number ind,bool jeu_duo)
                     action_utilisateur1 = t_action::go_right;
                 else if (e.key.code == sf::Keyboard::Down)
                     action_utilisateur1 = t_action::go_down;
-                else if (e.key.code == sf::Keyboard::Space)
+                else if (e.key.code == sf::Keyboard::RControl)
                     action_utilisateur1 = t_action::exchange;
                 else if (e.key.code == sf::Keyboard::Enter)
                     action_utilisateur1 = t_action::accelerate;
@@ -209,10 +204,8 @@ void interface::play(t_number ind,bool jeu_duo)
                 // Dessin de la target
                 if (_arbitre.getJoueur().getcell1target() == position(j, i) || _arbitre.getJoueur().getcell2target() == position(j, i))
                 {
-                    if (vec.size() == 0)
-                        s_target.setPosition(64 * j+thickness_line, 64 * i+thickness_line - _arbitre.getJoueur().grid_dy());
-                    else
-                        s_target.setPosition(_width_cell * j, _width_cell * i);
+                    s_target.setPosition(_width_cell * j+thickness_line, _width_cell * i+thickness_line - _arbitre.getJoueur().grid_dy());
+
                     window.draw(s_target);
                 }
             }
@@ -272,11 +265,9 @@ void interface::play(t_number ind,bool jeu_duo)
                     // Dessin de la target
                     if (_arbitre.getJoueur2().getcell1target() == position(j, i) || _arbitre.getJoueur2().getcell2target() == position(j, i))
                     {
-                        if (vec.size() == 0)
-                            s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre.getJoueur2 ().grid_dy());
-                        else
-                            s_target.setPosition(play_tab_width+score_tab_width + _width_cell * j, _width_cell * i);
-                        window.draw(s_target);
+
+                        s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre.getJoueur2 ().grid_dy());
+
                     }
                 }
             }
@@ -763,86 +754,76 @@ void interface::menu_lan(){
 
 void interface::load_textures()
 {
-    _textures["blue"].loadFromFile("../textures/single_blocks/Blue_colored.png");
-    _textures["red"].loadFromFile("../textures/single_blocks/Red.png");
-    _textures["yellow"].loadFromFile("../textures/single_blocks/Yellow_colored.png");
-    _textures["orange"].loadFromFile("../textures/single_blocks/Orange_colored.png");
-    _textures["pink"].loadFromFile("../textures/single_blocks/Pink_colored.png");
-    _textures["all"].loadFromFile("../textures/single_blocks/special.png");
-    _textures["sky_blue"].loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
-    _textures["purple"].loadFromFile("../textures/single_blocks/Purple_colored.png");
-    _textures["green"].loadFromFile("../textures/single_blocks/Green_colored.png");
-    _textures["white"].loadFromFile("../textures/single_blocks/White_colored.png");
+    _textures[t_textures_to_index(t_textures::Blue)].loadFromFile("../textures/single_blocks/Blue_colored.png");
+    _textures[t_textures_to_index(t_textures::Red)].loadFromFile("../textures/single_blocks/Red.png");
+    _textures[t_textures_to_index(t_textures::Yellow)].loadFromFile("../textures/single_blocks/Yellow_colored.png");
+    _textures[t_textures_to_index(t_textures::Orange)].loadFromFile("../textures/single_blocks/Orange_colored.png");
+    _textures[t_textures_to_index(t_textures::Pink)].loadFromFile("../textures/single_blocks/Pink_colored.png");
+    _textures[t_textures_to_index(t_textures::All)].loadFromFile("../textures/single_blocks/special.png");
+    _textures[t_textures_to_index(t_textures::SkyBlue)].loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
+    _textures[t_textures_to_index(t_textures::Purple)].loadFromFile("../textures/single_blocks/Purple_colored.png");
+    _textures[t_textures_to_index(t_textures::Green)].loadFromFile("../textures/single_blocks/Green_colored.png");
+    _textures[t_textures_to_index(t_textures::White)].loadFromFile("../textures/single_blocks/White_colored.png");
 
-    _textures["blue_shade"].loadFromFile("../textures/single_blocks/Blue_shade.png");
-    _textures["yellow_shade"].loadFromFile("../textures/single_blocks/Yellow_shade.png");
-    _textures["orange_shade"].loadFromFile("../textures/single_blocks/Orange_shade.png");
-    _textures["pink_shade"].loadFromFile("../textures/single_blocks/Pink_shade.png");
-    _textures["red_shade"].loadFromFile("../textures/single_blocks/Red_shade.png");
-    _textures["sky_blue_shade"].loadFromFile("../textures/single_blocks/Sky_blue_shade.png");
-    _textures["purple_shade"].loadFromFile("../textures/single_blocks/Purple_shade.png");
-    _textures["green_shade"].loadFromFile("../textures/single_blocks/Green_shade.png");
-    _textures["white_shade"].loadFromFile("../textures/single_blocks/White_shade.png");
+    _textures[t_textures_to_index(t_textures::BlueShade)].loadFromFile("../textures/single_blocks/Blue_shade.png");
+    _textures[t_textures_to_index(t_textures::YellowShade)].loadFromFile("../textures/single_blocks/Yellow_shade.png");
+    _textures[t_textures_to_index(t_textures::OrangeShade)].loadFromFile("../textures/single_blocks/Orange_shade.png");
+    _textures[t_textures_to_index(t_textures::PinkShade)].loadFromFile("../textures/single_blocks/Pink_shade.png");
+    _textures[t_textures_to_index(t_textures::RedShade)].loadFromFile("../textures/single_blocks/Red_shade.png");
+    _textures[t_textures_to_index(t_textures::SkyBlueShade)].loadFromFile("../textures/single_blocks/Sky_blue_shade.png");
+    _textures[t_textures_to_index(t_textures::PurpleShade)].loadFromFile("../textures/single_blocks/Purple_shade.png");
+    _textures[t_textures_to_index(t_textures::GreenShade)].loadFromFile("../textures/single_blocks/Green_shade.png");
+    _textures[t_textures_to_index(t_textures::WhiteShade)].loadFromFile("../textures/single_blocks/White_shade.png");
 
-    _textures["ghost"].loadFromFile("../textures/single_blocks/Ghost.png");
-    _textures["target"].loadFromFile("../textures/single_blocks/Target.png");
+    _textures[t_textures_to_index(t_textures::Ghost)].loadFromFile("../textures/single_blocks/Ghost.png");
+    _textures[t_textures_to_index(t_textures::Target)].loadFromFile("../textures/single_blocks/Target.png");
 
-    _textures["Crtl"].loadFromFile("../textures/keycaps/Crtl.png");
-    _textures["Fleches_directionelles"].loadFromFile("../textures/keycaps/Fleches_directionelles.png");
-    _textures["Shift"].loadFromFile("../textures/keycaps/Shift.png");
-    _textures["Up"].loadFromFile("../textures/keycaps/Up.png");
-    _textures["Down"].loadFromFile("../textures/keycaps/Down.png");
-    _textures["Left"].loadFromFile("../textures/keycaps/Left.png");
-    _textures["Tab"].loadFromFile("../textures/keycaps/Tab.png");
-    _textures["Enter"].loadFromFile("../textures/keycaps/Enter.png");
-    _textures["Z"].loadFromFile("../textures/keycaps/Z.png");
-    _textures["D"].loadFromFile("../textures/keycaps/D.png");
-    _textures["Q"].loadFromFile("../textures/keycaps/Q.png");
-    _textures["S"].loadFromFile("../textures/keycaps/S.png");
-    _textures["Esc"].loadFromFile("../textures/keycaps/Esc.png");
-    _textures["Right"].loadFromFile("../textures/keycaps/Right.png");
-    _textures["Touches_directionelles"].loadFromFile("../textures/keycaps/Touches_directionelles.png");
+    _textures[t_textures_to_index(t_textures::Ctrl)].loadFromFile("../textures/keycaps/Crtl.png");
+    _textures[t_textures_to_index(t_textures::DirectionalArrows)].loadFromFile("../textures/keycaps/Fleches_directionelles.png");
+    _textures[t_textures_to_index(t_textures::Shift)].loadFromFile("../textures/keycaps/Shift.png");
+    _textures[t_textures_to_index(t_textures::Tab)].loadFromFile("../textures/keycaps/Tab.png");
+    _textures[t_textures_to_index(t_textures::Enter)].loadFromFile("../textures/keycaps/Enter.png");
+    _textures[t_textures_to_index(t_textures::Esc)].loadFromFile("../textures/keycaps/Esc.png");
+    _textures[t_textures_to_index(t_textures::DirectionalKeys)].loadFromFile("../textures/keycaps/Touches_directionelles.png");
 
     _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
     _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");
     _buffer_sound_play.loadFromFile("../sound/Menu_Sounds_Load_Savefile.wav");
-    
 }
-
 
 void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) const
 {
     if (!shade) {
         switch (color) {
         case t_colors::blue:
-            sprite.setTexture(_textures.at("blue"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Blue)]);
             break;
         case t_colors::pink:
-            sprite.setTexture(_textures.at("pink"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Pink)]);
             break;
         case t_colors::yellow:
-            sprite.setTexture(_textures.at("yellow"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Yellow)]);
             break;
         case t_colors::orange:
-            sprite.setTexture(_textures.at("orange"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Orange)]);
             break;
         case t_colors::sky_blue:
-            sprite.setTexture(_textures.at("sky_blue"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::SkyBlue)]);
             break;
         case t_colors::purple:
-            sprite.setTexture(_textures.at("purple"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Purple)]);
             break;
         case t_colors::green:
-            sprite.setTexture(_textures.at("green"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Green)]);
             break;
         case t_colors::white:
-            sprite.setTexture(_textures.at("white"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::White)]);
             break;
         case t_colors::empty_cell:
-            sprite.setTexture(_textures.at("ghost"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Ghost)]);
             break;
         case t_colors::garbage:
-            sprite.setTexture(_textures.at("red"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::Red)]);
             break;
         default:
             break;
@@ -850,37 +831,34 @@ void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) con
     } else {
         switch (color) {
         case t_colors::blue:
-            sprite.setTexture(_textures.at("blue_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::BlueShade)]);
             break;
         case t_colors::pink:
-            sprite.setTexture(_textures.at("pink_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::PinkShade)]);
             break;
         case t_colors::yellow:
-            sprite.setTexture(_textures.at("yellow_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::YellowShade)]);
             break;
         case t_colors::orange:
-            sprite.setTexture(_textures.at("orange_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::OrangeShade)]);
             break;
         case t_colors::sky_blue:
-            sprite.setTexture(_textures.at("sky_blue_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::SkyBlueShade)]);
             break;
         case t_colors::purple:
-            sprite.setTexture(_textures.at("purple_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::PurpleShade)]);
             break;
         case t_colors::green:
-            sprite.setTexture(_textures.at("green_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::GreenShade)]);
             break;
         case t_colors::white:
-            sprite.setTexture(_textures.at("white_shade"));
+            sprite.setTexture(_textures[t_textures_to_index(t_textures::WhiteShade)]);
             break;
         default:
             break;
         }
     }
-    
-
 }
-
 
 
 void interface::menu_regle(){
@@ -947,14 +925,14 @@ void interface::menu_regle(){
 
     // sprites
     sf::Sprite s_fleches, s_ctrl_1, s_ctrl_2, s_shift_1, s_shift_2, s_enter, s_tab, s_touches;
-    s_fleches.setTexture(_textures.at("Fleches_directionelles"));
-    s_ctrl_1.setTexture(_textures.at("Crtl"));
-    s_shift_1.setTexture(_textures.at("Shift"));
-    s_enter.setTexture(_textures.at("Enter"));
-    s_touches.setTexture(_textures.at("Touches_directionelles"));
-    s_ctrl_2.setTexture(_textures.at("Crtl"));
-    s_shift_2.setTexture(_textures.at("Shift"));
-    s_tab.setTexture(_textures.at("Tab"));
+    s_fleches.setTexture(_textures[t_textures_to_index(t_textures::DirectionalArrows)]);
+    s_ctrl_1.setTexture(_textures[t_textures_to_index(t_textures::Ctrl)]);
+    s_shift_1.setTexture(_textures[t_textures_to_index(t_textures::Shift)]);
+    s_enter.setTexture(_textures[t_textures_to_index(t_textures::Enter)]);
+    s_touches.setTexture(_textures[t_textures_to_index(t_textures::DirectionalKeys)]);
+    s_ctrl_2.setTexture(_textures[t_textures_to_index(t_textures::Ctrl)]);
+    s_shift_2.setTexture(_textures[t_textures_to_index(t_textures::Shift)]);
+    s_tab.setTexture(_textures[t_textures_to_index(t_textures::Tab)]);
 
     //vector choice_pos
     std::vector<sf::Sprite *> _choices;
@@ -1076,4 +1054,9 @@ void interface::menu_regle(){
         window.draw(_text_explication);
         window.display();
     }
+}
+
+t_number t_textures_to_index(t_textures texture)
+{
+    return static_cast<t_number>(texture);
 }
