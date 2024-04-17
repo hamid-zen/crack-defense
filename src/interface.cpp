@@ -10,7 +10,12 @@ interface::interface():_width(6), _difficulty(4), _textures(35, sf::Texture()) {
 }
 
 void interface::play(t_number ind,bool jeu_duo)
+
 {
+    struct score_particle{
+        std::vector<std::unique_ptr<sf::Sprite>> _particle;
+
+    };
     sf::Music _music ;
     _music.openFromFile("../msc/EWD.ogg");
     _music.setLoop(true);
@@ -80,7 +85,8 @@ void interface::play(t_number ind,bool jeu_duo)
 
 
     // On cree les sprite
-    sf::Sprite s_tile, s_target(_textures[t_textures_to_index(t_textures::Target)]);
+    sf::Sprite s_tile, s_target(_textures[t_textures_to_index(t_textures::Target)]), s_xp(_textures[t_textures_to_index(t_textures::Blue_XP)]);
+    s_xp.setOrigin(sf::Vector2f((s_xp.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(s_xp.getGlobalBounds().height)/(2*s_xp.getScale().y)));
 
     while (window.isOpen() && !_arbitre.getJoueur().is_lost())
     {
@@ -155,7 +161,6 @@ void interface::play(t_number ind,bool jeu_duo)
 
 
         // On update l'etat du jeu
-
         _arbitre.update(action_utilisateur1);
         if(_arbitre.jeu_duo())
             _arbitre.update(action_utilisateur2, false);
@@ -192,6 +197,12 @@ void interface::play(t_number ind,bool jeu_duo)
                             s_tile.setScale(_arbitre.getDelays().scale, _arbitre.getDelays().scale);
                             //s_tile.setOrigin(0, 0);
                             vec.erase(it);
+
+                            // if (s_tile.getScale().x <= 0.1){
+                            //     s_xp.setTexture(_textures[t_textures_to_index(t_textures::Blue_XP)]);
+                            //     s_xp.setPosition(s_tile.getPosition());
+                            //     window.draw(s_xp);
+                            // }
                         }
                     }
 
@@ -253,6 +264,7 @@ void interface::play(t_number ind,bool jeu_duo)
                                 s_tile.setScale(_arbitre.getDelays(false).scale, _arbitre.getDelays(false).scale);
                                 //s_tile.setOrigin(0, 0);
                                 vec.erase(it);
+
                             }
                         }
 
@@ -301,19 +313,17 @@ void interface::play(t_number ind,bool jeu_duo)
         angle+=5;
         window.display();
     }
-    std::cout << "play\n" ;
+
     sf::Sound _sound_loose ;
     _sound_loose.setBuffer(_buffer_sound_loose);
     _sound_loose.setVolume(10);
     _sound_loose.play();
-    std::cout << "play\n" ;
     window.close();
     menu();
 }
 
 void interface::menu(){
 
-    
     sf::Sound _sound ;
     _sound.setBuffer(_buffer_sound_choice_move);
     _sound.setVolume(5);
@@ -394,13 +404,11 @@ void interface::menu(){
     _number_player_choice.setFillColor(color_line);
 
 
-
     //vector choice_pos 
     std::vector<sf::Transformable *> _choices;
     t_number _index_choice_pos = 0; 
 
     //add choice_pos
-
     _choices.push_back(&_number_player_choice);
     _choices.push_back(&_difficulty_choice);
     _choices.push_back(&_text_play);
@@ -428,14 +436,9 @@ void interface::menu(){
     _vector_number_player_choice.push_back(sf::String("W-LAN"));
 
     
-
-
     while(window.isOpen()){
         sf::Event e;
         
-
-
-
         while (window.pollEvent(e))
         {
             if (e.type == sf::Event::Closed)
@@ -785,6 +788,10 @@ void interface::load_textures()
     _textures[t_textures_to_index(t_textures::Enter)].loadFromFile("../textures/keycaps/Enter.png");
     _textures[t_textures_to_index(t_textures::Esc)].loadFromFile("../textures/keycaps/Esc.png");
     _textures[t_textures_to_index(t_textures::DirectionalKeys)].loadFromFile("../textures/keycaps/Touches_directionelles.png");
+
+    _textures[t_textures_to_index(t_textures::Blue_XP)].loadFromFile("../textures/xp_chips/Blue_XP.png");
+    _textures[t_textures_to_index(t_textures::Yellow_XP)].loadFromFile("../textures/xp_chips/Yellow_XP.png");
+    _textures[t_textures_to_index(t_textures::Pink_XP)].loadFromFile("../textures/xp_chips/Pink_XP.png");
 
     _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
     _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");

@@ -243,6 +243,9 @@ void  arbitre::updateFirstPlayer(t_action x )
     if (delays.angle >= 360 || delays.scale <= 0) {
         delays.angle = 0;
         delays.scale = 1;
+        for (auto it:delays.cells_align ){
+            std::cout<<it.x()<<"//"<<it.y()<<std::endl;
+        }
         _joueur1->inc_score(getDelays().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
@@ -460,6 +463,7 @@ void  arbitre::updateSecondPlayer(t_action x )
         {
             auto col(v[i].x());
             _joueur2->delete_cell(v[i]);
+
             _joueur2->slideColumn(col, delays2.cells_slide);
         }
     }
