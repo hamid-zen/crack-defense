@@ -184,6 +184,8 @@ void  arbitre::updateFirstPlayer(t_action x )
         if (_joueur1->grid_dy() >= 64)
         {
             _joueur1->add_new_row();
+            increment_delays_y_pos();
+            
             // On remet a zero grid_dy
             _joueur1->setGrid_dy(0);
             delays.newline = false;
@@ -198,6 +200,7 @@ void  arbitre::updateFirstPlayer(t_action x )
         if (_joueur1->grid_dy() >= 64)
         {   
             _joueur1->add_new_row(150);
+            increment_delays_y_pos();
 
             // On remet a zero grid_dy
             _joueur1->setGrid_dy(0);
@@ -391,6 +394,7 @@ void  arbitre::updateSecondPlayer(t_action x )
         if (_joueur2->grid_dy() >= 64)
         {
             _joueur2->add_new_row();
+            increment_delays_y_pos(false);
             // On remet a zero grid_dy
             _joueur2->setGrid_dy(0);
             delays2.newline = false;
@@ -405,6 +409,7 @@ void  arbitre::updateSecondPlayer(t_action x )
         if (_joueur2->grid_dy() >= 64)
         {   
             _joueur2->add_new_row(150);
+            increment_delays_y_pos(false);
 
             // On remet a zero grid_dy
             _joueur2->setGrid_dy(0);
@@ -490,3 +495,32 @@ bool arbitre::jeu_duo() const
     return _joueur2!=nullptr;
 }
 
+void arbitre::increment_delays_y_pos(bool first_player)
+{
+    if(first_player){
+        for(auto & it : delays.cells_align){
+            it.sety(it.y()-1);
+        }
+
+        for(auto & it : delays.cells_slide){
+            it->sety(it->y()-1);
+        }
+        if(delays.cells_switch1)
+            delays.cells_switch1->sety(delays.cells_switch1->y()-1);
+        if(delays.cells_switch2)
+            delays.cells_switch2->sety(delays.cells_switch2->y()-1);
+    }
+    else {
+        for(auto & it : delays2.cells_align){
+            it.sety(it.y()-1);
+        }
+
+        for(auto & it : delays2.cells_slide){
+            it->sety(it->y()-1);
+        }
+        if(delays2.cells_switch1)
+            delays2.cells_switch1->sety(delays2.cells_switch1->y()-1);
+        if(delays2.cells_switch2)
+            delays2.cells_switch2->sety(delays2.cells_switch2->y()-1);
+    }
+}

@@ -98,8 +98,10 @@ void interface::play(t_number ind,bool jeu_duo)
         while (window.pollEvent(e))
         {
             //TODO: remplacer par un appel a une methode meth(event, &first_player):t_action
-            if (e.type == sf::Event::Closed)
+            if (e.type == sf::Event::Closed){
                 window.close();
+                _music.stop();
+            }
             if (e.type == sf::Event::KeyPressed)
             {
                 if (e.key.code == sf::Keyboard::RShift)
@@ -215,15 +217,7 @@ void interface::play(t_number ind,bool jeu_duo)
                 }
             }
         }
-        if (vec.size() == 0)
-        {
-            //   if(s_tile.getOrigin().x == 0)
-            //             s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
-
-
-            //TODO: deplacer vers la boucle
-            // Affichage de la ligne qui monte
-            for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
+        for (std::size_t j(0); j < _arbitre.getJoueur().width(); j++)
             {
                 // On get la couleur actuelle
                 auto color = _arbitre.getJoueur()(position(j, _arbitre.getJoueur().height()));
@@ -233,7 +227,6 @@ void interface::play(t_number ind,bool jeu_duo)
                 s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre.getJoueur().height() - _arbitre.getJoueur().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
                 window.draw(s_tile);
             }
-        }
 
         // Affichage second joueur
 
