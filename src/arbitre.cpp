@@ -242,6 +242,9 @@ void  arbitre::updateFirstPlayer(t_action x )
         delays.angle = 0;
         delays.scale = 1;
         _joueur1->inc_score(getDelays().cells_align.size());
+        for(auto it : delays.cells_align){
+            std::cout<<std::endl<<it.x()<<"//"<<it.y()<<std::endl;
+        }
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());
