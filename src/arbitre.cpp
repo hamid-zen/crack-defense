@@ -44,7 +44,7 @@ void  arbitre::update(t_action x, bool first_player)
 
 void  arbitre::updateFirstPlayer(t_action x )
 {
-    //_joueur1->update_garbage_height();
+     _joueur1->update_garbage_height();
     auto it = delays.cells_slide.begin();
     while (it != delays.cells_slide.end())
     {
@@ -172,6 +172,8 @@ void  arbitre::updateFirstPlayer(t_action x )
             // On genere un malus
             // rajouter la touche pour envoyer un garbage a l'autre
             _joueur1->add_garbage(delays.cells_slide);
+            delays.last_frame_alignment=getFrame();
+            delays.last_garbage=getFrame();
             break;
         }
         default: break;
@@ -224,14 +226,19 @@ void  arbitre::updateFirstPlayer(t_action x )
             delays.last_frame_alignment=getFrame();
         }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {
-            // delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-            //  delays.last_garbage=getFrame();
+            //delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+           // delays.last_garbage=getFrame();
             //  _joueur1->add_garbage(delays.cells_slide);
         }   
 
 
         if(delays.last_garbage>0){
+            std::cout<<"cells slide "<<std::endl;
+            for(auto e :delays.cells_slide){
+                std::cout<<e->x()<<','<<e->y()<<std::endl;
+            }
             _joueur1->transform_malus_to_cell(v,delays.cells_slide);
+
             //ajouter que les cases glissent
         }
 
@@ -246,6 +253,7 @@ void  arbitre::updateFirstPlayer(t_action x )
         for (auto it:delays.cells_align ){
             std::cout<<it.x()<<"//"<<it.y()<<std::endl;
         }
+         std::cout<<"fin";
         _joueur1->inc_score(getDelays().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
@@ -261,7 +269,7 @@ void  arbitre::updateFirstPlayer(t_action x )
 }
 void  arbitre::updateSecondPlayer(t_action x )
 {
-    //_joueur1->update_garbage_height();
+     _joueur1->update_garbage_height();
     auto it = delays2.cells_slide.begin();
     while (it != delays2.cells_slide.end())
     {
@@ -387,6 +395,8 @@ void  arbitre::updateSecondPlayer(t_action x )
             // On genere un malus
             // rajouter la touche pour envoyer un garbage a l'autre
             _joueur2->add_garbage(delays2.cells_slide);
+             delays2.last_frame_alignment=getFrame();
+            delays2.last_garbage=getFrame();
             break;
         }
         default: break;
@@ -446,6 +456,7 @@ void  arbitre::updateSecondPlayer(t_action x )
 
 
         if(delays2.last_garbage>0){
+
             _joueur2->transform_malus_to_cell(v,delays2.cells_slide);
             //ajouter que les cases glissent
         }

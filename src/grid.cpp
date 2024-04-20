@@ -242,13 +242,13 @@ void grid::generate_garbage(std::vector<position*> & malus){
     }
     
     _board[(debut+0) + 0]=std::make_unique<malusCell>(t_colors::garbage,false,true);
-    malus.push_back(new position(debut,0));
+    malus.push_back(new position(debut,j));
 
     for(int i(1);i<(taille-1);i++){
         _board[(debut+i) + 0]=std::make_unique<malusCell>(t_colors::garbage,true,true);
-        malus.push_back(new position(debut+i,0));
+        malus.push_back(new position(debut+i,j));
     }
-    malus.push_back(new position(debut+taille-1,0));
+    malus.push_back(new position(debut+taille-1,j));
     _board[(debut+taille-1) + 0]=std::make_unique<malusCell>(t_colors::garbage,true,false);
 
 
@@ -389,7 +389,7 @@ void  grid::transform_to_cell(std::vector<position> const & align_cell, std::vec
             auto vec (generate_random_line(taille));
             for (auto i(pst.x());i<pst.x()+taille;i++){
                 if(estMalus(position(i, pst.y()))){ //est malus teste deja si cest nullptr    
-                    _board[i+ pst.y() * _max_width].reset();
+                    //_board[i+ pst.y() * _max_width].reset();
                     _board[i+ pst.y() * _max_width]=std::make_unique<cell>(vec[i-pst.x()]);
                     pos_cells.push_back(new position(i, pst.y() ));
                 }else break;

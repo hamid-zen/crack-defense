@@ -1,4 +1,4 @@
-#include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_test_macros.hpp> 
 #include "../src/game.h"
 
 TEST_CASE("Echange_case", "test") {
@@ -39,9 +39,7 @@ TEST_CASE("Alignement_horizontale", "[alignement][test]") {
 TEST_CASE("Alignement_verticale", "[alignement][test]") {
     mysrand(3);
     game g;
-        std::cout << "hehe1 \n";
-        grid gd;
-        std::cout<<gd.estMalus(position(0,0));
+   
     std::cout<<"verticallllllllllllllllllllll"<<std::endl;
 
         g.show();
