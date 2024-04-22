@@ -31,8 +31,9 @@ private:
     t_number_color _difficulty ;
     sf::Font _font;
     sf::SoundBuffer _buffer_sound_choice_move;
-    sf::SoundBuffer _buffer_sound_loose ;
-    sf::SoundBuffer _buffer_sound_play ;
+    sf::SoundBuffer _buffer_sound_loose;
+    sf::SoundBuffer _buffer_sound_play;
+    sf::SoundBuffer _buffer_sound_xp;
     
     // Est-ce une bonne pratique
     // est-ce que je dois la mettre en static ? (logiquement)

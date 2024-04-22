@@ -5,12 +5,12 @@ arbitre::arbitre(t_number ind,bool jeu_duo)
     : _vertical_speed(0.1), _nb_frame(0)
 
 {
-    delays = {false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1};
+    delays = {false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
     if(ind==0){ //easy
         _joueur1=std::make_unique<game>();
         if(jeu_duo){
             _joueur2=std::make_unique<game>();
-            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1};
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
         }else{
             _joueur2=nullptr;
         }
@@ -20,7 +20,7 @@ arbitre::arbitre(t_number ind,bool jeu_duo)
         setVerticalSpeed_Med();
         if(jeu_duo){
             _joueur2=std::make_unique<game>(12,6,6);
-            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1};
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
         }else{
             _joueur2=nullptr;
         }
@@ -29,7 +29,7 @@ arbitre::arbitre(t_number ind,bool jeu_duo)
         setVerticalSpeed_Hard();
         if(jeu_duo){
             _joueur2=std::make_unique<game>(14,8,6);
-            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1};
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
         }else{
             _joueur2=nullptr;
         }
@@ -50,7 +50,9 @@ void  arbitre::update(t_action x, bool first_player)
 
 void  arbitre::updateFirstPlayer(t_action x )
 {
-     _joueur1->update_garbage_height();
+    _joueur1->inc_score(delays.score);
+    delays.score = 0;
+    _joueur1->update_garbage_height();
     auto it = delays.cells_slide.begin();
     while (it != delays.cells_slide.end())
     {
@@ -265,7 +267,7 @@ void  arbitre::updateFirstPlayer(t_action x )
             std::cout<<it.x()<<"//"<<it.y()<<std::endl;
         }
          std::cout<<"fin";
-        _joueur1->inc_score(getDelays().cells_align.size());
+        // _joueur1->inc_score(getDelays().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
             auto col(v[i].x());

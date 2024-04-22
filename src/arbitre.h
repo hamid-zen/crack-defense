@@ -19,6 +19,7 @@ struct delay {
     frame last_garbage;
     t_number angle;
     float scale;
+    char score;
     std::vector<position *> cells_slide ;
     std::vector<position > cells_align ;
 };
@@ -47,6 +48,7 @@ public:
     bool jeu_duo() const ;
     void increment_delays_y_pos(bool first_player = true ) ;
     bool lost() const ;
+
 private:
     std::unique_ptr<game> _joueur1;
     std::unique_ptr<game> _joueur2;

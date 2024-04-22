@@ -10,12 +10,11 @@ interface::interface():_width(6), _difficulty(4), _textures(35, sf::Texture()) {
 }
 
 void interface::play(t_number ind,bool jeu_duo)
-
 {
-    struct score_particle{
-        std::vector<std::unique_ptr<sf::Sprite>> _particle;
+    sf::Sound _sound_xp;
+    _sound_xp.setBuffer(_buffer_sound_xp);
+    _sound_xp.setVolume(10);
 
-    };
     sf::Music _music ;
     _music.openFromFile("../msc/EWD.ogg");
     _music.setLoop(true);
@@ -88,10 +87,29 @@ void interface::play(t_number ind,bool jeu_duo)
     sf::Sprite s_tile, s_target(_textures[t_textures_to_index(t_textures::Target)]), s_xp(_textures[t_textures_to_index(t_textures::Blue_XP)]);
     s_xp.setOrigin(sf::Vector2f((s_xp.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(s_xp.getGlobalBounds().height)/(2*s_xp.getScale().y)));
 
+
+    struct score_particle {
+        position pos;
+        sf::Vector2f direction ;
+        float vitesse ;
+
+        score_particle(position p,position sco,float vit):pos(p),vitesse(vit){
+            direction = sf::Vector2f(sco.x()+20-pos.x(),sco.y()+20-pos.y());
+        }
+        
+        
+    
+    };
+
+    std::vector<score_particle *> particles ;
+
     while (window.isOpen() && !_arbitre.lost())
     {
         window.clear(color_background);
         // square.rotate(1);
+
+
+
         sf::Event e;
         t_action action_utilisateur1(t_action::nothing);
         t_action action_utilisateur2(t_action::nothing);
@@ -105,19 +123,19 @@ void interface::play(t_number ind,bool jeu_duo)
             }
             if (e.type == sf::Event::KeyPressed)
             {
-                if (e.key.code == sf::Keyboard::RShift)
+                if (e.key.code == sf::Keyboard::LShift)
                     action_utilisateur1 = t_action::change_direction;
-                else if (e.key.code == sf::Keyboard::Up)
+                else if (e.key.code == sf::Keyboard::Z)
                     action_utilisateur1 = t_action::go_up;
-                else if (e.key.code == sf::Keyboard::Left)
+                else if (e.key.code == sf::Keyboard::Q)
                     action_utilisateur1 = t_action::go_left;
-                else if (e.key.code == sf::Keyboard::Right)
+                else if (e.key.code == sf::Keyboard::D)
                     action_utilisateur1 = t_action::go_right;
-                else if (e.key.code == sf::Keyboard::Down)
+                else if (e.key.code == sf::Keyboard::S)
                     action_utilisateur1 = t_action::go_down;
-                else if (e.key.code == sf::Keyboard::RControl)
+                else if (e.key.code == sf::Keyboard::LControl)
                     action_utilisateur1 = t_action::exchange;
-                else if (e.key.code == sf::Keyboard::Enter)
+                else if (e.key.code == sf::Keyboard::Tab)
                     action_utilisateur1 = t_action::accelerate;
                 else if (e.key.code == sf::Keyboard::M)
                     action_utilisateur1 = t_action::generate_malus;
@@ -128,19 +146,19 @@ void interface::play(t_number ind,bool jeu_duo)
                 else
                     action_utilisateur1 = t_action::nothing;
 
-                if (e.key.code == sf::Keyboard::LShift)
+                if (e.key.code == sf::Keyboard::RShift)
                     action_utilisateur2 = t_action::change_direction;
-                else if (e.key.code == sf::Keyboard::Z)
+                else if (e.key.code == sf::Keyboard::Up)
                     action_utilisateur2 = t_action::go_up;
-                else if (e.key.code == sf::Keyboard::Q)
+                else if (e.key.code == sf::Keyboard::Left)
                     action_utilisateur2 = t_action::go_left;
-                else if (e.key.code == sf::Keyboard::D)
+                else if (e.key.code == sf::Keyboard::Right)
                     action_utilisateur2 = t_action::go_right;
-                else if (e.key.code == sf::Keyboard::S)
+                else if (e.key.code == sf::Keyboard::Down)
                     action_utilisateur2 = t_action::go_down;
-                else if (e.key.code == sf::Keyboard::LControl)
+                else if (e.key.code == sf::Keyboard::RControl)
                     action_utilisateur2 = t_action::exchange;
-                else if (e.key.code == sf::Keyboard::Tab)
+                else if (e.key.code == sf::Keyboard::Enter)
                     action_utilisateur2 = t_action::accelerate;
                 else
                     action_utilisateur2 = t_action::nothing;
@@ -177,7 +195,6 @@ void interface::play(t_number ind,bool jeu_duo)
                 auto dx = _arbitre.getJoueur().cellDx(position(j, i));
                 auto dy = _arbitre.getJoueur().cellDy(position(j, i));
                 
-                
                     auto color = _arbitre.getJoueur()(position(j, i));
 
                     load_texture(s_tile, color, false);
@@ -198,11 +215,8 @@ void interface::play(t_number ind,bool jeu_duo)
                             //s_tile.setOrigin(0, 0);
                             vec.erase(it);
 
-                            // if (s_tile.getScale().x <= 0.1){
-                            //     s_xp.setTexture(_textures[t_textures_to_index(t_textures::Blue_XP)]);
-                            //     s_xp.setPosition(s_tile.getPosition());
-                            //     window.draw(s_xp);
-                            // }
+                            if (s_tile.getScale().x <= 0.01)
+                                particles.push_back(new score_particle(position(s_tile.getPosition().x,s_tile.getPosition().y),position(_number_score_1.getPosition().x, _number_score_1.getPosition().y),0.01));
                         }
                     }
 
@@ -279,7 +293,7 @@ void interface::play(t_number ind,bool jeu_duo)
                     {
 
                         s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre.getJoueur2 ().grid_dy());
-
+                        window.draw(s_target);
                     }
                 }
             }
@@ -295,6 +309,33 @@ void interface::play(t_number ind,bool jeu_duo)
                 s_tile.setPosition(play_tab_width+score_tab_width + _width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre.getJoueur2().height() - _arbitre.getJoueur2().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
                 window.draw(s_tile);
             }
+        }
+
+        for(auto it(particles.begin()); it != particles.end(); it++){
+            s_xp.rotate(18);
+            s_xp.setPosition((*it)->pos.x(),(*it)->pos.y());
+            if (_arbitre.getFrame() % 3 == 0)
+                s_xp.setTexture(_textures[t_textures_to_index(t_textures::Blue_XP)]);
+            else if (_arbitre.getFrame() % 3 == 1)
+                s_xp.setTexture(_textures[t_textures_to_index(t_textures::Yellow_XP)]);
+            else
+                s_xp.setTexture(_textures[t_textures_to_index(t_textures::Pink_XP)]);
+            if((*it)->pos.x() <= _number_score_1.getPosition().x || (*it)->pos.y() >= _number_score_1.getPosition().y){
+                (*it)->pos.sety((*it)->pos.y()+(*it)->direction.y * (*it)->vitesse);
+                std::cout<< "original: " << (*it)->pos.x()<<std::endl;
+                std::cout << "v2: " << ((*it)->pos.x()+(*it)->direction.x * (*it)->vitesse) << "\n";
+                (*it)->pos.setx((*it)->pos.x()+(*it)->direction.x * (*it)->vitesse);
+                (*it)->vitesse += 0.001;
+                std::cout<<(*it)->pos.x() <<"//"<<(*it)->direction.x<<"//"<<(*it)->vitesse<< std::endl;
+            }
+            else {
+                particles.erase(it);
+                it--;
+                _arbitre.getDelays().score++;
+                _sound_xp.play();
+            }
+            
+            window.draw(s_xp);
         }
 
         // On display
@@ -796,6 +837,7 @@ void interface::load_textures()
     _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
     _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");
     _buffer_sound_play.loadFromFile("../sound/Menu_Sounds_Load_Savefile.wav");
+    _buffer_sound_xp.loadFromFile("../sound/xp.wav");
 }
 
 void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) const
