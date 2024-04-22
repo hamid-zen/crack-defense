@@ -46,6 +46,7 @@ public:
     void setVerticalSpeed_Hard(){_vertical_speed = 2;};
     bool jeu_duo() const ;
     void increment_delays_y_pos(bool first_player = true ) ;
+    bool lost() const ;
 private:
     std::unique_ptr<game> _joueur1;
     std::unique_ptr<game> _joueur2;

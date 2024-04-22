@@ -88,7 +88,7 @@ void interface::play(t_number ind,bool jeu_duo)
     sf::Sprite s_tile, s_target(_textures[t_textures_to_index(t_textures::Target)]), s_xp(_textures[t_textures_to_index(t_textures::Blue_XP)]);
     s_xp.setOrigin(sf::Vector2f((s_xp.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(s_xp.getGlobalBounds().height)/(2*s_xp.getScale().y)));
 
-    while (window.isOpen() && !_arbitre.getJoueur().is_lost())
+    while (window.isOpen() && !_arbitre.lost())
     {
         window.clear(color_background);
         // square.rotate(1);

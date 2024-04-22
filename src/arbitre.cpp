@@ -37,8 +37,14 @@ arbitre::arbitre(t_number ind,bool jeu_duo)
 }
 void  arbitre::update(t_action x, bool first_player)
 {
-    if(first_player)
+    if(jeu_duo() && x==t_action::generate_malus ){
+           
+          updateSecondPlayer(x);
+          updateFirstPlayer(x);  
+    }
+    else if(first_player){
         updateFirstPlayer(x);
+    }
     else updateSecondPlayer(x);
 }  
 
@@ -170,7 +176,6 @@ void  arbitre::updateFirstPlayer(t_action x )
         case t_action::generate_malus:
         {
             // On genere un malus
-            // rajouter la touche pour envoyer un garbage a l'autre
             _joueur1->add_garbage(delays.cells_slide);
             delays.last_frame_alignment=getFrame();
             delays.last_garbage=getFrame();
@@ -226,9 +231,15 @@ void  arbitre::updateFirstPlayer(t_action x )
             delays.last_frame_alignment=getFrame();
         }else if(( (getFrame()-(delays.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {
-            //delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-           // delays.last_garbage=getFrame();
-            //  _joueur1->add_garbage(delays.cells_slide);
+           /* if(jeu_duo()) //si jeu a deux joueur les alignement causent des malus à l'adversaire
+            {
+            delays2.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+            delays2.last_garbage=getFrame();
+               _joueur2->add_garbage(delays2.cells_slide);}
+            else{
+            delays.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+            delays.last_garbage=getFrame();
+               _joueur1->add_garbage(delays.cells_slide);}*/
         }   
 
 
@@ -269,7 +280,7 @@ void  arbitre::updateFirstPlayer(t_action x )
 }
 void  arbitre::updateSecondPlayer(t_action x )
 {
-     _joueur1->update_garbage_height();
+     _joueur2->update_garbage_height();
     auto it = delays2.cells_slide.begin();
     while (it != delays2.cells_slide.end())
     {
@@ -392,10 +403,10 @@ void  arbitre::updateSecondPlayer(t_action x )
         }
         case t_action::generate_malus:
         {
-            // On genere un malus
-            // rajouter la touche pour envoyer un garbage a l'autre
+            // On genere un malus pour les deux joueurs 
+            
             _joueur2->add_garbage(delays2.cells_slide);
-             delays2.last_frame_alignment=getFrame();
+            delays2.last_frame_alignment=getFrame();
             delays2.last_garbage=getFrame();
             break;
         }
@@ -448,11 +459,11 @@ void  arbitre::updateSecondPlayer(t_action x )
             delays2.last_frame_alignment=getFrame();
         }else if(( (getFrame()-(delays2.last_frame_alignment) <90)|| (v.size()>4) )&& getFrame()-delays2.last_garbage>60) //si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {
-            // delays2.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-            //  delays2.last_garbage=getFrame();
-            //  _joueur2->add_garbage(delays2.cells_slide);
+          /*  //si on rentre ici cad jeu a deux joueur donc le malus est envoyee à l'adversaire
+            delays.last_frame_alignment=getFrame();  
+            delays.last_garbage=getFrame();
+            _joueur1->add_garbage(delays.cells_slide);*/
         }   
-        //  _nb_frame++; // on incremente le nombre de frame
 
 
         if(delays2.last_garbage>0){
@@ -542,4 +553,9 @@ void arbitre::increment_delays_y_pos(bool first_player)
         if(delays2.cells_switch2)
             delays2.cells_switch2->sety(delays2.cells_switch2->y()-1);
     }
+}
+bool arbitre::lost() const {
+    if(jeu_duo()){
+        return (_joueur1->is_lost() || _joueur2->is_lost());
+    }else return _joueur1->is_lost();
 }
