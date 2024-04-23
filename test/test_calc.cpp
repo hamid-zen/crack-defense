@@ -274,3 +274,57 @@ TEST_CASE("first", "[test]")
     REQUIRE(g.firstMalus(position(5,4))==position(3,4));
 
 }
+
+TEST_CASE("chemin", "[ai]")
+{
+    mysrand(5);
+    ai g;
+    //g.rotate_target(); //cas special 1
+    g.move_target(t_direction::right); //cas special 2
+    g.move_target(t_direction::right); //cas special 2
+    g.show();
+
+
+    std::cout<<"cell target 1 : "<<g.getcell1target().x()<<" , "<<g.getcell1target().y()<<std::endl;
+    std::cout<<"cell target 2 : "<<g.getcell2target().x()<<" , "<<g.getcell2target().y()<<std::endl;
+   // auto v(g.chemin(position(5,10),position(5,11))); //cas special 1
+    auto v(g.chemin(position(3,11),position(4,11))); //cas special 2
+    for (auto x : v){
+        switch (x)
+        {
+        case t_action::go_right:
+        {
+            std::cout<<"Right ";
+            break;
+        }
+        case t_action::go_left:
+        {
+            std::cout<<"left ";
+            break;
+        }
+        case t_action::go_up:
+        {
+            std::cout<<"up ";
+            break;
+        }
+        case t_action::go_down:
+        {
+            std::cout<<"Down ";
+            break;
+        }
+        case t_action::change_direction:
+        {
+            std::cout<<"Rotate ";
+            break;
+        }
+        case t_action::exchange:
+        {
+            std::cout<<"swicth ";
+            break;
+        }
+        }
+    }
+   // REQUIRE(v.size()==8); //cas special 1
+
+}
+
