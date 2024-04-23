@@ -552,7 +552,7 @@ bool game::is_garbage(position const &p) const
     return _grid.estMalus(p);
 }
 
-void game::update_garbage_height()
+void game::update_garbage_height() 
 {
     _grid.update_garbage();
 }
@@ -560,4 +560,44 @@ void game::update_garbage_height()
 void game::transform_malus_to_cell(std::vector<position> const &align_cell, std::vector<position *> &pos_cells)
 {
     _grid.transform_to_cell(align_cell, pos_cells);
+}
+
+ai::ai(cordinate _max_height ,cordinate _max_width ,int colors )
+    :game(_max_height,_max_width,colors){}
+
+
+
+std::vector<t_action> ai::chemin(position const & p1,position const & p2){
+
+std::vector<t_action> vec;
+bool rotate(false);
+if(under_bounds(p1) && under_bounds(p2)){
+    auto difX(p1.x()-getcell1target().x());
+    auto difY(p1.y()-getcell1target().y());
+    //ajuster la la colone
+    if(difX>0){ //il faut se deplacer vers la droite
+        if(! under_bounds(position(p2.x()+difX,p2.y()))) //on verifie si la deuxieme case du target depassent pas
+        {   vec.push_back(t_action::change_direction);
+            vec.insert(vec.end(), difX, t_action::go_right);
+            rotate=true;
+        }
+        else vec.insert(vec.end(), difX, t_action::go_right);
+    }
+    else if(difX<0) //si =0 pas besoin de se deplacer en largeur 
+        vec.insert(vec.end(), -1*difX, t_action::go_left);
+    //ajuster la rotation du target
+    if(target_verticale() != target(p1,p2).isVertical() && !rotate){ //si le sense du target actuelle et du target pour faire switch les deux position sont different 
+        vec.push_back(t_action::change_direction);
+    }
+    //ajuster la ligne
+    if(difY>0) //il faut descendre
+        vec.insert(vec.end(), difY, t_action::go_down);
+    else if(difX<0) //si =0 pas besoin de se deplacer en hauteur 
+        vec.insert(vec.end(), -1*difY, t_action::go_up);
+
+    vec.push_back(t_action::exchange);
+}else {
+    std::cout<<"changement impossible à faire "<<std::endl;
+}
+return vec;
 }

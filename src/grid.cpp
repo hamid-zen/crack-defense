@@ -241,15 +241,15 @@ void grid::generate_garbage(std::vector<position*> & malus){
         }
     }
     
-    _board[(debut+0) + 0]=std::make_unique<malusCell>(t_colors::garbage,false,true);
-    malus.push_back(new position(debut,j));
+    _board[(debut+0) + (j*_max_width)]=std::make_unique<malusCell>(t_colors::garbage,false,true);
+   // malus.push_back(new position(debut,j));
 
     for(int i(1);i<(taille-1);i++){
-        _board[(debut+i) + 0]=std::make_unique<malusCell>(t_colors::garbage,true,true);
-        malus.push_back(new position(debut+i,j));
+        _board[(debut+i) +(j*_max_width)]=std::make_unique<malusCell>(t_colors::garbage,true,true);
+       // malus.push_back(new position(debut+i,j));
     }
-    malus.push_back(new position(debut+taille-1,j));
-    _board[(debut+taille-1) + 0]=std::make_unique<malusCell>(t_colors::garbage,true,false);
+    //malus.push_back(new position(debut+taille-1,j));
+    _board[(debut+taille-1) + (j*_max_width)]=std::make_unique<malusCell>(t_colors::garbage,true,false);
 
 
 }
@@ -424,4 +424,9 @@ position grid::first(position const & p) const{
 
     }
     return position(p.x()-i, p.y());
+}
+
+
+bool grid::under_bounds(position const & p) const{
+    return p.x()>=0 && p.x()<_max_width && p.y()>=0 && p.y()<_max_height;
 }

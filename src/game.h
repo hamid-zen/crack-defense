@@ -7,6 +7,9 @@
 
 using score = u_int16_t;
 
+enum class t_action{
+    go_right, go_left, go_up, go_down, change_direction, accelerate, exchange, nothing, generate_malus
+};
 
 enum class t_direction{
     up,
@@ -74,10 +77,10 @@ public:
     void update_garbage_height();
     void transform_malus_to_cell(std::vector<position> const & align_cell,std::vector<position *> &pos_cells);
     size getsize(position const & p) const{return _grid.getSize(p);}
-
     bool after(position const & p) const{return _grid.after(p);}
     bool before(position const & p) const{return _grid.before(p);}
     position firstMalus(position const & p) const {return _grid.first(p);}
+    bool under_bounds(position const & p) const { return _grid.under_bounds(p); }
 private:
     grid _grid;
     target _target;
@@ -86,4 +89,11 @@ private:
     
 };
 
+class ai : public game{
+public:
+    ai(cordinate _max_height=12,cordinate _max_width=6,int colors=4);
+    std::vector<t_action> chemin(position const & p1,position const & p2);
+private:
+
+};
 

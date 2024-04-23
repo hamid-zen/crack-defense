@@ -41,7 +41,7 @@ public:
     bool before(position const & p) const;
     bool after(position const & p) const;
     position first(position const & p) const;
-
+    bool under_bounds(position const & p) const;
 private:
     t_mat _board;
     cordinate _max_height;
