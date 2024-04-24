@@ -516,6 +516,9 @@ std::vector<position> game::max_column() const
 {
     return _grid.max_column();
 }
+std::vector<int>  game::highest_column() const{
+return _grid.highest_column();
+}
 
 void game::add_garbage(std::vector<position*> & malus)
 {
@@ -600,4 +603,56 @@ if(under_bounds(p1) && under_bounds(p2)){
     std::cout<<"changement impossible à faire "<<std::endl;
 }
 return vec;
+}
+
+
+t_num ai::color_distances(position const & p1,position const & p2) const{
+    return (abs(p2.x()-p1.x())+abs(p2.y()-p1.y()));
+}
+
+t_num ai::sum_color_distance() const{ //+ la somme est petite + les cases de meme couleur sont proches
+    int cpt(0);
+    std::vector<std::vector<position>> vec_colors(_grid.getNbrColors());
+    for (unsigned int j(0); j < _grid.max_height(); j++)
+    {
+        for (unsigned int i(0); i < _grid.max_width(); i++)
+        {
+            switch(_grid(position(i, j))){
+                case t_colors::empty_cell: break; //l'odre des couleur dans le vec est important (difficulty)
+                case t_colors::blue: vec_colors[0].push_back(position(i, j)); break;
+                case t_colors::sky_blue : vec_colors[1].push_back(position(i, j));break;
+                case t_colors::purple : vec_colors[2].push_back(position(i, j));break;
+                case t_colors::orange : vec_colors[3].push_back(position(i, j));break;
+                case t_colors::white : vec_colors[4].push_back(position(i, j));break;
+                case t_colors::pink : vec_colors[5].push_back(position(i, j));break;
+                case t_colors::yellow : vec_colors[6].push_back(position(i, j));break;
+                case t_colors::green : vec_colors[7].push_back(position(i, j));break;
+            }
+        }
+    }
+    // on a recuperé les vecteur avec pour chaque couleur toutes les positions
+    for(auto const & vec : vec_colors ){//pour chaque vec de couleures
+    //pour chaque position son calcule sa distance avec toutes les autre positions de meme couleur
+        for(unsigned int i(0) ; i <vec.size() ; i++){
+            for(unsigned int j(i+1);j<vec.size();j++){
+                cpt+=color_distances(vec[j],vec[i]);
+            }
+        }
+    } 
+
+}
+
+t_num ai::estimation() {
+    auto count(0);
+    auto vec(alignment());
+    //parcourir les alignement et voir si il y'a des alignement sur les colones les plus haute si c'est le cas maximiser l'estimation
+    auto colonnes_hautes (highest_column());
+    for(auto const & pst : vec){
+       if( std::find(colonnes_hautes.begin(),colonnes_hautes.end(),pst.x()) != colonnes_hautes.end()){
+            count += 100;
+       }
+    }
+    count += vec.size();
+    //ajouter sum_color_distance() dans l'estimation
+    return count;
 }

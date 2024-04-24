@@ -4,9 +4,10 @@
 #include "target.h"
 #include <algorithm>
 #include <iostream>
+#include <cmath>
 
 using score = u_int16_t;
-
+using t_num=u_int16_t;
 enum class t_action{
     go_right, go_left, go_up, go_down, change_direction, accelerate, exchange, nothing, generate_malus
 };
@@ -19,6 +20,7 @@ enum class t_direction{
 };
 
 class game{
+friend class ai; //ai doit pouvoir acceder a tout les attribus de game surtt grid
 
 public:
     game(cordinate _max_height=12,cordinate _max_width=6,int colors=4);
@@ -67,6 +69,7 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
     std::vector<position>  max_column() const;
+    std::vector<int>  highest_column() const;
     void add_garbage(std::vector<position*> & malus);
     bool hanging_malus(position p);
     bool not_hanging(position const & p) const;
@@ -93,7 +96,10 @@ class ai : public game{
 public:
     ai(cordinate _max_height=12,cordinate _max_width=6,int colors=4);
     std::vector<t_action> chemin(position const & p1,position const & p2);
-private:
+    t_num color_distances(position const & p1,position const & p2) const;
+    t_num sum_color_distance() const;
+    t_num estimation()  ;
+    private:
 
 };
 

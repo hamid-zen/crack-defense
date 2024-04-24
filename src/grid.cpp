@@ -212,12 +212,31 @@ std::vector<position>  grid::max_column() const{
                     vec.push_back(position(i,j));
                 }
                 i++;
-            }
-            return vec;
+            }return vec;
         }
     }
     return vec; //juste a cause du warning
 
+}
+
+std::vector<int>  grid::highest_column() const{
+std::vector<int> vec;
+    cordinate  i,j;
+    for(cordinate i(0);i<(max_height()*max_width());i++){
+        if(_board[i]!=nullptr){
+            vec.push_back(i%max_width());
+            j=(i/max_width()) ;
+            i=i%max_width()+1;
+            while( i<max_width()) //on ajoute les autres cases qui  ont la mm hauteur donc qui son sur la meme ligne
+            {
+                if(_board[i + j * _max_width]!=nullptr){
+                    vec.push_back(i);
+                }
+                i++;
+            }return vec;
+        }
+    }
+    return vec;
 }
 
 

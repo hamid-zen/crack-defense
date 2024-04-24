@@ -11,7 +11,7 @@ public:
     grid( cordinate _max_height=12, cordinate _max_width=6,t_number_color colors=4);
     t_colors randomColor() const;
     bool neighbours_same_color(position p,t_colors clr ) const;
-    void init();
+        void init();
     t_colors operator() (position p) const;
     cordinate max_height() const;
     cordinate max_width() const;
@@ -29,6 +29,7 @@ public:
     void setCellDy(position p,delta d);
     void resetCellDelta(position p);
    std::vector<position>  max_column() const;
+   std::vector<int>  highest_column() const;
     void generate_garbage(std::vector<position*> & malus);
     bool estMalus(position const & p) const;
     bool not_hanging(position const & p) const;
@@ -42,6 +43,7 @@ public:
     bool after(position const & p) const;
     position first(position const & p) const;
     bool under_bounds(position const & p) const;
+    t_number getNbrColors() const {return nbr_colors;}
 private:
     t_mat _board;
     cordinate _max_height;
