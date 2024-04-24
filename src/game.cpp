@@ -653,7 +653,7 @@ int ai::estimation() {
        }
     }
     count += vec.size();
-    count += sum_color_distance(); //genere l'erreru
+    count += static_cast<int>(1/sum_color_distance())*100;
 
     return count;
 }
