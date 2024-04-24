@@ -328,3 +328,18 @@ TEST_CASE("chemin", "[ai]")
 
 }
 
+ TEST_CASE("meilleur_coup", "[ai]")
+{
+    mysrand(3);
+    ai a;
+    a.move_target(t_direction::up);
+    a.move_target(t_direction::up);
+    a.move_target(t_direction::up);
+    a.move_target(t_direction::up);
+
+    std::cout<<"sum_color_distance() : "<<a.sum_color_distance()<<std::endl;
+        a.show();
+    coup c (a.best_blow(1));
+    std::cout<<"le meilleur coup a jouer : ("<<c.p1.x()<<","<<c.p1.y()<<") ; ("<<c.p2.x()<<","<<c.p2.y()<<") \n";
+
+}
