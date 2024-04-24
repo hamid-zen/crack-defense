@@ -19,6 +19,11 @@ enum class t_direction{
     left
 };
 
+struct coup{
+    position p1;
+    position p2;
+};
+
 class game{
 friend class ai; //ai doit pouvoir acceder a tout les attribus de game surtt grid
 
@@ -98,8 +103,11 @@ public:
     std::vector<t_action> chemin(position const & p1,position const & p2);
     t_num color_distances(position const & p1,position const & p2) const;
     t_num sum_color_distance() const;
-    t_num estimation()  ;
-    private:
+    int estimation()  ;
+    std::vector<coup> lawful_blow() const; //retourne tout les coups licites sauf si deux cases vides aucun interet
+    int minMax(int profondeur);
+    coup best_blow(int profondeur) ;
+private:
 
 };
 

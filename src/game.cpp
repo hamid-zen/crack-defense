@@ -612,7 +612,7 @@ t_num ai::color_distances(position const & p1,position const & p2) const{
 
 t_num ai::sum_color_distance() const{ //+ la somme est petite + les cases de meme couleur sont proches
     int cpt(0);
-    std::vector<std::vector<position>> vec_colors(_grid.getNbrColors());
+    std::vector<std::vector<position>> vec_colors(8);
     for (unsigned int j(0); j < _grid.max_height(); j++)
     {
         for (unsigned int i(0); i < _grid.max_width(); i++)
@@ -623,9 +623,9 @@ t_num ai::sum_color_distance() const{ //+ la somme est petite + les cases de mem
                 case t_colors::sky_blue : vec_colors[1].push_back(position(i, j));break;
                 case t_colors::purple : vec_colors[2].push_back(position(i, j));break;
                 case t_colors::orange : vec_colors[3].push_back(position(i, j));break;
-                case t_colors::white : vec_colors[4].push_back(position(i, j));break;
-                case t_colors::pink : vec_colors[5].push_back(position(i, j));break;
-                case t_colors::yellow : vec_colors[6].push_back(position(i, j));break;
+                case t_colors::yellow : vec_colors[4].push_back(position(i, j));break;
+                case t_colors::white : vec_colors[5].push_back(position(i, j));break;
+                case t_colors::pink : vec_colors[6].push_back(position(i, j));break;
                 case t_colors::green : vec_colors[7].push_back(position(i, j));break;
             }
         }
@@ -639,11 +639,11 @@ t_num ai::sum_color_distance() const{ //+ la somme est petite + les cases de mem
             }
         }
     } 
-
+    return cpt;
 }
 
-t_num ai::estimation() {
-    auto count(0);
+int ai::estimation() {
+    int count(0);
     auto vec(alignment());
     //parcourir les alignement et voir si il y'a des alignement sur les colones les plus haute si c'est le cas maximiser l'estimation
     auto colonnes_hautes (highest_column());
@@ -653,6 +653,64 @@ t_num ai::estimation() {
        }
     }
     count += vec.size();
-    //ajouter sum_color_distance() dans l'estimation
+    count += sum_color_distance(); //genere l'erreru
+
     return count;
+}
+
+std::vector<coup> ai::lawful_blow() const{
+  std::vector<coup> vec;  
+    for (unsigned int j(0); j < _grid.max_height()-1; j++)
+        {
+        for (unsigned int i(0); i < _grid.max_width()-1; i++){
+            if(_grid(position(i, j))!=t_colors::empty_cell || _grid(position(i+1, j))!=t_colors::empty_cell)
+            {
+                vec.push_back(coup{position(i, j),position(i+1, j)});
+            }
+            if(_grid(position(i, j))!=t_colors::empty_cell || _grid(position(i,j+1))!=t_colors::empty_cell)
+            {
+                vec.push_back(coup{position(i, j),position(i, j+1)});
+            }
+        }
+    }
+    return vec;
+}
+
+int ai::minMax(int profondeur) {
+    if (profondeur == 0) {
+        return estimation();
+    }
+    auto coups (lawful_blow());
+    int meilleurEstimation =  std::numeric_limits<int>::min();
+
+    // Parcours de tous les coups possibles
+    for (auto coup : coups) {
+        // Simulation du coup
+        switch_cells_position(coup.p1,coup.p2);
+        // Récursion pour évaluer les coups possibles
+        int estimationCoup = minMax(profondeur - 1);
+        // Annulation de la simulation du coup
+        switch_cells_position(coup.p1,coup.p2);
+        // Mise à jour de la meilleure estimation
+        meilleurEstimation = std::max(meilleurEstimation, estimationCoup);
+    }
+
+    return meilleurEstimation; // Retourne l'estimation optimale pour le joueur actuel
+}
+coup ai::best_blow(int profondeur) {
+    auto coups (lawful_blow());
+    coup meilleurCoup {position(0,0),position(0,0)}; //car doit étre initialisé
+    int meilleureEstimation = std::numeric_limits<int>::min();
+    for (auto cp : coups) {
+        switch_cells_position(cp.p1,cp.p2);
+        int estimationCoup = minMax(profondeur);
+        switch_cells_position(cp.p1,cp.p2); //annuler le coup
+
+        if (estimationCoup > meilleureEstimation) {
+            meilleurCoup = cp;
+            meilleureEstimation = estimationCoup;
+        }
+    }
+
+    return meilleurCoup;
 }
