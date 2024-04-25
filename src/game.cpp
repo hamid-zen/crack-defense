@@ -714,3 +714,8 @@ coup ai::best_blow(int profondeur) {
 
     return meilleurCoup;
 }
+
+std::vector<t_action> ai::play_what(){
+    auto coup (best_blow(1));
+    return chemin(coup.p1,coup.p2);
+}
