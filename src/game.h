@@ -89,6 +89,7 @@ public:
     bool before(position const & p) const{return _grid.before(p);}
     position firstMalus(position const & p) const {return _grid.first(p);}
     bool under_bounds(position const & p) const { return _grid.under_bounds(p); }
+    virtual bool is_ai() const {return false;}
 private:
     grid _grid;
     target _target;
@@ -107,6 +108,8 @@ public:
     std::vector<coup> lawful_blow() const; //retourne tout les coups licites sauf si deux cases vides aucun interet
     int minMax(int profondeur);
     coup best_blow(int profondeur) ;
+    std::vector<t_action> play_what();
+    bool is_ai() const override{return false;}
 private:
 
 };
