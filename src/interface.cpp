@@ -597,6 +597,295 @@ void interface::menu(){
     }
 
 }
+void interface::game_over_screen()
+{
+    // TODO: adapter dans le cas ou jeu a deux joueur
+    t_number thickness_line = 10;
+    t_number width_window = _width * 64 + 2 * thickness_line;
+    t_number height_window = 12 * 64 + 2 * thickness_line;
+    sf::Color color_background = sf::Color::Black;
+    sf::Color color_line = sf::Color(255, 87, 217);
+
+    // window
+    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
+    window.setFramerateLimit(30); // Pour set le framerate
+
+    // border
+    sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
+    line1.setFillColor(color_line);
+    sf::RectangleShape line2(sf::Vector2f(width_window-thickness_line, thickness_line));
+    line2.setFillColor(color_line);
+    sf::RectangleShape line3(sf::Vector2f(thickness_line, height_window + thickness_line));
+    line3.setFillColor(color_line);
+    line3.setPosition(width_window-thickness_line,0);
+    sf::RectangleShape line4(sf::Vector2f(width_window, thickness_line));
+    line4.setFillColor(color_line);
+    line4.setPosition(0,height_window-thickness_line);
+
+    // game over sprite
+    sf::Sprite s_game_over;
+    s_game_over.setTexture(_textures[t_textures_to_index(t_textures::game_over)]);
+    s_game_over.setOrigin(s_game_over.getGlobalBounds().width/2, s_game_over.getGlobalBounds().height/2);
+    s_game_over.setPosition(width_window/2, thickness_line + height_window / 4);
+
+    // texts
+    sf::Text _text_main_menu(sf::String("MENU"), _font);
+    sf::Text _text_exit(sf::String("EXIT"), _font);
+
+    // text_scale
+    _text_main_menu.setScale(1.5, 1.5);
+    _text_exit.setScale(1.5, 1.5);
+
+    // text_color
+    _text_main_menu.setFillColor(color_line);
+    _text_exit.setFillColor(color_line);
+
+    // text_origin
+    _text_main_menu.setOrigin(sf::Vector2f((_text_main_menu.getGlobalBounds().width)/(2*_text_main_menu.getScale().x),(_text_main_menu.getGlobalBounds().height)/(2*_text_main_menu.getScale().y)));
+    _text_exit.setOrigin(sf::Vector2f((_text_exit.getGlobalBounds().width)/(2*_text_exit.getScale().x),(_text_exit.getGlobalBounds().height)/(2*_text_exit.getScale().y)));
+
+    // text_position
+    _text_main_menu.setPosition(width_window/2, thickness_line + height_window / 1.75);
+    _text_exit.setPosition(width_window/2, thickness_line  + height_window / 1.5);
+
+    // choices
+    std::vector<sf::Transformable *> _choices;
+    t_number _index_choice_pos = 0;
+    _choices.push_back(&_text_main_menu);
+    _choices.push_back(&_text_exit);
+
+    // rectangle_choice
+    sf::RectangleShape _choice_target(sf::Vector2f(_text_main_menu.getGlobalBounds().width + 75, _text_main_menu.getGlobalBounds().height + 30));
+    _choice_target.setFillColor(sf::Color::Transparent);
+    _choice_target.setOutlineThickness(5);
+    _choice_target.setOutlineColor(sf::Color::Yellow);
+    _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
+    _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
+
+    while(window.isOpen()){
+
+        window.clear(color_background);
+
+        sf::Event e;
+
+        while (window.pollEvent(e)){
+            if (e.type == sf::Event::Closed)
+                window.close();
+            else if (e.type == sf::Event::KeyPressed)
+            {
+                if(e.key.code == sf::Keyboard::Key::Enter)
+                {
+                    if(_index_choice_pos == 0){ // main menu
+                        window.close();
+                        menu();
+                    } else if (_index_choice_pos == 1) {
+                        window.close();
+                    }
+                }
+                else if(e.key.code == sf::Keyboard::Key::Up)
+                {
+                    if(_index_choice_pos>0)
+                        _index_choice_pos--;
+                }
+                else if(e.key.code == sf::Keyboard::Key::Down)
+                {
+                    if(_index_choice_pos < _choices.size()-1)
+                        _index_choice_pos++;
+                }
+            }
+        }
+
+        // updating target position and size
+        _choice_target.setPosition(sf::Vector2f(_choices[_index_choice_pos]->getPosition().x+5, _choices[_index_choice_pos]->getPosition().y+17));
+
+        window.draw(s_game_over);
+        window.draw(_text_main_menu);
+        window.draw(_text_exit);
+        window.draw(_choice_target);
+        window.draw(line1);
+        window.draw(line2);
+        window.draw(line3);
+        window.draw(line4);
+        window.display();
+    }
+}
+void interface::pause_screen()
+{
+    // TODO: adapter dans le cas ou jeu a deux joueur
+    t_number thickness_line = 10;
+    t_number width_window = _width * 64 + 2 * thickness_line;
+    t_number height_window = 12 * 64 + 2 * thickness_line;
+    sf::Color color_background = sf::Color::Black;
+    sf::Color color_line = sf::Color(255, 87, 217);
+    
+    // window
+    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
+    window.setFramerateLimit(30); // Pour set le framerate
+    
+    // border
+    sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
+    line1.setFillColor(color_line);
+    sf::RectangleShape line2(sf::Vector2f(width_window-thickness_line, thickness_line));
+    line2.setFillColor(color_line);
+    sf::RectangleShape line3(sf::Vector2f(thickness_line, height_window + thickness_line));
+    line3.setFillColor(color_line);
+    line3.setPosition(width_window-thickness_line,0);
+    sf::RectangleShape line4(sf::Vector2f(width_window, thickness_line));
+    line4.setFillColor(color_line);
+    line4.setPosition(0,height_window-thickness_line);
+    
+    // game over sprite
+    sf::Sprite s_game_over;
+    s_game_over.setTexture(_textures[t_textures_to_index(t_textures::pause)]);
+    s_game_over.setOrigin(s_game_over.getGlobalBounds().width/2, s_game_over.getGlobalBounds().height/2);
+    s_game_over.setPosition(width_window/2, thickness_line + height_window / 4);
+    
+    // texts
+    sf::Text _text_resume(sf::String("RESUME"), _font);
+    sf::Text _text_main_menu(sf::String("MENU"), _font);
+    sf::Text _text_exit(sf::String("EXIT"), _font);
+    
+    // text_scale
+    _text_resume.setScale(1.5, 1.5);
+    _text_main_menu.setScale(1.5, 1.5);
+    _text_exit.setScale(1.5, 1.5);
+    
+    // text_color
+    _text_resume.setFillColor(color_line);
+    _text_main_menu.setFillColor(color_line);
+    _text_exit.setFillColor(color_line);
+    
+    // text_origin
+    _text_resume.setOrigin(sf::Vector2f((_text_resume.getGlobalBounds().width)/(2*_text_resume.getScale().x),(_text_resume.getGlobalBounds().height)/(2*_text_resume.getScale().y)));
+    _text_main_menu.setOrigin(sf::Vector2f((_text_main_menu.getGlobalBounds().width)/(2*_text_main_menu.getScale().x),(_text_main_menu.getGlobalBounds().height)/(2*_text_main_menu.getScale().y)));
+    _text_exit.setOrigin(sf::Vector2f((_text_exit.getGlobalBounds().width)/(2*_text_exit.getScale().x),(_text_exit.getGlobalBounds().height)/(2*_text_exit.getScale().y)));
+    
+    // text_position
+    _text_resume.setPosition(width_window/2, thickness_line + height_window / 2.1);
+    _text_main_menu.setPosition(width_window/2, thickness_line + height_window / 1.75);
+    _text_exit.setPosition(width_window/2, thickness_line  + height_window / 1.5);
+    
+    // choices
+    std::vector<sf::Transformable *> _choices;
+    t_number _index_choice_pos = 0;
+    _choices.push_back(&_text_resume);
+    _choices.push_back(&_text_main_menu);
+    _choices.push_back(&_text_exit);
+    
+    // rectangle_choice
+    sf::RectangleShape _choice_target(sf::Vector2f(_text_main_menu.getGlobalBounds().width + 75, _text_main_menu.getGlobalBounds().height + 30));
+    _choice_target.setFillColor(sf::Color::Transparent);
+    _choice_target.setOutlineThickness(5);
+    _choice_target.setOutlineColor(sf::Color::Yellow);
+    _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
+    _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
+    
+    while(window.isOpen()){
+        
+        window.clear(color_background);
+        
+        sf::Event e;
+        
+        while (window.pollEvent(e)){
+            if (e.type == sf::Event::Closed)
+                window.close();
+            else if (e.type == sf::Event::KeyPressed)
+            {
+                if(e.key.code == sf::Keyboard::Key::Enter)
+                {
+                    if(_index_choice_pos == 0){ // resume
+                        window.close();
+                        menu();
+                    } else if (_index_choice_pos == 1) { // main_menu
+                        window.close();
+                        menu();
+                    } else { // exit
+                        window.close();
+                    }
+                }
+                else if(e.key.code == sf::Keyboard::Key::Up)
+                {
+                    if(_index_choice_pos>0)
+                        _index_choice_pos--;
+                }
+                else if(e.key.code == sf::Keyboard::Key::Down)
+                {
+                    if(_index_choice_pos < _choices.size()-1)
+                        _index_choice_pos++;
+                }
+            }
+        }
+        
+        // updating target position and size
+        _choice_target.setPosition(sf::Vector2f(_choices[_index_choice_pos]->getPosition().x+5, _choices[_index_choice_pos]->getPosition().y+17));
+        
+        window.draw(s_game_over);
+        window.draw(_text_resume);
+        window.draw(_text_main_menu);
+        window.draw(_text_exit);
+        window.draw(_choice_target);
+        window.draw(line1);
+        window.draw(line2);
+        window.draw(line3);
+        window.draw(line4);
+        window.display();
+    }
+}
+
+void interface::load_textures()
+{
+    _textures[t_textures_to_index(t_textures::Blue)].loadFromFile("../textures/single_blocks/Blue_colored.png");
+    _textures[t_textures_to_index(t_textures::Red)].loadFromFile("../textures/single_blocks/Red.png");
+    _textures[t_textures_to_index(t_textures::Yellow)].loadFromFile("../textures/single_blocks/Yellow_colored.png");
+    _textures[t_textures_to_index(t_textures::Orange)].loadFromFile("../textures/single_blocks/Orange_colored.png");
+    _textures[t_textures_to_index(t_textures::Pink)].loadFromFile("../textures/single_blocks/Pink_colored.png");
+    _textures[t_textures_to_index(t_textures::All)].loadFromFile("../textures/single_blocks/special.png");
+    _textures[t_textures_to_index(t_textures::SkyBlue)].loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
+    _textures[t_textures_to_index(t_textures::Purple)].loadFromFile("../textures/single_blocks/Purple_colored.png");
+    _textures[t_textures_to_index(t_textures::Green)].loadFromFile("../textures/single_blocks/Green_colored.png");
+    _textures[t_textures_to_index(t_textures::White)].loadFromFile("../textures/single_blocks/White_colored.png");
+
+    _textures[t_textures_to_index(t_textures::BlueShade)].loadFromFile("../textures/single_blocks/Blue_shade.png");
+    _textures[t_textures_to_index(t_textures::YellowShade)].loadFromFile("../textures/single_blocks/Yellow_shade.png");
+    _textures[t_textures_to_index(t_textures::OrangeShade)].loadFromFile("../textures/single_blocks/Orange_shade.png");
+    _textures[t_textures_to_index(t_textures::PinkShade)].loadFromFile("../textures/single_blocks/Pink_shade.png");
+    _textures[t_textures_to_index(t_textures::RedShade)].loadFromFile("../textures/single_blocks/Red_shade.png");
+    _textures[t_textures_to_index(t_textures::SkyBlueShade)].loadFromFile("../textures/single_blocks/Sky_blue_shade.png");
+    _textures[t_textures_to_index(t_textures::PurpleShade)].loadFromFile("../textures/single_blocks/Purple_shade.png");
+    _textures[t_textures_to_index(t_textures::GreenShade)].loadFromFile("../textures/single_blocks/Green_shade.png");
+    _textures[t_textures_to_index(t_textures::WhiteShade)].loadFromFile("../textures/single_blocks/White_shade.png");
+
+    _textures[t_textures_to_index(t_textures::Ghost)].loadFromFile("../textures/single_blocks/Ghost.png");
+    _textures[t_textures_to_index(t_textures::Target)].loadFromFile("../textures/single_blocks/Target.png");
+
+    _textures[t_textures_to_index(t_textures::Ctrl)].loadFromFile("../textures/keycaps/Crtl.png");
+    _textures[t_textures_to_index(t_textures::DirectionalArrows)].loadFromFile("../textures/keycaps/Fleches_directionelles.png");
+    _textures[t_textures_to_index(t_textures::Shift)].loadFromFile("../textures/keycaps/Shift.png");
+    _textures[t_textures_to_index(t_textures::Tab)].loadFromFile("../textures/keycaps/Tab.png");
+    _textures[t_textures_to_index(t_textures::Enter)].loadFromFile("../textures/keycaps/Enter.png");
+    _textures[t_textures_to_index(t_textures::Esc)].loadFromFile("../textures/keycaps/Esc.png");
+    _textures[t_textures_to_index(t_textures::DirectionalKeys)].loadFromFile("../textures/keycaps/Touches_directionelles.png");
+
+    _textures[t_textures_to_index(t_textures::Blue_XP)].loadFromFile("../textures/xp_chips/Blue_XP.png");
+    _textures[t_textures_to_index(t_textures::Yellow_XP)].loadFromFile("../textures/xp_chips/Yellow_XP.png");
+    _textures[t_textures_to_index(t_textures::Pink_XP)].loadFromFile("../textures/xp_chips/Pink_XP.png");
+
+    _textures[t_textures_to_index(t_textures::loading_0)].loadFromFile("../textures/loading_circle/loading_0.png");
+    _textures[t_textures_to_index(t_textures::loading_1)].loadFromFile("../textures/loading_circle/loading_1.png");
+    _textures[t_textures_to_index(t_textures::loading_2)].loadFromFile("../textures/loading_circle/loading_2.png");
+    _textures[t_textures_to_index(t_textures::loading_3)].loadFromFile("../textures/loading_circle/loading_3.png");
+    _textures[t_textures_to_index(t_textures::loading_4)].loadFromFile("../textures/loading_circle/loading_4.png");
+
+    _textures[t_textures_to_index(t_textures::game_over)].loadFromFile("../textures/game_over.png");
+    _textures[t_textures_to_index(t_textures::pause)].loadFromFile("../textures/pause.png");
+    _textures[t_textures_to_index(t_textures::check_mark)].loadFromFile("../textures/check_mark.png");
+
+    _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
+    _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");
+    _buffer_sound_play.loadFromFile("../sound/Menu_Sounds_Load_Savefile.wav");
+    _buffer_sound_xp.loadFromFile("../sound/xp.wav");
+}
+
 void interface::menu_lan(){
 
     sf::Sound _sound_move ;
@@ -794,50 +1083,6 @@ void interface::menu_lan(){
         window.display();
     }
 
-}
-
-void interface::load_textures()
-{
-    _textures[t_textures_to_index(t_textures::Blue)].loadFromFile("../textures/single_blocks/Blue_colored.png");
-    _textures[t_textures_to_index(t_textures::Red)].loadFromFile("../textures/single_blocks/Red.png");
-    _textures[t_textures_to_index(t_textures::Yellow)].loadFromFile("../textures/single_blocks/Yellow_colored.png");
-    _textures[t_textures_to_index(t_textures::Orange)].loadFromFile("../textures/single_blocks/Orange_colored.png");
-    _textures[t_textures_to_index(t_textures::Pink)].loadFromFile("../textures/single_blocks/Pink_colored.png");
-    _textures[t_textures_to_index(t_textures::All)].loadFromFile("../textures/single_blocks/special.png");
-    _textures[t_textures_to_index(t_textures::SkyBlue)].loadFromFile("../textures/single_blocks/Sky_blue_colored.png");
-    _textures[t_textures_to_index(t_textures::Purple)].loadFromFile("../textures/single_blocks/Purple_colored.png");
-    _textures[t_textures_to_index(t_textures::Green)].loadFromFile("../textures/single_blocks/Green_colored.png");
-    _textures[t_textures_to_index(t_textures::White)].loadFromFile("../textures/single_blocks/White_colored.png");
-
-    _textures[t_textures_to_index(t_textures::BlueShade)].loadFromFile("../textures/single_blocks/Blue_shade.png");
-    _textures[t_textures_to_index(t_textures::YellowShade)].loadFromFile("../textures/single_blocks/Yellow_shade.png");
-    _textures[t_textures_to_index(t_textures::OrangeShade)].loadFromFile("../textures/single_blocks/Orange_shade.png");
-    _textures[t_textures_to_index(t_textures::PinkShade)].loadFromFile("../textures/single_blocks/Pink_shade.png");
-    _textures[t_textures_to_index(t_textures::RedShade)].loadFromFile("../textures/single_blocks/Red_shade.png");
-    _textures[t_textures_to_index(t_textures::SkyBlueShade)].loadFromFile("../textures/single_blocks/Sky_blue_shade.png");
-    _textures[t_textures_to_index(t_textures::PurpleShade)].loadFromFile("../textures/single_blocks/Purple_shade.png");
-    _textures[t_textures_to_index(t_textures::GreenShade)].loadFromFile("../textures/single_blocks/Green_shade.png");
-    _textures[t_textures_to_index(t_textures::WhiteShade)].loadFromFile("../textures/single_blocks/White_shade.png");
-
-    _textures[t_textures_to_index(t_textures::Ghost)].loadFromFile("../textures/single_blocks/Ghost.png");
-    _textures[t_textures_to_index(t_textures::Target)].loadFromFile("../textures/single_blocks/Target.png");
-
-    _textures[t_textures_to_index(t_textures::Ctrl)].loadFromFile("../textures/keycaps/Crtl.png");
-    _textures[t_textures_to_index(t_textures::DirectionalArrows)].loadFromFile("../textures/keycaps/Fleches_directionelles.png");
-    _textures[t_textures_to_index(t_textures::Shift)].loadFromFile("../textures/keycaps/Shift.png");
-    _textures[t_textures_to_index(t_textures::Tab)].loadFromFile("../textures/keycaps/Tab.png");
-    _textures[t_textures_to_index(t_textures::Enter)].loadFromFile("../textures/keycaps/Enter.png");
-    _textures[t_textures_to_index(t_textures::Esc)].loadFromFile("../textures/keycaps/Esc.png");
-    _textures[t_textures_to_index(t_textures::DirectionalKeys)].loadFromFile("../textures/keycaps/Touches_directionelles.png");
-
-    _textures[t_textures_to_index(t_textures::Blue_XP)].loadFromFile("../textures/xp_chips/Blue_XP.png");
-    _textures[t_textures_to_index(t_textures::Yellow_XP)].loadFromFile("../textures/xp_chips/Yellow_XP.png");
-    _textures[t_textures_to_index(t_textures::Pink_XP)].loadFromFile("../textures/xp_chips/Pink_XP.png");
-
-    _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
-    _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");
-    _buffer_sound_play.loadFromFile("../sound/Menu_Sounds_Load_Savefile.wav");
-    _buffer_sound_xp.loadFromFile("../sound/xp.wav");
 }
 
 void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) const
