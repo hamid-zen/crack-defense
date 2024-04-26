@@ -4,7 +4,7 @@
 // #E882E8 color target
 // #255,255,255 color case vide
 //
-interface::interface():_width(6), _difficulty(4), _textures(35, sf::Texture()) {
+interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()) {
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
 }
