@@ -719,3 +719,36 @@ std::vector<t_action> ai::play_what(){
     auto coup (best_blow(1));
     return chemin(coup.p1,coup.p2);
 }
+
+class remote_game : public game {
+public:
+    remote_game(cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
+    void recieve_action();
+    void send_action(const t_action &action);
+    void recieve_number();
+    void send_number(const t_number &number);
+    bool connected() const { return _socket.getRemoteAddress() != sf::IpAddress::None; }
+    virtual t_remote_game type() const =0;
+
+protected:
+    sf::TcpSocket _socket;
+};
+
+class server : public remote_game {
+public:
+    server(unsigned int port, cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
+    t_remote_game type() const override {return t_remote_game::server;}
+    void connect_client();
+
+private:
+    sf::TcpListener _listner;
+    unsigned int _port;
+};
+
+class client : public remote_game {
+public:
+    client(cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
+    t_remote_game type() const override {return t_remote_game::client;}
+    void connect(const sf::IpAddress &server_ip, unsigned int port);
+
+};
