@@ -720,35 +720,129 @@ std::vector<t_action> ai::play_what(){
     return chemin(coup.p1,coup.p2);
 }
 
-class remote_game : public game {
-public:
-    remote_game(cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
-    void recieve_action();
-    void send_action(const t_action &action);
-    void recieve_number();
-    void send_number(const t_number &number);
-    bool connected() const { return _socket.getRemoteAddress() != sf::IpAddress::None; }
-    virtual t_remote_game type() const =0;
+// remote_game
+std::string actionToString(t_action action) {
+    switch (action) {
+    case t_action::go_right: return "go_right";
+    case t_action::go_left: return "go_left";
+    case t_action::go_up: return "go_up";
+    case t_action::go_down: return "go_down";
+    case t_action::change_direction: return "change_direction";
+    case t_action::accelerate: return "accelerate";
+    case t_action::exchange: return "exchange";
+    case t_action::nothing: return "nothing";
+    case t_action::generate_malus: return "generate_malus";
+    }
+}
 
-protected:
-    sf::TcpSocket _socket;
-};
+sf::Packet &operator << (sf::Packet& packet, const t_action& action) {
+    packet << static_cast<unsigned int>(action);
+    return packet;
+}
 
-class server : public remote_game {
-public:
-    server(unsigned int port, cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
-    t_remote_game type() const override {return t_remote_game::server;}
-    void connect_client();
+sf::Packet &operator >> (sf::Packet& packet, t_action& action) {
+    packet >> action;
+    return packet;
+}
 
-private:
-    sf::TcpListener _listner;
-    unsigned int _port;
-};
+remote_game::remote_game(cordinate _max_height, cordinate _max_width, t_number_color colors) :
+    game(_max_height, _max_width, colors), _socket()
+{}
 
-class client : public remote_game {
-public:
-    client(cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
-    t_remote_game type() const override {return t_remote_game::client;}
-    void connect(const sf::IpAddress &server_ip, unsigned int port);
+void remote_game::send_action(const t_action &action)
+{
+    if (action != t_action::nothing)
+    {
+        sf::Packet packet;
+        packet << action;
 
-};
+        std::cout << "trying to send packet of size: " << packet.getDataSize() << "\n";
+        if (packet.getDataSize() > 0 && _socket.send(packet) != sf::Socket::Done)
+        {
+            std::cout << "Packet: " << packet << " not sent\n";
+        }
+    }
+}
+
+void remote_game::recieve_number()
+{
+    sf::Packet packet;
+    sf::Socket::Status recieve_status(_socket.receive(packet));
+    if (recieve_status == sf::Socket::Disconnected)
+    {
+        std::cout << "Socket deconnecté\n";//TODO: return une exception pour pouvoir afficher une erreur
+        _socket.disconnect();
+        return;
+    }
+    else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
+    {
+        t_number received_number;
+        packet >> received_number;
+        std::cout << "recieved packet of size: " << packet.getDataSize() << " : " << received_number << "\n";
+        packet.clear();
+    }
+}
+
+void remote_game::send_number(const t_number &number)
+{
+    sf::Packet packet;
+    packet << number;
+
+    std::cout << "trying to send packet of size: " << packet.getDataSize() << " : " << number << "\n";
+    sf::Socket::Status send_status(_socket.send(packet));
+
+    if (packet.getDataSize() > 0 && send_status != sf::Socket::Done)
+    {
+        std::cout << "Packet: " << packet << " not sent\n";
+    }
+}
+
+void remote_game::recieve_action()
+{
+    sf::Packet packet;
+    sf::Socket::Status recieve_status(_socket.receive(packet));
+    if (recieve_status == sf::Socket::Disconnected)
+    {
+        std::cout << "Socket deconnecté\n";//TODO: return une exception pour pouvoir afficher une erreur
+        _socket.disconnect();
+        return;
+    }
+    else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
+    {
+        std::cout << "recieved packet of size: " << packet.getDataSize() << "\n";
+        t_action received_action;
+        //packet >> received_action;
+        packet.clear();
+
+        std::cout << _socket.getRemoteAddress() << ": " << actionToString(received_action) << "\n";
+    }
+}
+
+server::server(unsigned int port, cordinate _max_height, cordinate _max_width, t_number_color colors) :
+    remote_game(_max_height, _max_width, colors), _listner(), _port(port)
+{
+    _listner.setBlocking(false);
+    _listner.listen(_port);
+    // if (_listner.listen(_port) != sf::Socket::Done)
+    //     std::cout << "Erreur ecoute\n"; //TODO: return une exception pour pouvoir afficher une erreur
+}
+
+void server::connect_client()
+{
+    _socket.setBlocking(false);
+    if (_listner.accept(_socket) == sf::Socket::Done)
+    {
+        std::cout << "Client connecté " << _socket.getRemoteAddress() << ":" << _socket.getRemotePort() << "\n";
+    }
+}
+client::client(cordinate _max_height, cordinate _max_width, t_number_color colors) :
+    remote_game(_max_height, _max_width)
+{}
+
+void client::connect(const sf::IpAddress &server_ip, unsigned int port)
+{
+    _socket.setBlocking(false);
+    std::cout << "Connexion sur " << server_ip.toString() << ":" << port << "\n";
+    _socket.connect(server_ip, port);
+}
+
