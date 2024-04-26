@@ -2,6 +2,7 @@
 #include "grid.h"
 #include "cell.h"
 #include "target.h"
+#include <SFML/Network.hpp>
 #include <algorithm>
 #include <iostream>
 #include <cmath>
