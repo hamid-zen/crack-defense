@@ -10,7 +10,8 @@ using dimension = u_int16_t;
 enum class t_textures {
     Blue, Red, Yellow, Orange, Pink, All, SkyBlue, Purple, Green, White,
     BlueShade, YellowShade, OrangeShade, PinkShade, RedShade, SkyBlueShade, PurpleShade, GreenShade, WhiteShade,
-    Ghost, Target, Ctrl, DirectionalArrows, Shift, Tab, Enter, Esc, DirectionalKeys, Blue_XP, Yellow_XP, Pink_XP
+    Ghost, Target, Ctrl, DirectionalArrows, Shift, Tab, Enter, Esc, DirectionalKeys, Blue_XP, Yellow_XP, Pink_XP, 
+    loading_0, loading_1, loading_2, loading_3, loading_4, game_over, pause, check_mark
 };
 
 t_number t_textures_to_index(t_textures texture);
@@ -21,6 +22,8 @@ public:
     void play(t_number indDiff=0,bool jeu_duo=false);
     void menu();
     void menu_lan();
+    void game_over_screen(); // donner window en parametre pour pouvoir tout effacer et le faire
+    void pause_screen(); // avantage de mettre arbitre en attribut: repprendre le jeu juste apres (arbitre serait init juste avant d'appeler play)
     void play2(t_number indDiff=0);
     void menu_regle();
     void load_textures();
