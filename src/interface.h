@@ -19,11 +19,11 @@ t_number t_textures_to_index(t_textures texture);
 class interface{
 public:
     interface();
-    void play(t_number indDiff=0,bool jeu_duo=false);
+    void play();
     void menu();
     void menu_lan();
-    void game_over_screen(); // donner window en parametre pour pouvoir tout effacer et le faire
-    void pause_screen(); // avantage de mettre arbitre en attribut: repprendre le jeu juste apres (arbitre serait init juste avant d'appeler play)
+    void game_over_screen(bool first_player_lost= true); // si first_player alors first_player a perdu
+    void pause_screen();
     void play2(t_number indDiff=0);
     void menu_regle();
     void load_textures();
@@ -33,6 +33,7 @@ private:
     dimension _width;
     t_number_color _difficulty ;
     sf::Font _font;
+    std::unique_ptr<arbitre> _arbitre; // pointeur car au debut oil doit etre vide (et doit etre init apres le choix de tout les params: duo/solo/wlan, difficulté)
     sf::SoundBuffer _buffer_sound_choice_move;
     sf::SoundBuffer _buffer_sound_loose;
     sf::SoundBuffer _buffer_sound_play;
