@@ -1,14 +1,14 @@
 TO ASK GENEST : 
-    Class qui gere tout les sons ;
-    heritage de arbitre solo , donc arbitre duo et en ligne ;
+    pourquoi l'ia est super nule ses methodes fonctionnent pourtant (99%) 
+    on a besoin de stocker joueur 1 et 2 dans interface (à la place d'arbitre) *******arina : oui ******** hamid et fifi : non *******
     
 TO RESOLVE 
-    probleme alignement , plusieur fois la meme position dans le vecteur retourné , std:cout<< ligne246 arbitre.cpp 
-    
+    probleme nbr de couleur en fonction des difficulté nn respecté
+    malus
     
 TO DO : 
-    rectifier alignement ;
-    rectifier malus ; 
-    animation inc score particle ;
-    jeux en reseaux  ;
+    rectifier malus ; ************************ faudra bien qu'on le fasse un jour ************************************
+    finir jeux en reseaux  ;
+    ameliorer l'ia ;
+
     
