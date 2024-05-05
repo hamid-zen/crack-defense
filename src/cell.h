@@ -29,7 +29,7 @@ public:
     void setDx(delta newDx);
     void setDy(delta newDy);
     virtual bool estmalus() const {return (_color == t_colors::garbage);} //TODO: Bonne pratique de la mettre en virtuel ?
-
+    virtual std::unique_ptr<cell> clone() { return std::make_unique<cell>(*this);}
 private:
     t_colors _color;
     delta _dx;
@@ -42,6 +42,7 @@ public:
     bool next_left() const {return _before;}
     bool next_right() const {return _after;}
     bool estmalus() const override {return (color() == t_colors::garbage);}
+    std::unique_ptr<cell> clone() override{ return std::make_unique<malusCell>(*this);}
 
 private:
     bool _before;

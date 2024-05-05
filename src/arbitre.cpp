@@ -1,52 +1,134 @@
 #include "arbitre.h"
 
-
-arbitre::arbitre(t_number ind,bool jeu_duo)
+/*
+ * On send un signal comme quoi on cree un arbitre dans l'instance du serveur et on le fait connecter au client
+ * */
+arbitre::arbitre(t_number ind,typeplayer plyr1,typeplayer plyr2 , unsigned int port)
     : _vertical_speed(0.1), _nb_frame(0)
 
 {
     delays = {false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+    bool jeu_reseau(plyr1==typeplayer::client || plyr1==typeplayer::server);
+    bool server_game(plyr1==typeplayer::server);
     if(ind==0){ //easy
-        _joueur1=std::make_unique<game>();
-        if(jeu_duo){
+        if(jeu_reseau && server_game){
+            _joueur1=std::make_unique<server>(port);
             _joueur2=std::make_unique<game>();
             delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+        }
+        else if (jeu_reseau && !server_game) {
+            _joueur1=std::make_unique<client>();
+            _joueur2=std::make_unique<game>();
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+        }else if (plyr2!=typeplayer::none){ //jeu_duo
+            if(plyr1==typeplayer::ai){
+                _joueur1=std::make_unique<ai>();
+            }
+            else{
+            _joueur1=std::make_unique<game>();}
+            if(plyr2==typeplayer::ai){
+                _joueur2=std::make_unique<ai>();
+            }
+            else{
+            _joueur2=std::make_unique<game>();}
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
         }else{
+            if(plyr1==typeplayer::ai){
+                _joueur1=std::make_unique<ai>();
+            }
+            else{
+            _joueur1=std::make_unique<game>();}
             _joueur2=nullptr;
         }
 
     }else if(ind==1){ //medium
-        _joueur1=std::make_unique<game>(12,6,6);
-        setVerticalSpeed_Med();
-        if(jeu_duo){
-            _joueur2=std::make_unique<game>(12,6,6);
+        if(jeu_reseau && server_game){
+            _joueur1=std::make_unique<server>(port, 12, 6, 6);
+            _joueur2=std::make_unique<game>(12, 6, 6);
             delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
-        }else{
+        }
+        else if (jeu_reseau && !server_game) {
+            _joueur1=std::make_unique<client>(12, 6, 6);
+            _joueur2=std::make_unique<game>(12, 6, 6);
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+        } else if (plyr2!=typeplayer::none){ //jeu_duo
+            if(plyr1==typeplayer::ai){
+                _joueur1=std::make_unique<ai>(12, 6, 6);
+            }
+            else{
+            _joueur1=std::make_unique<game>(12, 6, 6);
+            }
+            setVerticalSpeed_Med();
+            if(plyr2==typeplayer::ai){
+                _joueur2=std::make_unique<ai>(12, 6, 6);
+            }
+            else{
+            _joueur2=std::make_unique<game>(12, 6, 6);}
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+        } else{
+            if(plyr1==typeplayer::ai){
+                _joueur1=std::make_unique<ai>(12, 6, 6);
+            }
+            else{
+            _joueur1=std::make_unique<game>(12, 6, 6);}
+            setVerticalSpeed_Med();
             _joueur2=nullptr;
         }
     }else{ //hard
-        _joueur1=std::make_unique<game>(14,8,6); //a changer
-        setVerticalSpeed_Hard();
-        if(jeu_duo){
-            _joueur2=std::make_unique<game>(14,8,6);
+        if(jeu_reseau && server_game){
+            _joueur1=std::make_unique<server>(port, 14, 8, 6);
+            _joueur2=std::make_unique<game>(14, 8, 6);
             delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
-        }else{
+        }
+        else if (jeu_reseau && !server_game) {
+            _joueur1=std::make_unique<client>(14, 8, 6);
+            _joueur2=std::make_unique<game>(14, 8, 6);
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+        } else if (plyr2!=typeplayer::none){ //jeu_duo
+         if(plyr1==typeplayer::ai){
+                _joueur1=std::make_unique<ai>(14,8, 6);
+            }
+            else{
+            _joueur1=std::make_unique<game>(14, 8, 6); //a changer
+            }
+            setVerticalSpeed_Hard();
+             if(plyr2==typeplayer::ai){
+                _joueur2=std::make_unique<ai>(14,8, 6);
+            }
+            else{
+            _joueur2=std::make_unique<game>(14, 8, 6);}
+            delays2={false,nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+        } else{
+            if(plyr1==typeplayer::ai){
+                _joueur1=std::make_unique<ai>(14, 8, 6);
+            }
+            else{
+            _joueur1=std::make_unique<game>(14, 8, 6); //a changer
+            }
+            setVerticalSpeed_Hard();
             _joueur2=nullptr;
         }
     }
 }
-void  arbitre::update(t_action x, bool first_player)
+
+   void  arbitre::update(t_action x, bool first_player)
 {
     if(jeu_duo() && x==t_action::generate_malus ){
-           
-          updateSecondPlayer(x);
-          updateFirstPlayer(x);  
+        _joueur1->setAction(x);
+        updateFirstPlayer(_joueur1->getCoup(getFrame()));
+        _joueur2->setAction(x);
+        updateSecondPlayer(_joueur2->getCoup(getFrame()));
     }
     else if(first_player){
-        updateFirstPlayer(x);
+            _joueur1->setAction(x);
+            updateFirstPlayer(_joueur1->getCoup(getFrame()));
     }
-    else updateSecondPlayer(x);
+    else{ _joueur2->setAction(x);
+          updateSecondPlayer(_joueur2->getCoup(getFrame()));
+
+    }
 }  
+
 
 void  arbitre::updateFirstPlayer(t_action x )
 {
@@ -282,7 +364,7 @@ void  arbitre::updateFirstPlayer(t_action x )
 }
 void  arbitre::updateSecondPlayer(t_action x )
 {
-     _joueur2->update_garbage_height();
+    _joueur2->update_garbage_height();
     auto it = delays2.cells_slide.begin();
     while (it != delays2.cells_slide.end())
     {
@@ -506,12 +588,15 @@ game &arbitre::getJoueur2() const
 {
     return (*_joueur2);
 }
-void arbitre::init()
+void arbitre::init(t_number seed_j1, t_number seed_j2)
 {
-    _joueur1->init();
-    if(_joueur2!=nullptr) //cas ; jeu duo
-    {
-        _joueur2->init();
+    if (jeu_res()){ // On donne une seed
+        _joueur1->init(seed_j1);
+        _joueur2->init(seed_j2);
+    } else { // Pas de seed car soit jeu solo soit duo meme machine
+        _joueur1->init();
+        if(_joueur2!=nullptr)
+            _joueur2->init();
     }
 }
 
@@ -526,6 +611,65 @@ bool arbitre::jeu_duo() const
 {
     return _joueur2!=nullptr;
 }
+
+bool arbitre::jeu_res() const
+{
+    return dynamic_cast<remote_game*>(_joueur1.get());
+}
+
+bool arbitre::server_game() const
+{
+    return dynamic_cast<server*>(_joueur1.get());
+}
+
+bool arbitre::connected() const
+{
+    auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
+    return joueur && joueur->connected();
+}
+
+void arbitre::connect(const sf::IpAddress &server_ip, unsigned int port)
+{
+    auto joueur=dynamic_cast<client*>(_joueur1.get());
+    if (joueur)
+        joueur->connect(server_ip, port);
+}
+
+void arbitre::connect_client()
+{
+    auto joueur=dynamic_cast<server*>(_joueur1.get());
+    if (joueur)
+        joueur->connect_client();
+}
+
+void arbitre::send_action(const t_action &action)
+{
+    auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
+    if (joueur)
+        joueur->send_action(action);
+}
+
+t_action arbitre::recieve_action()
+{
+    auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
+    if (joueur)
+        return joueur->recieve_action();
+}
+
+void arbitre::send_number(t_number number)
+{
+    auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
+    if (joueur)
+        joueur->send_number(number);
+}
+
+t_number arbitre::recieve_number()
+{
+    auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
+    if (joueur)
+        return joueur->recieve_number();
+}
+
 
 void arbitre::increment_delays_y_pos(bool first_player)
 {

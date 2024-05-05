@@ -29,7 +29,7 @@ void interface::play()
     
     t_number play_tab_width = _arbitre->getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
-    if(_arbitre->jeu_duo())
+    if(_arbitre->jeu_duo() && !_arbitre->jeu_res())
         total_width += play_tab_width;
     t_number total_height = _arbitre->getJoueur().height() * _width_cell + 2 * thickness_line ;
     auto angle(0);
@@ -94,9 +94,6 @@ void interface::play()
         score_particle(position p,position sco,float vit):pos(p),vitesse(vit){
             direction = sf::Vector2f(sco.x()+20-pos.x(),sco.y()+20-pos.y());
         }
-        
-        
-
     };
 
     std::vector<score_particle *> particles ;
@@ -149,6 +146,7 @@ void interface::play()
                 else
                     action_utilisateur1 = t_action::nothing;
 
+                // TODO
                 if (e.key.code == sf::Keyboard::RShift)
                     action_utilisateur2 = t_action::change_direction;
                 else if (e.key.code == sf::Keyboard::Up)
@@ -174,7 +172,7 @@ void interface::play()
         _number_score_1.setString(sf::String(std::to_string(_temp_score)));
         _number_score_1.setOrigin(sf::Vector2f((_number_score_1.getGlobalBounds().width)/(2*_number_score_1.getScale().x),(_number_score_1.getGlobalBounds().height)/(2*_number_score_1.getScale().y)));
 
-        if (_arbitre->jeu_duo()){
+        if (_arbitre->jeu_duo() && !_arbitre->jeu_res()){
             t_number _temp_score = _arbitre->getJoueur2().get_score();
             _number_score_2.setString(sf::String(std::to_string(_temp_score)));
             _number_score_2.setOrigin(sf::Vector2f((_number_score_2.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(_number_score_2.getGlobalBounds().height)/(2*_number_score_2.getScale().y)));
@@ -183,8 +181,20 @@ void interface::play()
 
         // On update l'etat du jeu
         _arbitre->update(action_utilisateur1);
-        if(_arbitre->jeu_duo())
+        if(_arbitre->jeu_duo() && !_arbitre->jeu_res()) //TODO: On devrait pas recuperer l'action_utilisateur_2 (desactiver son input)
             _arbitre->update(action_utilisateur2, false);
+
+        if (_arbitre->jeu_res()) { // si jeu reseau alors on envoie l'action_utilisateur_1 et on reçoie l'action_utilisateur_2
+            _arbitre->send_action(action_utilisateur1);
+            t_action remote_player_action;
+            remote_player_action = _arbitre->recieve_action();
+            if (remote_player_action != t_action::nothing)
+                std::cout << "Action reçue: " << actionToString(remote_player_action) << "\n";
+            // Une fois l'action reçue il suffit de l'appliquer (update) le joueur_2 avec
+            // Je devrait modifier l'init de l'arbitre
+            // Server:
+            _arbitre->updateSecondPlayer(remote_player_action);
+        }
 
         auto vec(_arbitre->getDelays().cells_align);
 
@@ -250,7 +260,6 @@ void interface::play()
         }
 
         // Affichage second joueur
-
         if (_arbitre->jeu_duo()){
             vec = _arbitre->getDelays(false).cells_align;
             for (std::size_t i(0); i < _arbitre->getJoueur2().height(); i++)
@@ -269,11 +278,16 @@ void interface::play()
                     if(s_tile.getOrigin().x == 0)
                         s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
 
-                    if (vec.size() == 0)
-                        s_tile.setPosition( play_tab_width+score_tab_width + _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
-                    else
-                    {
+                    if (_arbitre->jeu_res()){//TODO: est-ce optimisé de dynamic_cast plusieurs fois par frame ?
+                        s_tile.setPosition(play_tab_width + (score_tab_width - _width_cell/2*_arbitre->getJoueur2().width())/2 +  _width_cell/2 * j + dx +thickness_line, total_height/2 + _width_cell/2 * i + dy - _arbitre->getJoueur2().grid_dy()+_width_cell - thickness_line);
+                        s_tile.setScale(0.5, 0.5);
+                    } else {
                         s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
+                        s_tile.setScale(1, 1);
+                    }
+
+                    if (vec.size() != 0)
+                    {
                         auto it(std::find(vec.begin(), vec.end(), position(j, i)));
                         if (it != vec.end())
                         {
@@ -292,9 +306,8 @@ void interface::play()
                     
 
                     // Dessin de la target
-                    if (_arbitre->getJoueur2().getcell1target() == position(j, i) || _arbitre->getJoueur2().getcell2target() == position(j, i))
+                    if (!_arbitre->jeu_res() && (_arbitre->getJoueur2().getcell1target() == position(j, i) || _arbitre->getJoueur2().getcell2target() == position(j, i)))
                     {
-
                         s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre->getJoueur2 ().grid_dy());
                         window.draw(s_target);
                     }
@@ -309,7 +322,14 @@ void interface::play()
 
                 load_texture(s_tile, color, true);
 
-                s_tile.setPosition(play_tab_width+score_tab_width + _width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre->getJoueur2().height() - _arbitre->getJoueur2().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
+                if (_arbitre->jeu_res()){//TODO: est-ce optimisé de dynamic_cast plusieurs fois par frame ?
+                    s_tile.setPosition(play_tab_width + (score_tab_width - _width_cell/2*_arbitre->getJoueur2().width())/2 + _width_cell/2 * j +thickness_line, total_height/2 + _width_cell/2 * _arbitre->getJoueur2().height()  - _arbitre->getJoueur2().grid_dy() + _width_cell - thickness_line);
+                    s_tile.setScale(0.5, 0.5);
+                } else {
+                    s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j +thickness_line + _width_cell/2, _width_cell * _arbitre->getJoueur2().height()  +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
+                    s_tile.setScale(1, 1);
+                }
+
                 window.draw(s_tile);
             }
         }
@@ -349,7 +369,7 @@ void interface::play()
         window.draw(line3);
         window.draw(line4);
         window.draw(line5);
-        if(_arbitre->jeu_duo()){
+        if(_arbitre->jeu_duo() && !_arbitre->jeu_res()){
             window.draw(_number_score_2);
             window.draw(_text_score_2);
             window.draw(line6);
@@ -409,48 +429,58 @@ void interface::menu(){
     //text declaration
     sf::Text _text_difficulty(sf::String("DIFFICULTY"), _font);
     sf::Text _text_help(sf::String("press H For Help"), _font);
-    sf::Text _text_number_player(sf::String("NUMBER OF PLAYER"), _font);
+    sf::Text _text_first_player(sf::String("FIRST PLAYER"), _font);
+    sf::Text _text_second_player(sf::String("SECOND PLAYER"), _font);
     sf::Text _text_menu(sf::String("MENU"), _font);
     sf::Text _difficulty_choice(sf::String("EASY"), _font);
-    sf::Text _number_player_choice(sf::String("SOLO"), _font);
+    sf::Text _first_player_choice(sf::String("standard"), _font);
+    sf::Text _second_player_choice(sf::String("none"), _font);
     sf::Text _text_play(sf::String("PLAY"), _font);
 
     //text scale
     _text_menu.setScale(2, 2);
     _text_difficulty.setScale(1.5, 1.5);
     _text_help.setScale(0.75, 0.75);
-    _text_number_player.setScale(1.5, 1.5);
+    _text_first_player.setScale(1.5, 1.5);
+    _text_second_player.setScale(1.5, 1.5);
     _text_play.setScale(1.5, 1.5);
     _difficulty_choice.setScale(1.5, 1.5);
-    _number_player_choice.setScale(1.5, 1.5);
+    _first_player_choice.setScale(1.5, 1.5);
+    _second_player_choice.setScale(1.5, 1.5);
     
     //textorigin 
     _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
     _text_help.setOrigin(sf::Vector2f((_text_help.getGlobalBounds().width)/(2*_text_help.getScale().x),(_text_help.getGlobalBounds().height)/(2*_text_help.getScale().y)));
     _text_difficulty.setOrigin(sf::Vector2f((_text_difficulty.getGlobalBounds().width)/(2*_text_difficulty.getScale().x),(_text_difficulty.getGlobalBounds().height)/(2*_text_difficulty.getScale().y)));
-    _text_number_player.setOrigin(sf::Vector2f((_text_number_player.getGlobalBounds().width)/(2*_text_number_player.getScale().x),(_text_number_player.getGlobalBounds().height)/(2*_text_number_player.getScale().y)));
+    _text_first_player.setOrigin(sf::Vector2f((_text_first_player.getGlobalBounds().width)/(2*_text_first_player.getScale().x),(_text_first_player.getGlobalBounds().height)/(2*_text_first_player.getScale().y)));
+    _text_second_player.setOrigin(sf::Vector2f((_text_second_player.getGlobalBounds().width)/(2*_text_second_player.getScale().x),(_text_second_player.getGlobalBounds().height)/(2*_text_second_player.getScale().y)));
     _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
     _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-    _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
+    _first_player_choice.setOrigin(sf::Vector2f((_first_player_choice.getGlobalBounds().width)/(2*_first_player_choice.getScale().x),(_first_player_choice.getGlobalBounds().height)/(2*_first_player_choice.getScale().y)));
+    _second_player_choice.setOrigin(sf::Vector2f((_second_player_choice.getGlobalBounds().width)/(2*_second_player_choice.getScale().x),(_second_player_choice.getGlobalBounds().height)/(2*_second_player_choice.getScale().y)));
 
     //textposition 
     _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
     _text_help.setPosition(width_window/2  , thickness_line + height_window / 1.05);
     _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
-    _text_number_player.setPosition(width_window/2  ,thickness_line  + height_window / 3);
+    _text_first_player.setPosition(width_window/2  ,thickness_line  + height_window /5);//????????
+    _text_second_player.setPosition(width_window/2  ,thickness_line  + height_window /3);
     _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
     _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-    _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
+    _first_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
+    _second_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /1.75);
 
 
     //text_color
     _text_menu.setFillColor(color_line);
     _text_help.setFillColor(sf::Color::Yellow);
     _text_difficulty.setFillColor(color_line);
-    _text_number_player.setFillColor(color_line);
+    _text_first_player.setFillColor(color_line);
+    _text_second_player.setFillColor(color_line);
     _text_play.setFillColor(color_line);
     _difficulty_choice.setFillColor(color_line);
-    _number_player_choice.setFillColor(color_line);
+    _first_player_choice.setFillColor(color_line);
+    _second_player_choice.setFillColor(color_line);
 
 
     //vector choice_pos 
@@ -458,7 +488,8 @@ void interface::menu(){
     t_number _index_choice_pos = 0; 
 
     //add choice_pos
-    _choices.push_back(&_number_player_choice);
+    _choices.push_back(&_first_player_choice);
+    _choices.push_back(&_second_player_choice);
     _choices.push_back(&_difficulty_choice);
     _choices.push_back(&_text_play);
 
@@ -477,12 +508,19 @@ void interface::menu(){
     _vector_difficulties_choice.push_back(sf::String("MIDD"));
     _vector_difficulties_choice.push_back(sf::String("HARD"));
 
-    //number_player_choice
-    std::vector<sf::String>_vector_number_player_choice;
-    t_number _index_number_player_choice=0;
-    _vector_number_player_choice.push_back(sf::String("SOLO"));
-    _vector_number_player_choice.push_back(sf::String("DUAL"));
-    _vector_number_player_choice.push_back(sf::String("W-LAN"));
+    //first_player_choice
+    std::vector<sf::String>_vector_first_player_choice;
+    t_number _index_first_player_choice=0;
+    _vector_first_player_choice.push_back(sf::String("standard"));
+    _vector_first_player_choice.push_back(sf::String("bot"));
+    _vector_first_player_choice.push_back(sf::String("online")); 
+
+   //second_player_choice
+    std::vector<sf::String>_vector_second_player_choice;
+    t_number _index_second_player_choice=0;
+    _vector_second_player_choice.push_back(sf::String("none"));
+    _vector_second_player_choice.push_back(sf::String("standard"));
+    _vector_second_player_choice.push_back(sf::String("bot"));
 
     
     while(window.isOpen()){
@@ -502,33 +540,30 @@ void interface::menu(){
                 if (e.key.code == sf::Keyboard::Key::Enter)
                 {
                     if(_index_choice_pos == _choices.size()-1){
-                        if(_index_number_player_choice==1){ // dual
-                            window.close();
-                            _sound.stop();
-                            _sound_play.play();
-
-                            _arbitre = std::make_unique<arbitre>(_index_difficulties_choice, true);
+                        _difficulty = _index_difficulties_choice; // vu qu'on appel pas directement play on doit garder le choix de difficulté
+                        window.close();
+                        if(_index_first_player_choice==2) //wlan
+                        {
+                           menu_lan(); 
+                        } else{
+                         _sound.stop();
+                         _sound_play.play(); 
+                         typeplayer first_player;
+                         if(_index_first_player_choice==0){
+                            first_player=typeplayer::player;
+                         }else{  first_player=typeplayer::ai ;}
+                         typeplayer second_player;  
+                          if(_index_second_player_choice==0){
+                            second_player=typeplayer::none;
+                         }else if(_index_second_player_choice==1)
+                         {  second_player=typeplayer::player ;}
+                         else{ second_player=typeplayer::ai ;}
+                            _arbitre = std::make_unique<arbitre>(_difficulty,first_player,second_player);
                             _arbitre->init();
 
                             play();
                         }
 
-                        else if(_index_number_player_choice==2){ // wlan
-                            _difficulty = _index_difficulties_choice; // vu qu'on appel pas directement play on doit garder le choix de difficulté
-                            window.close();
-                            menu_lan();
-                        }
-
-                        else { // solo
-                            window.close();
-                            _sound.stop();
-                            _sound_play.play();
-
-                            _arbitre = std::make_unique<arbitre>(_index_difficulties_choice);
-                            _arbitre->init();
-
-                            play();
-                        }
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
@@ -548,22 +583,30 @@ void interface::menu(){
                 }
                 else if(e.key.code == sf::Keyboard::Key::Left)
                 {
-                    if(_index_choice_pos == 0 and _index_number_player_choice > 0){
-                        _index_number_player_choice--;
+                    if(_index_choice_pos == 0 and _index_first_player_choice > 0){
+                        _index_first_player_choice--;
                         
                     }
-                    else if(_index_choice_pos == 1 and _index_difficulties_choice > 0){
+                    else if(_index_choice_pos == 1 and _index_second_player_choice > 0){
+                        _index_second_player_choice--;
+                        
+                    }
+                    else if(_index_choice_pos == 2 and _index_difficulties_choice > 0){
                         _index_difficulties_choice--;
                         
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Right)
                 {
-                    if(_index_choice_pos == 0 and _index_number_player_choice < _vector_number_player_choice.size()-1){
-                        _index_number_player_choice++;
+                    if(_index_choice_pos == 0 and _index_first_player_choice < _vector_first_player_choice.size()-1){
+                        _index_first_player_choice++;
                         
                     }
-                    else if(_index_choice_pos == 1 and _index_difficulties_choice < _vector_difficulties_choice.size()-1){
+                    else if(_index_choice_pos == 1 and _index_second_player_choice < _vector_second_player_choice.size()-1){
+                        _index_second_player_choice++;
+                        
+                    }
+                    else if(_index_choice_pos == 2 and _index_difficulties_choice < _vector_difficulties_choice.size()-1){
                         _index_difficulties_choice++;
                         
                     }
@@ -577,22 +620,27 @@ void interface::menu(){
         }
         _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
         _text_difficulty.setOrigin(sf::Vector2f((_text_difficulty.getGlobalBounds().width)/(2*_text_difficulty.getScale().x),(_text_difficulty.getGlobalBounds().height)/(2*_text_difficulty.getScale().y)));
-        _text_number_player.setOrigin(sf::Vector2f((_text_number_player.getGlobalBounds().width)/(2*_text_number_player.getScale().x),(_text_number_player.getGlobalBounds().height)/(2*_text_number_player.getScale().y)));
+        _text_first_player.setOrigin(sf::Vector2f((_text_first_player.getGlobalBounds().width)/(2*_text_first_player.getScale().x),(_text_first_player.getGlobalBounds().height)/(2*_text_first_player.getScale().y)));
+        _text_second_player.setOrigin(sf::Vector2f((_text_second_player.getGlobalBounds().width)/(2*_text_second_player.getScale().x),(_text_second_player.getGlobalBounds().height)/(2*_text_second_player.getScale().y)));
         _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
         _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-        _number_player_choice.setOrigin(sf::Vector2f((_number_player_choice.getGlobalBounds().width)/(2*_number_player_choice.getScale().x),(_number_player_choice.getGlobalBounds().height)/(2*_number_player_choice.getScale().y)));
+        _first_player_choice.setOrigin(sf::Vector2f((_first_player_choice.getGlobalBounds().width)/(2*_first_player_choice.getScale().x),(_first_player_choice.getGlobalBounds().height)/(2*_first_player_choice.getScale().y)));
+        _second_player_choice.setOrigin(sf::Vector2f((_second_player_choice.getGlobalBounds().width)/(2*_second_player_choice.getScale().x),(_second_player_choice.getGlobalBounds().height)/(2*_second_player_choice.getScale().y)));
 
 
         _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
         _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
         _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
-        _text_number_player.setPosition(width_window/2  ,thickness_line  + height_window / 3);
+        _text_first_player.setPosition(width_window/2  ,thickness_line  + height_window /5.5);
+        _text_second_player.setPosition(width_window/2  ,thickness_line  + height_window /2.5);
         _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
         _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-        _number_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
+        _first_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /3.75);
+        _second_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /2.05);
 
         _difficulty_choice.setString(_vector_difficulties_choice[_index_difficulties_choice]);
-        _number_player_choice.setString(_vector_number_player_choice[_index_number_player_choice]);
+        _first_player_choice.setString(_vector_first_player_choice[_index_first_player_choice]);
+        _second_player_choice.setString(_vector_second_player_choice[_index_second_player_choice]);
 
         window.clear(color_background);
         window.draw(_text_help);
@@ -602,10 +650,12 @@ void interface::menu(){
         window.draw(line4);
         window.draw(_text_difficulty);
         window.draw(_text_menu);
-        window.draw(_text_number_player);
+        window.draw(_text_first_player);
+        window.draw(_text_second_player);
         window.draw(_text_play);
         window.draw(_difficulty_choice);
-        window.draw(_number_player_choice);
+        window.draw(_first_player_choice);
+        window.draw(_second_player_choice);
         window.draw(_choice_target);
         window.display();
     }
@@ -1017,10 +1067,9 @@ void interface::menu_lan(){
     waiting_circle.setPosition(_text_connect.getPosition().x - _text_connect.getOrigin().x + _text_connect.getGlobalBounds().width, _text_connect.getPosition().y - _text_connect.getOrigin().y);
     waiting_circle.setTexture(_textures[t_textures_to_index(t_textures::loading_0)]);
 
-    bool tryconnect(false), connected(false);
+    bool tryconnect(false), connected(false), server_choosen(false);
     sf::Clock clock_for_circle, clock_since_connection;
     unsigned int index_circle_texture(0); // pour savoir quelle texture de cercle afficher
-    std::unique_ptr<game> joueur;
     sf::IpAddress ip;
     t_number port;
 
@@ -1044,11 +1093,13 @@ void interface::menu_lan(){
                     port = (_port.getString() == "" ? 8080 : std::stoi(_port.getString().toAnsiString()));
 
                     if (_index_type_choice == 0) { // serveur
-                        std::cout << "Serveur choisi\n";
-                        joueur = std::make_unique<server>(port);
+                    //change3
+                        _arbitre = std::make_unique<arbitre>(_difficulty);//, false, true, true, port);
+                        server_choosen = true;
                     } else { // client
-                        std::cout << "Client choisi\n";
-                        joueur = std::make_unique<client>();
+                    //change3
+                        _arbitre = std::make_unique<arbitre>(_difficulty);//, false, true, false, port);
+                        server_choosen = false;
                     }
 
                 }
@@ -1104,7 +1155,7 @@ void interface::menu_lan(){
 
         // on affiche l'ip local et le port default (8080) que si serveur est choisi
         if (_index_type_choice == 0){
-            _ip.setString(sf::String(sf::IpAddress::getLocalAddress().toString()));
+            _ip.setString(sf::String(sf::IpAddress::LocalHost.toString()));
             _port.setString("8080");
 
             // On remet l'input a zero
@@ -1117,20 +1168,18 @@ void interface::menu_lan(){
         }
 
 
-        auto *server = dynamic_cast<class server*>(joueur.get());
-        auto *client = dynamic_cast<class client*>(joueur.get());
-
+        // On essaie de connecter le tout
         if (tryconnect){
-            if (server){
-                server->connect_client();
-                if (server->connected()){
+            if (server_choosen){
+                _arbitre->connect_client();
+                if (_arbitre->connected()){
                     tryconnect = false;
                     index_circle_texture = 0;
                     clock_since_connection.restart();
                 }
-            } else if (client) {
-                client->connect(ip, port);
-                if (client->connected()){
+            } else {
+                _arbitre->connect(ip, port);
+                if (_arbitre->connected()){
                     tryconnect = false;
                     index_circle_texture = 0;
                     clock_since_connection.restart();
@@ -1148,7 +1197,7 @@ void interface::menu_lan(){
             window.draw(waiting_circle);
         }
 
-        if ((server && server->connected()) || (client && client->connected())){ // si connecté on met le check_mark, un countdown et on affiche le boutton play
+        if (_arbitre->connected()){ // si connecté on met le check_mark, un countdown et on affiche le boutton play
 
             _text_countdown.setString("PLAYIN IN " + std::to_string(static_cast<t_number>(5 - clock_since_connection.getElapsedTime().asSeconds())));
             window.draw(_text_countdown);
@@ -1157,6 +1206,19 @@ void interface::menu_lan(){
             window.draw(waiting_circle);
 
             if (clock_since_connection.getElapsedTime().asSeconds() >= 5){ // on attend 2 secondes avant de jouer
+
+                // On envoie une seed pour init le jeu
+                if (server_choosen){
+                    t_number server_seed_j1(nombreAleatoire(255)), server_seed_j2(nombreAleatoire(255));
+                    _arbitre->send_number(server_seed_j1);
+                    _arbitre->send_number(server_seed_j2);
+                    std::cout << "Choosen seed (server): " << server_seed_j1 << " - " << server_seed_j2 << "\n";
+                } else {
+                    t_number client_seed_j1(0), client_seed_j2(0); //TODO: y'a t'il une meilleure maniere de faire (au lieu d'envoyer la seed) (dans le cas de deux cpu different)
+                    client_seed_j2 = _arbitre->recieve_number();
+                    client_seed_j1 = _arbitre->recieve_number();
+                    std::cout << "Choosen seed (client): " << client_seed_j1 << " - " << client_seed_j2 << "\n";
+                }
                 window.close();
                 play();
             }
@@ -1177,7 +1239,6 @@ void interface::menu_lan(){
         window.draw(line4);
         window.display();
     }
-
 }
 
 void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) const

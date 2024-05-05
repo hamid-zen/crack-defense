@@ -9,9 +9,10 @@ using t_number_color=uint16_t ;
 class grid {
 public:
     grid( cordinate _max_height=12, cordinate _max_width=6,t_number_color colors=4);
+    grid(grid const & g) ;
     t_colors randomColor() const;
     bool neighbours_same_color(position p,t_colors clr ) const;
-        void init();
+        void init(t_number seed = 0);
     t_colors operator() (position p) const;
     cordinate max_height() const;
     cordinate max_width() const;
@@ -44,6 +45,7 @@ public:
     position first(position const & p) const;
     bool under_bounds(position const & p) const;
     t_number getNbrColors() const {return nbr_colors;}
+    
 private:
     t_mat _board;
     cordinate _max_height;

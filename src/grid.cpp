@@ -64,8 +64,13 @@ int nombreAleatoire(int k) {
  * @brief grid::_init
  * initialise la grille
  */
-void grid::init() // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
-{   for(cordinate i(0);i<_max_width;i++){ //colone
+void grid::init(t_number seed) // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
+{   if (seed == 0) // seed non choisit donc on choisit une seed au hasard
+        mysrand(nombreAleatoire(255));
+    else // sinon seed choisie
+        mysrand(seed);
+
+    for(cordinate i(0);i<_max_width;i++){ //colone
         // pour chaque colone on genere un nbr de case pour la colonne
         int nbr=nombreAleatoire((_max_height+1)/2)+1; //nbr aleatoire entre  2 et 8 si MAx_hauteur=12 sachant que 1 sera caché au debut
         for(cordinate j(_max_height-nbr);j<_max_height+1;j++){ //ligne
@@ -449,3 +454,18 @@ position grid::first(position const & p) const{
 bool grid::under_bounds(position const & p) const{
     return p.x()>=0 && p.x()<_max_width && p.y()>=0 && p.y()<_max_height;
 }
+
+grid::grid(grid const & g)  {
+        for (const auto& cellPtr : g._board) {
+            if (cellPtr) {
+                _board.push_back(cellPtr->clone());
+            } else {
+                _board.push_back(nullptr);
+            }
+        }
+        _max_height=g._max_height;
+        _max_width=g._max_width;
+        nbr_colors=g.nbr_colors;
+}
+
+

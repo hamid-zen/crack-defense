@@ -24,13 +24,15 @@ struct delay {
     std::vector<position > cells_align ;
 };
 
-
+enum class typeplayer{
+    server,client,ai,player,none
+};
 
 //TODO: Pourrait prendre le srand
 class arbitre
 {
 public:
-    arbitre(t_number ind,bool jeu_duo=false);
+    arbitre(t_number ind,typeplayer plyr1=typeplayer::player,typeplayer plyr2=typeplayer::none , unsigned int port=8080);
     void update(t_action x, bool first_player=true);
     void updateFirstPlayer(t_action x);
     void updateSecondPlayer(t_action x);
@@ -38,7 +40,7 @@ public:
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
     game& getJoueur2() const;
-    void init ();
+    void init(t_number seed_j1 = 0, t_number seed_j2 = 0);
     delay & getDelays(bool first_player=true);
     t_number getFrame() const {return _nb_frame;}
     void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
@@ -47,10 +49,19 @@ public:
     void increment_delays_y_pos(bool first_player = true ) ;
     bool lost() const ;
 
+    bool jeu_res() const;
+    bool server_game() const;
+    bool connected() const;
+    void connect(const sf::IpAddress &server_ip, unsigned int port);
+    void connect_client();
+    void send_action(const t_action &action);
+    t_action recieve_action();
+    void send_number(t_number number);
+    t_number recieve_number();
+
 private:
     std::unique_ptr<game> _joueur1;
     std::unique_ptr<game> _joueur2;
-
     float _vertical_speed;
     t_number _nb_frame;
     delay delays ;
