@@ -13,5 +13,6 @@ TO DO :
     finir jeux en reseaux  ;
     ameliorer l'ia ;
     ajouter l'affichage su score à la fin de partie 
+    commencer le rapport
 
     
