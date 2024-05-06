@@ -433,8 +433,8 @@ void interface::menu(){
     sf::Text _text_second_player(sf::String("SECOND PLAYER"), _font);
     sf::Text _text_menu(sf::String("MENU"), _font);
     sf::Text _difficulty_choice(sf::String("EASY"), _font);
-    sf::Text _first_player_choice(sf::String("standard"), _font);
-    sf::Text _second_player_choice(sf::String("none"), _font);
+    sf::Text _first_player_choice(sf::String("STANDARD"), _font);
+    sf::Text _second_player_choice(sf::String("NONE"), _font);
     sf::Text _text_play(sf::String("PLAY"), _font);
 
     //text scale
@@ -459,17 +459,16 @@ void interface::menu(){
     _first_player_choice.setOrigin(sf::Vector2f((_first_player_choice.getGlobalBounds().width)/(2*_first_player_choice.getScale().x),(_first_player_choice.getGlobalBounds().height)/(2*_first_player_choice.getScale().y)));
     _second_player_choice.setOrigin(sf::Vector2f((_second_player_choice.getGlobalBounds().width)/(2*_second_player_choice.getScale().x),(_second_player_choice.getGlobalBounds().height)/(2*_second_player_choice.getScale().y)));
 
-    //textposition 
+    //textposition
     _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
-    _text_help.setPosition(width_window/2  , thickness_line + height_window / 1.05);
     _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
-    _text_first_player.setPosition(width_window/2  ,thickness_line  + height_window /5);//????????
-    _text_second_player.setPosition(width_window/2  ,thickness_line  + height_window /3);
+    _text_first_player.setPosition(width_window/2  ,thickness_line  + height_window /5.5);
+    _text_second_player.setPosition(width_window/2  ,thickness_line  + height_window /2.5);
     _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
     _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-    _first_player_choice.setPosition(width_window/2  ,thickness_line  + height_window / 2.35);
-    _second_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /1.75);
-
+    _first_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /3.75);
+    _second_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /2.05);
+    _text_help.setPosition(width_window/2  , thickness_line + height_window / 1.05);
 
     //text_color
     _text_menu.setFillColor(color_line);
@@ -478,13 +477,13 @@ void interface::menu(){
     _text_first_player.setFillColor(color_line);
     _text_second_player.setFillColor(color_line);
     _text_play.setFillColor(color_line);
-    _difficulty_choice.setFillColor(color_line);
-    _first_player_choice.setFillColor(color_line);
-    _second_player_choice.setFillColor(color_line);
+    _difficulty_choice.setFillColor(sf::Color::White);
+    _first_player_choice.setFillColor(sf::Color::White);
+    _second_player_choice.setFillColor(sf::Color::White);
 
 
     //vector choice_pos 
-    std::vector<sf::Transformable *> _choices;
+    std::vector<sf::Text *> _choices;
     t_number _index_choice_pos = 0; 
 
     //add choice_pos
@@ -498,8 +497,8 @@ void interface::menu(){
     _choice_target.setFillColor(sf::Color::Transparent);
     _choice_target.setOutlineThickness(5);
     _choice_target.setOutlineColor(sf::Color::Yellow);
-    _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
     _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
+    _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
 
     //difficulty_choice
     std::vector<sf::String> _vector_difficulties_choice;
@@ -511,16 +510,16 @@ void interface::menu(){
     //first_player_choice
     std::vector<sf::String>_vector_first_player_choice;
     t_number _index_first_player_choice=0;
-    _vector_first_player_choice.push_back(sf::String("standard"));
-    _vector_first_player_choice.push_back(sf::String("bot"));
-    _vector_first_player_choice.push_back(sf::String("online")); 
+    _vector_first_player_choice.push_back(sf::String("STANDARD"));
+    _vector_first_player_choice.push_back(sf::String("BOT"));
+    _vector_first_player_choice.push_back(sf::String("ONLINE"));
 
-   //second_player_choice
+    //second_player_choice
     std::vector<sf::String>_vector_second_player_choice;
     t_number _index_second_player_choice=0;
-    _vector_second_player_choice.push_back(sf::String("none"));
-    _vector_second_player_choice.push_back(sf::String("standard"));
-    _vector_second_player_choice.push_back(sf::String("bot"));
+    _vector_second_player_choice.push_back(sf::String("NONE"));
+    _vector_second_player_choice.push_back(sf::String("STANDARD"));
+    _vector_second_player_choice.push_back(sf::String("BOT"));
 
     
     while(window.isOpen()){
@@ -544,20 +543,24 @@ void interface::menu(){
                         window.close();
                         if(_index_first_player_choice==2) //wlan
                         {
-                           menu_lan(); 
+                            menu_lan();
                         } else{
-                         _sound.stop();
-                         _sound_play.play(); 
-                         typeplayer first_player;
-                         if(_index_first_player_choice==0){
-                            first_player=typeplayer::player;
-                         }else{  first_player=typeplayer::ai ;}
-                         typeplayer second_player;  
-                          if(_index_second_player_choice==0){
-                            second_player=typeplayer::none;
-                         }else if(_index_second_player_choice==1)
-                         {  second_player=typeplayer::player ;}
-                         else{ second_player=typeplayer::ai ;}
+                            _sound.stop();
+                            _sound_play.play();
+                            typeplayer first_player;
+                            if(_index_first_player_choice==0)
+                                first_player=typeplayer::player;
+                            else
+                                first_player=typeplayer::ai;
+
+                            typeplayer second_player;
+                            if(_index_second_player_choice==0)
+                                second_player=typeplayer::none;
+                            else if(_index_second_player_choice==1)
+                                second_player=typeplayer::player;
+                            else
+                                second_player=typeplayer::ai;
+
                             _arbitre = std::make_unique<arbitre>(_difficulty,first_player,second_player);
                             _arbitre->init();
 
@@ -567,10 +570,8 @@ void interface::menu(){
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
-                {
+
                     window.close();
-                    
-                }
                 else if(e.key.code == sf::Keyboard::Key::Up)
                 {   
                     if(_index_choice_pos>0)
@@ -618,29 +619,23 @@ void interface::menu(){
                 }
             }
         }
-        _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width)/(2*_text_menu.getScale().x),(_text_menu.getGlobalBounds().height)/(2*_text_menu.getScale().y)));
-        _text_difficulty.setOrigin(sf::Vector2f((_text_difficulty.getGlobalBounds().width)/(2*_text_difficulty.getScale().x),(_text_difficulty.getGlobalBounds().height)/(2*_text_difficulty.getScale().y)));
-        _text_first_player.setOrigin(sf::Vector2f((_text_first_player.getGlobalBounds().width)/(2*_text_first_player.getScale().x),(_text_first_player.getGlobalBounds().height)/(2*_text_first_player.getScale().y)));
-        _text_second_player.setOrigin(sf::Vector2f((_text_second_player.getGlobalBounds().width)/(2*_text_second_player.getScale().x),(_text_second_player.getGlobalBounds().height)/(2*_text_second_player.getScale().y)));
-        _text_play.setOrigin(sf::Vector2f((_text_play.getGlobalBounds().width)/(2*_text_play.getScale().x),(_text_play.getGlobalBounds().height)/(2*_text_play.getScale().y)));
-        _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
-        _first_player_choice.setOrigin(sf::Vector2f((_first_player_choice.getGlobalBounds().width)/(2*_first_player_choice.getScale().x),(_first_player_choice.getGlobalBounds().height)/(2*_first_player_choice.getScale().y)));
-        _second_player_choice.setOrigin(sf::Vector2f((_second_player_choice.getGlobalBounds().width)/(2*_second_player_choice.getScale().x),(_second_player_choice.getGlobalBounds().height)/(2*_second_player_choice.getScale().y)));
 
-
-        _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
-        _text_menu.setPosition(width_window/2  , thickness_line + height_window / 20);
-        _text_difficulty.setPosition(width_window/2  ,thickness_line + height_window / 1.75);
-        _text_first_player.setPosition(width_window/2  ,thickness_line  + height_window /5.5);
-        _text_second_player.setPosition(width_window/2  ,thickness_line  + height_window /2.5);
-        _text_play.setPosition(width_window/2  ,thickness_line  + height_window / 1.2);
-        _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
-        _first_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /3.75);
-        _second_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /2.05);
+        _choice_target.setPosition(sf::Vector2f( width_window/2 - _choices[_index_choice_pos]->getGlobalBounds().width/4, _choices[_index_choice_pos]->getPosition().y));
 
         _difficulty_choice.setString(_vector_difficulties_choice[_index_difficulties_choice]);
         _first_player_choice.setString(_vector_first_player_choice[_index_first_player_choice]);
         _second_player_choice.setString(_vector_second_player_choice[_index_second_player_choice]);
+
+        _difficulty_choice.setPosition(width_window/2  ,thickness_line  + height_window / 1.5);
+        _first_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /3.75);
+        _second_player_choice.setPosition(width_window/2  ,thickness_line  + height_window /2.05);
+
+        _difficulty_choice.setOrigin(sf::Vector2f((_difficulty_choice.getGlobalBounds().width)/(2*_difficulty_choice.getScale().x),(_difficulty_choice.getGlobalBounds().height)/(2*_difficulty_choice.getScale().y)));
+        _first_player_choice.setOrigin(sf::Vector2f((_first_player_choice.getGlobalBounds().width)/(2*_first_player_choice.getScale().x),(_first_player_choice.getGlobalBounds().height)/(2*_first_player_choice.getScale().y)));
+        _second_player_choice.setOrigin(sf::Vector2f((_second_player_choice.getGlobalBounds().width)/(2*_second_player_choice.getScale().x),(_second_player_choice.getGlobalBounds().height)/(2*_second_player_choice.getScale().y)));
+
+        _choice_target.setSize(sf::Vector2f(_choices[_index_choice_pos]->getGlobalBounds().width*1.1,_choices[_index_choice_pos]->getGlobalBounds().height + 20));
+        _choice_target.setOrigin(sf::Vector2f( _choices[_index_choice_pos]->getOrigin().x, _choices[_index_choice_pos]->getOrigin().y));
 
         window.clear(color_background);
         window.draw(_text_help);
