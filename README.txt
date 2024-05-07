@@ -12,7 +12,8 @@ TO DO :
     rectifier malus ; ************************ faudra bien qu'on le fasse un jour ************************************
     finir jeux en reseaux  ;
     ameliorer l'ia ;
-    ajouter l'affichage su score à la fin de partie 
+    ajouter une sauvegarde du meilleur score(json?)
     commencer le rapport
+
 
     
