@@ -251,7 +251,6 @@ void grid::generate_garbage(std::vector<position*> & malus){
     int taille ;
     int debut;
     cordinate j(vec[0].y()-1);
-    std::cout<<"le plus grand : "<<vec[0].y();
     if(vec[0].x()==max_width()-1){ //si la colone la plus haute est la derniere
         debut=vec[0].x()-1; //on commence le malus dans la colone d'avant
         taille=2;

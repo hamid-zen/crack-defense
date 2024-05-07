@@ -386,9 +386,9 @@ void interface::play()
 
     window.close();
     if (_arbitre->getJoueur().is_lost())
-        game_over_screen();
+        game_over_screen(true,_arbitre->getJoueur().get_score());
     else if (_arbitre->jeu_duo() && _arbitre->getJoueur2().is_lost())
-        game_over_screen(false);
+        game_over_screen(false,_arbitre->getJoueur2().get_score());
 }
 
 void interface::menu(){
@@ -656,7 +656,7 @@ void interface::menu(){
     }
 
 }
-void interface::game_over_screen(bool first_player_lost)
+void interface::game_over_screen(bool first_player_lost,t_number score)
 {
     // TODO: adapter dans le cas ou jeu a deux joueur
     t_number thickness_line = 10;
@@ -686,33 +686,42 @@ void interface::game_over_screen(bool first_player_lost)
     s_game_over.setOrigin(s_game_over.getGlobalBounds().width/2, s_game_over.getGlobalBounds().height/2);
     s_game_over.setPosition(width_window/2, thickness_line + height_window / 4);
 
+
+
     // texts
     sf::Text _text_looser(sf::String(first_player_lost ? "PLAYER 1" : "PLAYER 2"), _font);
     sf::Text _text_main_menu(sf::String("MENU"), _font);
     sf::Text _text_exit(sf::String("EXIT"), _font);
+    sf::Text _score_gagnant(sf::String("SCORE : "+std::to_string(score)),_font,45);
 
     // text_scale
     _text_looser.setScale(1.5, 1.5);
     _text_main_menu.setScale(1.5, 1.5);
     _text_exit.setScale(1.5, 1.5);
 
+
     // text_color
     _text_looser.setFillColor(sf::Color::White);
     _text_main_menu.setFillColor(color_line);
     _text_exit.setFillColor(color_line);
+    _score_gagnant.setFillColor(color_line);
 
     // text_origin
     _text_looser.setOrigin(sf::Vector2f((_text_looser.getGlobalBounds().width)/(2*_text_looser.getScale().x),(_text_looser.getGlobalBounds().height)/(2*_text_looser.getScale().y)));
     _text_main_menu.setOrigin(sf::Vector2f((_text_main_menu.getGlobalBounds().width)/(2*_text_main_menu.getScale().x),(_text_main_menu.getGlobalBounds().height)/(2*_text_main_menu.getScale().y)));
     _text_exit.setOrigin(sf::Vector2f((_text_exit.getGlobalBounds().width)/(2*_text_exit.getScale().x),(_text_exit.getGlobalBounds().height)/(2*_text_exit.getScale().y)));
+    _score_gagnant.setOrigin(sf::Vector2f((_score_gagnant.getGlobalBounds().width)/(2*_score_gagnant.getScale().x),(_score_gagnant.getGlobalBounds().height)/(2*_score_gagnant.getScale().y)));
 
     // text_position
     _text_looser.setPosition(s_game_over.getPosition().x, thickness_line + height_window / 2.75);
     _text_main_menu.setPosition(width_window/2, thickness_line + height_window / 1.75);
     _text_exit.setPosition(width_window/2, thickness_line  + height_window / 1.5);
+    _score_gagnant.setPosition(width_window/2, thickness_line  + height_window / 1.3);
+
+
 
     // choices
-    std::vector<sf::Transformable *> _choices;
+    std::vector<sf::Text *> _choices;
     t_number _index_choice_pos = 0;
     _choices.push_back(&_text_main_menu);
     _choices.push_back(&_text_exit);
@@ -770,6 +779,7 @@ void interface::game_over_screen(bool first_player_lost)
         window.draw(_text_main_menu);
         window.draw(_text_exit);
         window.draw(_choice_target);
+        window.draw(_score_gagnant);
         window.display();
     }
 }
