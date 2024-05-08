@@ -29,7 +29,7 @@ void interface::play()
     
     t_number play_tab_width = _arbitre->getJoueur().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
-    if(_arbitre->jeu_duo() && !_arbitre->jeu_res())
+    if(_arbitre->jeu_duo())
         total_width += play_tab_width;
     t_number total_height = _arbitre->getJoueur().height() * _width_cell + 2 * thickness_line ;
     auto angle(0);
@@ -91,20 +91,16 @@ void interface::play()
         sf::Vector2f direction ;
         float vitesse ;
 
-        score_particle(position p,position sco,float vit):pos(p),vitesse(vit){
+        score_particle(position p, position sco, float vit):pos(p),vitesse(vit){
             direction = sf::Vector2f(sco.x()+20-pos.x(),sco.y()+20-pos.y());
         }
     };
 
-    std::vector<score_particle *> particles ;
+    std::vector<score_particle *> particles_p1, particles_p2;
 
     while (window.isOpen() && !_arbitre->lost())
     {
-        //game_over_screen(window);
         window.clear(color_background);
-        // square.rotate(1);
-
-
 
         sf::Event e;
         t_action action_utilisateur1(t_action::nothing);
@@ -146,7 +142,7 @@ void interface::play()
                 else
                     action_utilisateur1 = t_action::nothing;
 
-                // TODO
+                // TODO: descativer quand le jeu est en ligne
                 if (e.key.code == sf::Keyboard::RShift)
                     action_utilisateur2 = t_action::change_direction;
                 else if (e.key.code == sf::Keyboard::Up)
@@ -172,7 +168,7 @@ void interface::play()
         _number_score_1.setString(sf::String(std::to_string(_temp_score)));
         _number_score_1.setOrigin(sf::Vector2f((_number_score_1.getGlobalBounds().width)/(2*_number_score_1.getScale().x),(_number_score_1.getGlobalBounds().height)/(2*_number_score_1.getScale().y)));
 
-        if (_arbitre->jeu_duo() && !_arbitre->jeu_res()){
+        if (_arbitre->jeu_duo()){
             t_number _temp_score = _arbitre->getJoueur2().get_score();
             _number_score_2.setString(sf::String(std::to_string(_temp_score)));
             _number_score_2.setOrigin(sf::Vector2f((_number_score_2.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(_number_score_2.getGlobalBounds().height)/(2*_number_score_2.getScale().y)));
@@ -181,20 +177,17 @@ void interface::play()
 
         // On update l'etat du jeu
         _arbitre->update(action_utilisateur1);
-        if(_arbitre->jeu_duo() && !_arbitre->jeu_res()) //TODO: On devrait pas recuperer l'action_utilisateur_2 (desactiver son input)
-            _arbitre->update(action_utilisateur2, false);
-
         if (_arbitre->jeu_res()) { // si jeu reseau alors on envoie l'action_utilisateur_1 et on reçoie l'action_utilisateur_2
             _arbitre->send_action(action_utilisateur1);
-            t_action remote_player_action;
-            remote_player_action = _arbitre->recieve_action();
-            if (remote_player_action != t_action::nothing)
-                std::cout << "Action reçue: " << actionToString(remote_player_action) << "\n";
-            // Une fois l'action reçue il suffit de l'appliquer (update) le joueur_2 avec
-            // Je devrait modifier l'init de l'arbitre
-            // Server:
+            // std::cout << "sent " << actionToString(action_utilisateur1) << " on frame " << _arbitre->getFrame() << "\n";
+            t_action remote_player_action(t_action::nothing);
+            _arbitre->recieve_action(remote_player_action);
+            // std::cout << "recieved " << actionToString(remote_player_action) << " on frame " << _arbitre->getFrame() << "\n";
             _arbitre->updateSecondPlayer(remote_player_action);
         }
+        else if(_arbitre->jeu_duo())
+            _arbitre->update(action_utilisateur2, false);
+
 
         auto vec(_arbitre->getDelays().cells_align);
 
@@ -215,6 +208,7 @@ void interface::play()
                 if(s_tile.getOrigin().x == 0)
                     s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
 
+                //TODO: optimiser l'ecriture de ce code
                 if (vec.size() == 0)
                     s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur().grid_dy() + _width_cell/2);
                 else
@@ -229,15 +223,13 @@ void interface::play()
                         vec.erase(it);
 
                         if (s_tile.getScale().x <= 0.01)
-                            particles.push_back(new score_particle(position(s_tile.getPosition().x,s_tile.getPosition().y),position(_number_score_1.getPosition().x, _number_score_1.getPosition().y),0.01));
+                            particles_p1.push_back(new score_particle(position(s_tile.getPosition().x,s_tile.getPosition().y),position(_number_score_1.getPosition().x, _number_score_1.getPosition().y),0.01));
                     }
                 }
 
                 window.draw(s_tile);
                 s_tile.setRotation(0);
                 s_tile.setScale(1, 1);
-                //s_tile.setOrigin(0, 0);
-                
 
                 // Dessin de la target
                 if (_arbitre->getJoueur().getcell1target() == position(j, i) || _arbitre->getJoueur().getcell2target() == position(j, i))
@@ -277,14 +269,8 @@ void interface::play()
 
                     if(s_tile.getOrigin().x == 0)
                         s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
-
-                    if (_arbitre->jeu_res()){//TODO: est-ce optimisé de dynamic_cast plusieurs fois par frame ?
-                        s_tile.setPosition(play_tab_width + (score_tab_width - _width_cell/2*_arbitre->getJoueur2().width())/2 +  _width_cell/2 * j + dx +thickness_line, total_height/2 + _width_cell/2 * i + dy - _arbitre->getJoueur2().grid_dy()+_width_cell - thickness_line);
-                        s_tile.setScale(0.5, 0.5);
-                    } else {
-                        s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
-                        s_tile.setScale(1, 1);
-                    }
+                    s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
+                    s_tile.setScale(1, 1);
 
                     if (vec.size() != 0)
                     {
@@ -295,18 +281,17 @@ void interface::play()
                             s_tile.setScale(_arbitre->getDelays(false).scale, _arbitre->getDelays(false).scale);
                             //s_tile.setOrigin(0, 0);
                             vec.erase(it);
-
                         }
+                        if (s_tile.getScale().x <= 0.01)
+                            particles_p2.push_back(new score_particle(position(s_tile.getPosition().x,s_tile.getPosition().y),position(_number_score_2.getPosition().x, _number_score_2.getPosition().y),0.01));
                     }
 
                     window.draw(s_tile);
                     s_tile.setRotation(0);
                     s_tile.setScale(1, 1);
-                    //s_tile.setOrigin(0, 0);
-                    
 
                     // Dessin de la target
-                    if (!_arbitre->jeu_res() && (_arbitre->getJoueur2().getcell1target() == position(j, i) || _arbitre->getJoueur2().getcell2target() == position(j, i)))
+                    if (_arbitre->getJoueur2().getcell1target() == position(j, i) || _arbitre->getJoueur2().getcell2target() == position(j, i))
                     {
                         s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre->getJoueur2 ().grid_dy());
                         window.draw(s_target);
@@ -321,20 +306,15 @@ void interface::play()
                 auto color = _arbitre->getJoueur2()(position(j, _arbitre->getJoueur2().height()));
 
                 load_texture(s_tile, color, true);
-
-                if (_arbitre->jeu_res()){//TODO: est-ce optimisé de dynamic_cast plusieurs fois par frame ?
-                    s_tile.setPosition(play_tab_width + (score_tab_width - _width_cell/2*_arbitre->getJoueur2().width())/2 + _width_cell/2 * j +thickness_line, total_height/2 + _width_cell/2 * _arbitre->getJoueur2().height()  - _arbitre->getJoueur2().grid_dy() + _width_cell - thickness_line);
-                    s_tile.setScale(0.5, 0.5);
-                } else {
-                    s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j +thickness_line + _width_cell/2, _width_cell * _arbitre->getJoueur2().height()  +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
-                    s_tile.setScale(1, 1);
-                }
+                s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j +thickness_line + _width_cell/2, _width_cell * _arbitre->getJoueur2().height()  +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
+                s_tile.setScale(1, 1);
 
                 window.draw(s_tile);
             }
         }
 
-        for(auto it(particles.begin()); it != particles.end(); it++){
+        //TODO: factoriser ce traitement
+        for(auto it(particles_p1.begin()); it != particles_p1.end(); it++){
             s_xp.rotate(18);
             s_xp.setPosition((*it)->pos.x(),(*it)->pos.y());
             if (_arbitre->getFrame() % 3 == 0)
@@ -343,21 +323,41 @@ void interface::play()
                 s_xp.setTexture(_textures[t_textures_to_index(t_textures::Yellow_XP)]);
             else
                 s_xp.setTexture(_textures[t_textures_to_index(t_textures::Pink_XP)]);
-            if((*it)->pos.x() <= _number_score_1.getPosition().x || (*it)->pos.y() >= _number_score_1.getPosition().y){
+            if((*it)->pos.x() <= _number_score_1.getPosition().x){
                 (*it)->pos.sety((*it)->pos.y()+(*it)->direction.y * (*it)->vitesse);
-                std::cout<< "original: " << (*it)->pos.x()<<std::endl;
-                std::cout << "v2: " << ((*it)->pos.x()+(*it)->direction.x * (*it)->vitesse) << "\n";
                 (*it)->pos.setx((*it)->pos.x()+(*it)->direction.x * (*it)->vitesse);
                 (*it)->vitesse += 0.001;
-                std::cout<<(*it)->pos.x() <<"//"<<(*it)->direction.x<<"//"<<(*it)->vitesse<< std::endl;
             }
             else {
-                particles.erase(it);
+                particles_p1.erase(it);
                 it--;
                 _arbitre->getDelays().score++;
                 _sound_xp.play();
             }
-            
+
+            window.draw(s_xp);
+        }
+        for(auto it(particles_p2.begin()); it != particles_p2.end(); it++){
+            s_xp.rotate(18);
+            s_xp.setPosition((*it)->pos.x(),(*it)->pos.y());
+            if (_arbitre->getFrame() % 3 == 0)
+                s_xp.setTexture(_textures[t_textures_to_index(t_textures::Blue_XP)]);
+            else if (_arbitre->getFrame() % 3 == 1)
+                s_xp.setTexture(_textures[t_textures_to_index(t_textures::Yellow_XP)]);
+            else
+                s_xp.setTexture(_textures[t_textures_to_index(t_textures::Pink_XP)]);
+            if((*it)->pos.x() >= _number_score_2.getPosition().x){
+                (*it)->pos.sety((*it)->pos.y()+(*it)->direction.y * (*it)->vitesse);
+                (*it)->pos.setx((*it)->pos.x()+(*it)->direction.x * (*it)->vitesse);
+                (*it)->vitesse += 0.001;
+            }
+            else {
+                particles_p2.erase(it);
+                it--;
+                _arbitre->getDelays(false).score++;
+                _sound_xp.play();
+            }
+
             window.draw(s_xp);
         }
 
@@ -369,7 +369,7 @@ void interface::play()
         window.draw(line3);
         window.draw(line4);
         window.draw(line5);
-        if(_arbitre->jeu_duo() && !_arbitre->jeu_res()){
+        if(_arbitre->jeu_duo()){
             window.draw(_number_score_2);
             window.draw(_text_score_2);
             window.draw(line6);
@@ -386,9 +386,9 @@ void interface::play()
 
     window.close();
     if (_arbitre->getJoueur().is_lost())
-        game_over_screen(true,_arbitre->getJoueur().get_score());
+        game_over_screen(true, _arbitre->getJoueur().get_score());
     else if (_arbitre->jeu_duo() && _arbitre->getJoueur2().is_lost())
-        game_over_screen(false,_arbitre->getJoueur2().get_score());
+        game_over_screen(false, _arbitre->getJoueur2().get_score());
 }
 
 void interface::menu(){
@@ -571,7 +571,7 @@ void interface::menu(){
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
 
-                    window.close();
+                window.close();
                 else if(e.key.code == sf::Keyboard::Key::Up)
                 {   
                     if(_index_choice_pos>0)
@@ -656,7 +656,7 @@ void interface::menu(){
     }
 
 }
-void interface::game_over_screen(bool first_player_lost,t_number score)
+void interface::game_over_screen(bool first_player_lost, t_number score)
 {
     // TODO: adapter dans le cas ou jeu a deux joueur
     t_number thickness_line = 10;
@@ -689,16 +689,15 @@ void interface::game_over_screen(bool first_player_lost,t_number score)
 
 
     // texts
-    sf::Text _text_looser(sf::String(first_player_lost ? "PLAYER 1" : "PLAYER 2"), _font);
+    sf::Text _text_looser(sf::String(first_player_lost ? "PLAYER 1 LOST" : "PLAYER 2 LOST"), _font);
     sf::Text _text_main_menu(sf::String("MENU"), _font);
     sf::Text _text_exit(sf::String("EXIT"), _font);
-    sf::Text _score_gagnant(sf::String("SCORE : "+std::to_string(score)),_font,45);
+    sf::Text _score_gagnant(sf::String("HIGH SCORE : "+std::to_string(score)),_font,45);
 
     // text_scale
     _text_looser.setScale(1.5, 1.5);
     _text_main_menu.setScale(1.5, 1.5);
     _text_exit.setScale(1.5, 1.5);
-
 
     // text_color
     _text_looser.setFillColor(sf::Color::White);
@@ -734,6 +733,7 @@ void interface::game_over_screen(bool first_player_lost,t_number score)
     _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
     _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
 
+    sf::Clock clock; // pour faire clignoter le score
     while(window.isOpen()){
 
         window.clear(color_background);
@@ -770,6 +770,20 @@ void interface::game_over_screen(bool first_player_lost,t_number score)
         // updating target position and size
         _choice_target.setPosition(sf::Vector2f(_choices[_index_choice_pos]->getPosition().x+5, _choices[_index_choice_pos]->getPosition().y+17));
 
+        if (clock.getElapsedTime().asMilliseconds() >= 500) {
+
+            // on met a jour la couleur du texte
+            if (_score_gagnant.getFillColor() == color_line){
+                _score_gagnant.setFillColor(sf::Color::White);
+                _text_looser.setFillColor(color_line);
+            }
+            else {
+                _score_gagnant.setFillColor(color_line);
+                _text_looser.setFillColor(sf::Color::White);
+            }
+
+            clock.restart(); // on remet a zero la clock
+        }
         window.draw(s_game_over);
         window.draw(line1);
         window.draw(line2);
@@ -778,8 +792,8 @@ void interface::game_over_screen(bool first_player_lost,t_number score)
         window.draw(_text_looser);
         window.draw(_text_main_menu);
         window.draw(_text_exit);
-        window.draw(_choice_target);
         window.draw(_score_gagnant);
+        window.draw(_choice_target);
         window.display();
     }
 }
@@ -969,6 +983,7 @@ void interface::menu_lan(){
 
 
     // TODO: creation des text avec une methode
+    //TODO: rajoute un help
     //needed base variable
     t_number thickness_line = 10;
     t_number width_window = _width * 64 + 2 * thickness_line;
@@ -1075,6 +1090,7 @@ void interface::menu_lan(){
     bool tryconnect(false), connected(false), server_choosen(false);
     sf::Clock clock_for_circle, clock_since_connection;
     unsigned int index_circle_texture(0); // pour savoir quelle texture de cercle afficher
+    t_number seed(0);
     sf::IpAddress ip;
     t_number port;
 
@@ -1098,12 +1114,10 @@ void interface::menu_lan(){
                     port = (_port.getString() == "" ? 8080 : std::stoi(_port.getString().toAnsiString()));
 
                     if (_index_type_choice == 0) { // serveur
-                    //change3
-                        _arbitre = std::make_unique<arbitre>(_difficulty);//, false, true, true, port);
+                        _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::server, typeplayer::player);
                         server_choosen = true;
-                    } else { // client
-                    //change3
-                        _arbitre = std::make_unique<arbitre>(_difficulty);//, false, true, false, port);
+                    } else {
+                        _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::client, typeplayer::player);
                         server_choosen = false;
                     }
 
@@ -1178,6 +1192,13 @@ void interface::menu_lan(){
             if (server_choosen){
                 _arbitre->connect_client();
                 if (_arbitre->connected()){
+                    srand(time(NULL));
+
+                    seed = rand()%255 + 1;
+                    std::cout << "Choosen seed (server): " << seed << "\n";
+
+                    _arbitre->send_number(seed);
+
                     tryconnect = false;
                     index_circle_texture = 0;
                     clock_since_connection.restart();
@@ -1185,6 +1206,12 @@ void interface::menu_lan(){
             } else {
                 _arbitre->connect(ip, port);
                 if (_arbitre->connected()){
+
+                    // On recoit seed2 avant seed1 car server_seed1=client_seed2
+                    _arbitre->recieve_number(seed);
+
+                    std::cout << "Choosen seed (server): " << seed << "\n";
+
                     tryconnect = false;
                     index_circle_texture = 0;
                     clock_since_connection.restart();
@@ -1204,6 +1231,7 @@ void interface::menu_lan(){
 
         if (_arbitre->connected()){ // si connecté on met le check_mark, un countdown et on affiche le boutton play
 
+            _arbitre->init(seed);
             _text_countdown.setString("PLAYIN IN " + std::to_string(static_cast<t_number>(5 - clock_since_connection.getElapsedTime().asSeconds())));
             window.draw(_text_countdown);
 
@@ -1211,19 +1239,6 @@ void interface::menu_lan(){
             window.draw(waiting_circle);
 
             if (clock_since_connection.getElapsedTime().asSeconds() >= 5){ // on attend 2 secondes avant de jouer
-
-                // On envoie une seed pour init le jeu
-                if (server_choosen){
-                    t_number server_seed_j1(nombreAleatoire(255)), server_seed_j2(nombreAleatoire(255));
-                    _arbitre->send_number(server_seed_j1);
-                    _arbitre->send_number(server_seed_j2);
-                    std::cout << "Choosen seed (server): " << server_seed_j1 << " - " << server_seed_j2 << "\n";
-                } else {
-                    t_number client_seed_j1(0), client_seed_j2(0); //TODO: y'a t'il une meilleure maniere de faire (au lieu d'envoyer la seed) (dans le cas de deux cpu different)
-                    client_seed_j2 = _arbitre->recieve_number();
-                    client_seed_j1 = _arbitre->recieve_number();
-                    std::cout << "Choosen seed (client): " << client_seed_j1 << " - " << client_seed_j2 << "\n";
-                }
                 window.close();
                 play();
             }

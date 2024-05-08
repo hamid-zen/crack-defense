@@ -1,7 +1,7 @@
 #include "game.h"
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
-    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0), _score(0) { _grid.init(); /* TODO: Enlever */ }
+    : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0), _score(0) {}
 
 /**
  * @brief check si le game est perdu
@@ -238,13 +238,13 @@ std::vector<position> game::vertical_alignment()
                     vec.push_back(position(i,j+2));
                     unsigned int k(j+3);
                     auto clr(_grid(position(i,j)));
-                // on ajoute tant que c'est la meme couleur
-                while (k < _grid.max_height()&& !is_garbage(position(i,k)) && (_grid(position(i, k)) == clr || _grid(position(i,k)) == t_colors::all))
-                {
-                    vec.push_back(position(i, k));
-                    k++;
-                }
-                return vec;
+                    // on ajoute tant que c'est la meme couleur
+                    while (k < _grid.max_height()&& !is_garbage(position(i,k)) && (_grid(position(i, k)) == clr || _grid(position(i,k)) == t_colors::all))
+                    {
+                        vec.push_back(position(i, k));
+                        k++;
+                    }
+                    return vec;
                 }
             }
 
@@ -258,10 +258,10 @@ std::vector<position> game::vertical_alignment()
 
 std::vector<position> game::horizontal_alignment()
 {
-   std::vector<position> vec;
+    std::vector<position> vec;
     t_colors clr;
     for (unsigned int j(0); j < _grid.max_height(); j++)
-        {
+    {
         for (unsigned int i(0); i < _grid.max_width()-2; i++)
         {
             if ( _grid(position(i,j))!=t_colors::empty_cell && _grid(position(i+1,j))!=t_colors::empty_cell && _grid(position(i+2,j))!=t_colors::empty_cell)
@@ -272,13 +272,13 @@ std::vector<position> game::horizontal_alignment()
                     vec.push_back(position(i+2,j));
                     unsigned int k(i+3);
                     auto clr(_grid(position(i,j)));
-                // on ajoute tant que c'est la meme couleur
-                while (k < _grid.max_width() && !is_garbage(position(k,j)) && (_grid(position(k,j)) == clr || _grid(position(k, j)) == t_colors::all))
-                {
-                    vec.push_back(position(k,j));
-                    k++;
-                }
-                return vec;
+                    // on ajoute tant que c'est la meme couleur
+                    while (k < _grid.max_width() && !is_garbage(position(k,j)) && (_grid(position(k,j)) == clr || _grid(position(k, j)) == t_colors::all))
+                    {
+                        vec.push_back(position(k,j));
+                        k++;
+                    }
+                    return vec;
                 }
             }
 
@@ -364,7 +364,7 @@ std::vector<position> game::alignment()
     else
     {
         auto vec2(horizontal_alignment());
-       // inc_score(vec2.size());
+        // inc_score(vec2.size());
         return vec2;
     }
 }
@@ -517,7 +517,7 @@ std::vector<position> game::max_column() const
     return _grid.max_column();
 }
 std::vector<int>  game::highest_column() const{
-return _grid.highest_column();
+    return _grid.highest_column();
 }
 
 void game::add_garbage(std::vector<position*> & malus)
@@ -740,7 +740,7 @@ int ai::minMax(int profondeur,game const &g)
 std::vector<coup> ai::best_blow(int profondeur)
 {
     std::vector<coup> meilleurscoups;
-     game g(*this);
+    game g(*this);
     auto coups(lawful_blow(g.getGrid()));
     int meilleureEstimation = std::numeric_limits<int>::min();
     std::cout<<"coup posible : \n";
@@ -866,58 +866,65 @@ remote_game::remote_game(cordinate _max_height, cordinate _max_width, t_number_c
     game(_max_height, _max_width, colors), _socket()
 {}
 
-void remote_game::send_action(const t_action &action)
-{
-    if (action != t_action::nothing)
-    {
-        sf::Packet packet;
-        packet << action;
-
-        //std::cout << "trying to send packet of size: " << packet.getDataSize() << " : " << actionToString(action) << "\n";
-        if (packet.getDataSize() > 0 && _socket.send(packet) != sf::Socket::Done)
-        {
-            std::cout << "Packet: " << packet << " not sent\n";
-        }
-    }
-}
-
-t_number remote_game::recieve_number()
+sf::Socket::Status remote_game::send_action(const t_action &action)
 {
     sf::Packet packet;
-    sf::Socket::Status recieve_status(_socket.receive(packet));
-    if (recieve_status == sf::Socket::Disconnected)
-    {
-        std::cout << "Socket deconnecté\n";//TODO: return une exception pour pouvoir afficher une erreur
-        _socket.disconnect();
-        return -1;
-    }
-    else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
-    {
-        t_number received_number;
-        packet >> received_number;
-        std::cout << "recieved packet of size: " << packet.getDataSize() << " : " << received_number << "\n";
-        packet.clear();
-        return received_number;
-    }
-    return -1;
+    packet << action;
+
+    sf::Socket::Status send_status(_socket.send(packet));
+    return send_status;
 }
 
-void remote_game::send_number(const t_number &number)
+sf::Socket::Status remote_game::recieve_number(t_number &number)
+{   
+    sf::Packet packet;
+    sf::Socket::Status recieve_status(_socket.receive(packet));
+
+    // std::string statusStr;
+
+    // switch (recieve_status) {
+    // case sf::Socket::Status::Done:
+    //     statusStr = "Done";
+    //     break;
+    // case sf::Socket::Status::NotReady:
+    //     statusStr = "Not Ready";
+    //     break;
+    // case sf::Socket::Status::Partial:
+    //     statusStr = "Partial";
+    //     break;
+    // case sf::Socket::Status::Disconnected:
+    //     statusStr = "Disconnected";
+    //     break;
+    // case sf::Socket::Status::Error:
+    //     statusStr = "Error";
+    //     break;
+    // default:
+    //     statusStr = "Unknown";
+    //     break;
+    // }
+
+    // std::cout << "Recieve_Number Status: " << statusStr << std::endl;
+
+    if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
+    {
+        packet >> number;
+        std::cout << "recieved packet of size: " << packet.getDataSize() << " : " << number << "\n";
+        packet.clear();
+    }
+    return recieve_status;
+}
+
+sf::Socket::Status remote_game::send_number(const t_number &number)
 {
+
     sf::Packet packet;
     packet << number;
-
-    std::cout << "trying to send packet of size: " << packet.getDataSize() << " : " << number << "\n";
     sf::Socket::Status send_status(_socket.send(packet));
-
-    if (packet.getDataSize() > 0 && send_status != sf::Socket::Done)
-    {
-        std::cout << "Packet: " << packet << " not sent\n";
-    }
+    return send_status;
 }
 
 
-t_action remote_game::recieve_action()
+sf::Socket::Status remote_game::recieve_action(t_action &action)
 {
     sf::Packet packet;
     sf::Socket::Status recieve_status(_socket.receive(packet));
@@ -925,17 +932,13 @@ t_action remote_game::recieve_action()
     {
         std::cout << "Socket deconnecté\n";//TODO: return une exception pour pouvoir afficher une erreur
         _socket.disconnect();
-        return t_action::nothing; //TODO: gerer ce cas
     }
     else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
     {
-        t_action received_action;
-        packet >> received_action;
-        //std::cout << "recieved packet of size: " << packet.getDataSize() << " : " << actionToString(received_action) << "\n";
+        packet >> action;
         packet.clear();
-        return received_action;
     }
-    return t_action::nothing; //TODO: gerer ce cas
+    return recieve_status;
 }
 
 server::server(unsigned int port, cordinate _max_height, cordinate _max_width, t_number_color colors) :

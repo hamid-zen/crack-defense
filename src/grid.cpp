@@ -65,9 +65,8 @@ int nombreAleatoire(int k) {
  * initialise la grille
  */
 void grid::init(t_number seed) // on initialisse une grille aleatoire de max 7 ligne (+1 ligne caché)
-{   if (seed == 0) // seed non choisit donc on choisit une seed au hasard
-        mysrand(nombreAleatoire(255));
-    else // sinon seed choisie
+{
+    if (seed != 0) // seed choisie
         mysrand(seed);
 
     for(cordinate i(0);i<_max_width;i++){ //colone

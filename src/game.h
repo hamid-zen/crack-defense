@@ -140,10 +140,10 @@ enum class t_remote_game
 class remote_game : public game {
 public:
     remote_game(cordinate _max_height = 12, cordinate _max_width = 6, t_number_color colors = 4);
-    t_action recieve_action();
-    void send_action(const t_action &action);
-    t_number recieve_number();
-    void send_number(const t_number &number);
+    sf::Socket::Status recieve_action(t_action &action);
+    sf::Socket::Status send_action(const t_action &action);
+    sf::Socket::Status recieve_number(t_number &number);
+    sf::Socket::Status send_number(const t_number &number);
     bool connected() const { return _socket.getRemoteAddress() != sf::IpAddress::None; }
     virtual t_remote_game type() const =0;
     bool is_remote() const override {return true;}

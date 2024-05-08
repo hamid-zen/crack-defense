@@ -40,7 +40,7 @@ public:
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& getJoueur() const;
     game& getJoueur2() const;
-    void init(t_number seed_j1 = 0, t_number seed_j2 = 0);
+    void init(t_number seed = 0);
     delay & getDelays(bool first_player=true);
     t_number getFrame() const {return _nb_frame;}
     void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
@@ -55,9 +55,9 @@ public:
     void connect(const sf::IpAddress &server_ip, unsigned int port);
     void connect_client();
     void send_action(const t_action &action);
-    t_action recieve_action();
+    void recieve_action(t_action &action);
     void send_number(t_number number);
-    t_number recieve_number();
+    void recieve_number(t_number &number);
 
 private:
     std::unique_ptr<game> _joueur1;
