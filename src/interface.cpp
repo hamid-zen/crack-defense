@@ -85,7 +85,6 @@ void interface::play()
     sf::Sprite s_tile, s_target(_textures[t_textures_to_index(t_textures::Target)]), s_xp(_textures[t_textures_to_index(t_textures::Blue_XP)]);
     s_xp.setOrigin(sf::Vector2f((s_xp.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(s_xp.getGlobalBounds().height)/(2*s_xp.getScale().y)));
 
-
     struct score_particle {
         position pos;
         sf::Vector2f direction ;
@@ -117,10 +116,8 @@ void interface::play()
             {
                 if (e.key.code == sf::Keyboard::LShift)
                     action_utilisateur1 = t_action::change_direction;
-                else if (e.key.code == sf::Keyboard::P){
-                    window.close();
-                    pause_screen();
-                }
+                else if (e.key.code == sf::Keyboard::P)
+                    action_utilisateur1 = t_action::pause;
                 else if (e.key.code == sf::Keyboard::Z)
                     action_utilisateur1 = t_action::go_up;
                 else if (e.key.code == sf::Keyboard::Q)
@@ -178,16 +175,22 @@ void interface::play()
         // On update l'etat du jeu
         _arbitre->update(action_utilisateur1);
         if (_arbitre->jeu_res()) { // si jeu reseau alors on envoie l'action_utilisateur_1 et on reçoie l'action_utilisateur_2
+
             _arbitre->send_action(action_utilisateur1);
-            // std::cout << "sent " << actionToString(action_utilisateur1) << " on frame " << _arbitre->getFrame() << "\n";
+
             t_action remote_player_action(t_action::nothing);
-            _arbitre->recieve_action(remote_player_action);
-            // std::cout << "recieved " << actionToString(remote_player_action) << " on frame " << _arbitre->getFrame() << "\n";
-            _arbitre->updateSecondPlayer(remote_player_action);
+            while (_arbitre->recieve_action(remote_player_action) != sf::Socket::Done) {}
+
+            _arbitre->update(remote_player_action, false);
+
+            if (action_utilisateur1 == t_action::pause || remote_player_action == t_action::pause) {
+                window.close();
+                pause_screen();
+            }
+
         }
         else if(_arbitre->jeu_duo())
             _arbitre->update(action_utilisateur2, false);
-
 
         auto vec(_arbitre->getDelays().cells_align);
 
@@ -883,8 +886,14 @@ void interface::pause_screen()
                 if(e.key.code == sf::Keyboard::Key::Enter)
                 {
                     if(_index_choice_pos == 0){ // resume
+
+                        if (_arbitre->jeu_res()) { // si jeu reseau on envoie un signal pour reprendre le jeu
+                            _arbitre->send_action(t_action::resume);
+                            std::cout << "sent: resume\n";
+                        }
                         window.close();
                         play();
+
                     } else if (_index_choice_pos == 1) { // main_menu
                         window.close();
                         menu();
@@ -905,6 +914,14 @@ void interface::pause_screen()
             }
         }
         
+        if (_arbitre->jeu_res()){ // on check si l'autre joueur a repris le jeu
+            t_action remote_player_action(t_action::nothing);
+            if (_arbitre->recieve_action(remote_player_action) == sf::Socket::Done && remote_player_action == t_action::resume){
+                window.close();
+                play();
+            }
+        }
+
         // updating target position and size
         _choice_target.setPosition(sf::Vector2f(_choices[_index_choice_pos]->getPosition().x+5, _choices[_index_choice_pos]->getPosition().y+17));
         
@@ -1106,19 +1123,22 @@ void interface::menu_lan(){
                     _sound_move.play();
                 if(e.key.code == sf::Keyboard::Key::Enter)
                 {
-                    tryconnect = true;
-                    clock_for_circle.restart(); // On cmmence la clock pour l'affichage de la texture d'attente
+                    if (_index_choice_pos == 3) { // connect
 
-                    // on recupere l'ip et le port
-                    ip = (_ip.getString() == "" ? sf::IpAddress::LocalHost : _ip.getString().toAnsiString());
-                    port = (_port.getString() == "" ? 8080 : std::stoi(_port.getString().toAnsiString()));
+                        tryconnect = true;
+                        clock_for_circle.restart(); // On cmmence la clock pour l'affichage de la texture d'attente
 
-                    if (_index_type_choice == 0) { // serveur
-                        _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::server, typeplayer::player);
-                        server_choosen = true;
-                    } else {
-                        _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::client, typeplayer::player);
-                        server_choosen = false;
+                        // on recupere l'ip et le port
+                        ip = (_ip.getString() == "" ? sf::IpAddress::LocalHost : _ip.getString().toAnsiString());
+                        port = (_port.getString() == "" ? 8080 : std::stoi(_port.getString().toAnsiString()));
+
+                        if (_index_type_choice == 0) { // serveur
+                            _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::server, typeplayer::player);
+                            server_choosen = true;
+                        } else {
+                            _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::client, typeplayer::player);
+                            server_choosen = false;
+                        }
                     }
 
                 }
@@ -1208,7 +1228,7 @@ void interface::menu_lan(){
                 if (_arbitre->connected()){
 
                     // On recoit seed2 avant seed1 car server_seed1=client_seed2
-                    _arbitre->recieve_number(seed);
+                    while (_arbitre->recieve_number(seed) != sf::Socket::Done) {}
 
                     std::cout << "Choosen seed (server): " << seed << "\n";
 

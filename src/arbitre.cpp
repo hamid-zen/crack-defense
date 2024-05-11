@@ -649,11 +649,12 @@ void arbitre::send_action(const t_action &action)
         joueur->send_action(action);
 }
 
-void arbitre::recieve_action(t_action &action)
+sf::Socket::Status arbitre::recieve_action(t_action &action)
 {
     auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
     if (joueur)
-        while (joueur->recieve_action(action) != sf::Socket::Done){}
+        return joueur->recieve_action(action);
+    return sf::Socket::Error; // TODO: peut etre remplacer par une exception
 }
 
 void arbitre::send_number(t_number number)
@@ -663,11 +664,12 @@ void arbitre::send_number(t_number number)
         joueur->send_number(number);
 }
 
-void arbitre::recieve_number(t_number &number)
+sf::Socket::Status arbitre::recieve_number(t_number &number)
 {
     auto joueur=dynamic_cast<remote_game*>(_joueur1.get());
     if (joueur)
-        while (joueur->recieve_number(number) != sf::Socket::Done){}
+        return joueur->recieve_number(number);
+    return sf::Socket::Error; // TODO: peut etre remplacer par une exception
 }
 
 

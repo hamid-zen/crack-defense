@@ -55,9 +55,9 @@ public:
     void connect(const sf::IpAddress &server_ip, unsigned int port);
     void connect_client();
     void send_action(const t_action &action);
-    void recieve_action(t_action &action);
+    sf::Socket::Status recieve_action(t_action &action);
     void send_number(t_number number);
-    void recieve_number(t_number &number);
+    sf::Socket::Status recieve_number(t_number &number);
 
 private:
     std::unique_ptr<game> _joueur1;
