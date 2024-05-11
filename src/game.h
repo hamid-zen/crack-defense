@@ -10,7 +10,7 @@
 using score = u_int16_t;
 using t_num=u_int16_t;
 enum class t_action{
-    go_right, go_left, go_up, go_down, change_direction, accelerate, exchange, nothing, generate_malus, pause
+    go_right, go_left, go_up, go_down, change_direction, accelerate, exchange, nothing, generate_malus, pause, resume
 };
 
 enum class t_direction{
