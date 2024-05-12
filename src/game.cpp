@@ -846,6 +846,8 @@ std::string actionToString(t_action action) {
     case t_action::exchange: return "exchange";
     case t_action::nothing: return "nothing";
     case t_action::generate_malus: return "generate_malus";
+    case t_action::pause: return "pause";
+    case t_action::resume: return "resume";
     default: return "";
     }
 }
@@ -872,6 +874,8 @@ sf::Socket::Status remote_game::send_action(const t_action &action)
     packet << action;
 
     sf::Socket::Status send_status(_socket.send(packet));
+    if (send_status == sf::Socket::Disconnected)
+        std::cout << "sending failed: disconnected\n";
     return send_status;
 }
 
@@ -928,9 +932,32 @@ sf::Socket::Status remote_game::recieve_action(t_action &action)
 {
     sf::Packet packet;
     sf::Socket::Status recieve_status(_socket.receive(packet));
+
+    std::string statusStr;
+
+    switch (recieve_status) {
+    case sf::Socket::Status::Done:
+        statusStr = "Done";
+        break;
+    case sf::Socket::Status::NotReady:
+        statusStr = "Not Ready";
+        break;
+    case sf::Socket::Status::Partial:
+        statusStr = "Partial";
+        break;
+    case sf::Socket::Status::Disconnected:
+        statusStr = "Disconnected";
+        break;
+    case sf::Socket::Status::Error:
+        statusStr = "Error";
+        break;
+    default:
+        statusStr = "Unknown";
+        break;
+    }
     if (recieve_status == sf::Socket::Disconnected)
     {
-        std::cout << "Socket deconnecté\n";//TODO: return une exception pour pouvoir afficher une erreur
+        std::cout << "recieving failed: disconnected\n";//TODO: return une exception pour pouvoir afficher une erreur
         _socket.disconnect();
     }
     else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)

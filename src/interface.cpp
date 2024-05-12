@@ -174,19 +174,28 @@ void interface::play()
 
         // On update l'etat du jeu
         _arbitre->update(action_utilisateur1);
-        if (_arbitre->jeu_res()) { // si jeu reseau alors on envoie l'action_utilisateur_1 et on reçoie l'action_utilisateur_2
+        if (_arbitre->jeu_res() && _arbitre->connected()) { // si jeu reseau alors on envoie l'action_utilisateur_1 et on reçoie l'action_utilisateur_2
 
-            _arbitre->send_action(action_utilisateur1);
+                _arbitre->send_action(action_utilisateur1);
 
-            t_action remote_player_action(t_action::nothing);
-            while (_arbitre->recieve_action(remote_player_action) != sf::Socket::Done) {}
+                t_action remote_player_action(t_action::nothing);
 
-            _arbitre->update(remote_player_action, false);
+                sf::Socket::Status recieving_status(_arbitre->recieve_action(remote_player_action));
+                while (recieving_status != sf::Socket::Done) {
+                    if (recieving_status == sf::Socket::Disconnected) { // socket deconnecté
+                        std::cout << "disconnected\n";
+                        window.close();
+                        menu_lan();
+                    }
+                    recieving_status = _arbitre->recieve_action(remote_player_action);
+                }
 
-            if (action_utilisateur1 == t_action::pause || remote_player_action == t_action::pause) {
-                window.close();
-                pause_screen();
-            }
+                _arbitre->update(remote_player_action, false);
+
+                if (action_utilisateur1 == t_action::pause || remote_player_action == t_action::pause) {
+                    window.close();
+                    pause_screen();
+                }
 
         }
         else if(_arbitre->jeu_duo())
@@ -1133,9 +1142,11 @@ void interface::menu_lan(){
                         port = (_port.getString() == "" ? 8080 : std::stoi(_port.getString().toAnsiString()));
 
                         if (_index_type_choice == 0) { // serveur
+                            std::cout << "server choisi\n";
                             _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::server, typeplayer::player);
                             server_choosen = true;
                         } else {
+                            std::cout << "client choisi\n";
                             _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::client, typeplayer::player);
                             server_choosen = false;
                         }
