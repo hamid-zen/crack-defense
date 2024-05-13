@@ -135,6 +135,8 @@ void interface::play()
                 else if (e.key.code == sf::Keyboard::Escape){
                     _music.stop();
                     window.close();
+                    if (_arbitre->jeu_res()) // ca veut dire qu'on se deconnecte donc on reviens au menu_lan
+                        menu_lan(true);
                 }
                 else
                     action_utilisateur1 = t_action::nothing;
@@ -185,7 +187,7 @@ void interface::play()
                     if (recieving_status == sf::Socket::Disconnected) { // socket deconnecté
                         std::cout << "disconnected\n";
                         window.close();
-                        menu_lan();
+                        menu_lan(true);
                     }
                     recieving_status = _arbitre->recieve_action(remote_player_action);
                 }
@@ -1001,12 +1003,11 @@ void interface::load_textures()
     _buffer_sound_xp.loadFromFile("../sound/xp.wav");
 }
 
-void interface::menu_lan(){
+void interface::menu_lan(bool disconnected){
 
     sf::Sound _sound_move ;
     _sound_move.setBuffer(_buffer_sound_choice_move);
     _sound_move.setVolume(5);
-
 
     // TODO: creation des text avec une methode
     //TODO: rajoute un help
@@ -1042,6 +1043,7 @@ void interface::menu_lan(){
     sf::Text _text_port(sf::String("PORT"), _font);
     sf::Text _port(sf::String("8080"), _font);
     sf::Text _text_connect(sf::String("CONNECT"), _font);
+    sf::Text _text_disconnect(sf::String("CONNECTION LOST"), _font);
     sf::Text _text_countdown(sf::String("PLAYING IN "), _font);
 
     // text_scale
@@ -1072,10 +1074,12 @@ void interface::menu_lan(){
     _text_port.setOrigin(sf::Vector2f((_text_port.getGlobalBounds().width)/(2*_text_port.getScale().x),(_text_port.getGlobalBounds().height)/(2*_text_port.getScale().y)));
     _port.setOrigin(sf::Vector2f((_port.getGlobalBounds().width)/(2*_port.getScale().x),(_port.getGlobalBounds().height)/(2*_port.getScale().y)));
     _text_connect.setOrigin(sf::Vector2f((_text_connect.getGlobalBounds().width)/(2*_text_connect.getScale().x),(_text_connect.getGlobalBounds().height)/(2*_text_connect.getScale().y)));
+    _text_disconnect.setOrigin(sf::Vector2f((_text_disconnect.getGlobalBounds().width)/(2*_text_disconnect.getScale().x),(_text_disconnect.getGlobalBounds().height)/(2*_text_disconnect.getScale().y)));
     _text_countdown.setOrigin(sf::Vector2f((_text_countdown.getGlobalBounds().width)/(2*_text_countdown.getScale().x),(_text_countdown.getGlobalBounds().height)/(2*_text_countdown.getScale().y)));
 
     // text_position
     _text_title.setPosition(width_window/2, thickness_line + height_window / 20);
+    _text_disconnect.setPosition(width_window/2, _text_title.getPosition().y + _text_disconnect.getGlobalBounds().height + _text_title.getGlobalBounds().height);
     _text_type.setPosition(width_window/2, thickness_line  + height_window / 4);
     _type_choice.setPosition(width_window/2, thickness_line  + height_window / 3);
     _text_ip.setPosition(width_window/2, thickness_line  + height_window / 2.25);
@@ -1114,14 +1118,17 @@ void interface::menu_lan(){
     waiting_circle.setTexture(_textures[t_textures_to_index(t_textures::loading_0)]);
 
     bool tryconnect(false), connected(false), server_choosen(false);
-    sf::Clock clock_for_circle, clock_since_connection;
+    sf::Clock clock_for_circle, clock_since_connection, clock_for_disconnect;
     unsigned int index_circle_texture(0); // pour savoir quelle texture de cercle afficher
     t_number seed(0);
     sf::IpAddress ip;
     t_number port;
+    sf::Sprite s_disconnect;
 
     while(window.isOpen()){
+
         sf::Event e;
+        window.clear(color_background);
 
         while (window.pollEvent(e)){
             if (e.type == sf::Event::Closed)
@@ -1250,7 +1257,6 @@ void interface::menu_lan(){
             }
         }
 
-        window.clear(color_background);
         if (tryconnect){
             if (clock_for_circle.getElapsedTime().asSeconds() >= 1){ // plus d'une seconde est passé donc on change de texture pour le cercle
                 index_circle_texture = (index_circle_texture+1)%5;
@@ -1275,6 +1281,7 @@ void interface::menu_lan(){
             }
         }
 
+        // On affiche la texture si il s'agit d'une deconnexion
         window.draw(_text_title);
         window.draw(_choice_target);
         window.draw(_text_type);
@@ -1288,6 +1295,16 @@ void interface::menu_lan(){
         window.draw(line2);
         window.draw(line3);
         window.draw(line4);
+
+        if (disconnected && !_arbitre->connected()) { // afichage de deconnexion si deconnecté
+            if (static_cast<t_number>(clock_for_disconnect.getElapsedTime().asMilliseconds()) % 500 <= 250)
+                _text_disconnect.setFillColor(sf::Color::White);
+            else
+                _text_disconnect.setFillColor(sf::Color::Transparent);
+
+            window.draw(_text_disconnect);
+        }
+
         window.display();
     }
 }
