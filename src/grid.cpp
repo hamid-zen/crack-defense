@@ -12,7 +12,7 @@ grid::grid(cordinate height, cordinate width,t_number_color colors)
 // TODO: rajouter les autres couleurs
 t_colors grid::randomColor() const
 {
-    int k =nombreAleatoire(nbr_colors);
+    int k =nombreAleatoire(nbr_colors - 1);
     switch (k) {
     case 0:
         return t_colors::blue;
