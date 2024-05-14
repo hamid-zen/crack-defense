@@ -27,11 +27,11 @@ void interface::play()
     t_number _width_cell = 64 ;
     t_number score_tab_width = 500 ;
     
-    t_number play_tab_width = _arbitre->getJoueur().width() * _width_cell + 2 * thickness_line;
+    t_number play_tab_width = _arbitre->player1().width() * _width_cell + 2 * thickness_line;
     t_number total_width = score_tab_width + play_tab_width;
     if(_arbitre->jeu_duo())
         total_width += play_tab_width;
-    t_number total_height = _arbitre->getJoueur().height() * _width_cell + 2 * thickness_line ;
+    t_number total_height = _arbitre->player1().height() * _width_cell + 2 * thickness_line ;
     auto angle(0);
 
     // On init la partie affichage du score
@@ -40,7 +40,7 @@ void interface::play()
     _text_score_1.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/20));
     _text_score_1.setFillColor(color_line);
 
-    sf::Text _number_score_1 = sf::Text(std::to_string(_arbitre->getJoueur().get_score()),_font,60);
+    sf::Text _number_score_1 = sf::Text(std::to_string(_arbitre->player1().get_score()),_font,60);
     _number_score_1.setOrigin(sf::Vector2f((_number_score_1.getGlobalBounds().width)/(2*_number_score_1.getScale().x),(_number_score_1.getGlobalBounds().height)/(2*_number_score_1.getScale().y)));
     _number_score_1.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/20 + 100));
     _number_score_1.setFillColor(color_line);
@@ -50,7 +50,7 @@ void interface::play()
     _text_score_2.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/1.3));
     _text_score_2.setFillColor(color_line);
 
-    sf::Text _number_score_2 = sf::Text(std::to_string(_arbitre->getJoueur().get_score()),_font,60);
+    sf::Text _number_score_2 = sf::Text(std::to_string(_arbitre->player1().get_score()),_font,60);
     _number_score_2.setOrigin(sf::Vector2f((_number_score_2.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(_number_score_2.getGlobalBounds().height)/(2*_number_score_2.getScale().y)));
     _number_score_2.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/1.3 + 100));
     _number_score_2.setFillColor(color_line);
@@ -64,7 +64,7 @@ void interface::play()
     // On dessine les bordures
     sf::RectangleShape line1(sf::Vector2f(thickness_line, total_height-thickness_line));
     line1.setFillColor(color_line);
-    //sf::RectangleShape line2(sf::Vector2f(64 * _arbitre->getJoueur().width()+thickness_line, thickness_line));
+    //sf::RectangleShape line2(sf::Vector2f(64 * _arbitre->player1().width()+thickness_line, thickness_line));
     sf::RectangleShape line2(sf::Vector2f(total_width, thickness_line));
     line2.setFillColor(color_line);
     sf::RectangleShape line3(sf::Vector2f(thickness_line, total_height-thickness_line));
@@ -163,12 +163,12 @@ void interface::play()
 
 
         // Traitement du score
-        t_number _temp_score = _arbitre->getJoueur().get_score();
+        t_number _temp_score = _arbitre->player1().get_score();
         _number_score_1.setString(sf::String(std::to_string(_temp_score)));
         _number_score_1.setOrigin(sf::Vector2f((_number_score_1.getGlobalBounds().width)/(2*_number_score_1.getScale().x),(_number_score_1.getGlobalBounds().height)/(2*_number_score_1.getScale().y)));
 
         if (_arbitre->jeu_duo()){
-            t_number _temp_score = _arbitre->getJoueur2().get_score();
+            t_number _temp_score = _arbitre->player2().get_score();
             _number_score_2.setString(sf::String(std::to_string(_temp_score)));
             _number_score_2.setOrigin(sf::Vector2f((_number_score_2.getGlobalBounds().width)/(2*_number_score_2.getScale().x),(_number_score_2.getGlobalBounds().height)/(2*_number_score_2.getScale().y)));
         }
@@ -206,16 +206,16 @@ void interface::play()
         auto vec(_arbitre->getDelays().cells_align);
 
         // Affichage de la board
-        for (std::size_t i(0); i < _arbitre->getJoueur().height(); i++)
+        for (std::size_t i(0); i < _arbitre->player1().height(); i++)
         {
-            for (std::size_t j(0); j < _arbitre->getJoueur().width(); j++)
+            for (std::size_t j(0); j < _arbitre->player1().width(); j++)
             {
                 t_number x(0);
 
-                auto dx = _arbitre->getJoueur().cellDx(position(j, i));
-                auto dy = _arbitre->getJoueur().cellDy(position(j, i));
+                auto dx = _arbitre->player1().cellDx(position(j, i));
+                auto dy = _arbitre->player1().cellDy(position(j, i));
                 
-                auto color = _arbitre->getJoueur()(position(j, i));
+                auto color = _arbitre->player1()(position(j, i));
 
                 load_texture(s_tile, color, false);
 
@@ -224,10 +224,10 @@ void interface::play()
 
                 //TODO: optimiser l'ecriture de ce code
                 if (vec.size() == 0)
-                    s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur().grid_dy() + _width_cell/2);
+                    s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->player1().grid_dy() + _width_cell/2);
                 else
                 {
-                    s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur().grid_dy() + _width_cell/2);
+                    s_tile.setPosition(_width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->player1().grid_dy() + _width_cell/2);
                     auto it(std::find(vec.begin(), vec.end(), position(j, i)));
                     if (it != vec.end())
                     {
@@ -246,44 +246,44 @@ void interface::play()
                 s_tile.setScale(1, 1);
 
                 // Dessin de la target
-                if (_arbitre->getJoueur().getcell1target() == position(j, i) || _arbitre->getJoueur().getcell2target() == position(j, i))
+                if (_arbitre->player1().getcell1target() == position(j, i) || _arbitre->player1().getcell2target() == position(j, i))
                 {
-                    s_target.setPosition(_width_cell * j+thickness_line, _width_cell * i+thickness_line - _arbitre->getJoueur().grid_dy());
+                    s_target.setPosition(_width_cell * j+thickness_line, _width_cell * i+thickness_line - _arbitre->player1().grid_dy());
 
                     window.draw(s_target);
                 }
             }
         }
-        for (std::size_t j(0); j < _arbitre->getJoueur().width(); j++)
+        for (std::size_t j(0); j < _arbitre->player1().width(); j++)
         {
             // On get la couleur actuelle
-            auto color = _arbitre->getJoueur()(position(j, _arbitre->getJoueur().height()));
+            auto color = _arbitre->player1()(position(j, _arbitre->player1().height()));
 
             load_texture(s_tile, color, true);
 
-            s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre->getJoueur().height() - _arbitre->getJoueur().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
+            s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre->player1().height() - _arbitre->player1().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
             window.draw(s_tile);
         }
 
         // Affichage second joueur
         if (_arbitre->jeu_duo()){
             vec = _arbitre->getDelays(false).cells_align;
-            for (std::size_t i(0); i < _arbitre->getJoueur2().height(); i++)
+            for (std::size_t i(0); i < _arbitre->player2().height(); i++)
             {
-                for (std::size_t j(0); j < _arbitre->getJoueur2().width(); j++)
+                for (std::size_t j(0); j < _arbitre->player2().width(); j++)
                 {
                     t_number x(0);
 
-                    auto dx = _arbitre->getJoueur2().cellDx(position(j, i));
-                    auto dy = _arbitre->getJoueur2().cellDy(position(j, i));
+                    auto dx = _arbitre->player2().cellDx(position(j, i));
+                    auto dy = _arbitre->player2().cellDy(position(j, i));
                     
-                    auto color = _arbitre->getJoueur2()(position(j, i));
+                    auto color = _arbitre->player2()(position(j, i));
 
                     load_texture(s_tile, color, false);
 
                     if(s_tile.getOrigin().x == 0)
                         s_tile.setOrigin(sf::Vector2f((s_tile.getGlobalBounds().width)/(2*s_tile.getScale().x),(s_tile.getGlobalBounds().height)/(2*s_tile.getScale().y)));
-                    s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
+                    s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j + dx +thickness_line + _width_cell/2, _width_cell * i + dy +thickness_line - _arbitre->player2().grid_dy() + _width_cell/2);
                     s_tile.setScale(1, 1);
 
                     if (vec.size() != 0)
@@ -305,22 +305,22 @@ void interface::play()
                     s_tile.setScale(1, 1);
 
                     // Dessin de la target
-                    if (_arbitre->getJoueur2().getcell1target() == position(j, i) || _arbitre->getJoueur2().getcell2target() == position(j, i))
+                    if (_arbitre->player2().getcell1target() == position(j, i) || _arbitre->player2().getcell2target() == position(j, i))
                     {
-                        s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre->getJoueur2 ().grid_dy());
+                        s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre->player2().grid_dy());
                         window.draw(s_target);
                     }
                 }
             }
 
             // Affichage de la ligne qui monte joueur 2
-            for (std::size_t j(0); j < _arbitre->getJoueur2().width(); j++)
+            for (std::size_t j(0); j < _arbitre->player2().width(); j++)
             {
                 // On get la couleur actuelle
-                auto color = _arbitre->getJoueur2()(position(j, _arbitre->getJoueur2().height()));
+                auto color = _arbitre->player2()(position(j, _arbitre->player2().height()));
 
                 load_texture(s_tile, color, true);
-                s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j +thickness_line + _width_cell/2, _width_cell * _arbitre->getJoueur2().height()  +thickness_line - _arbitre->getJoueur2().grid_dy() + _width_cell/2);
+                s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j +thickness_line + _width_cell/2, _width_cell * _arbitre->player2().height()  +thickness_line - _arbitre->player2().grid_dy() + _width_cell/2);
                 s_tile.setScale(1, 1);
 
                 window.draw(s_tile);
@@ -399,10 +399,11 @@ void interface::play()
     _sound_loose.play();
 
     window.close();
-    if (_arbitre->getJoueur().is_lost())
-        game_over_screen(true, _arbitre->getJoueur().get_score());
-    else if (_arbitre->jeu_duo() && _arbitre->getJoueur2().is_lost())
-        game_over_screen(false, _arbitre->getJoueur2().get_score());
+
+    if (_arbitre->player1().is_lost())
+        game_over_screen(true, _arbitre->player1().get_score());
+    else if (_arbitre->jeu_duo() && _arbitre->player2().is_lost())
+        game_over_screen(false, _arbitre->player2().get_score());
 }
 
 void interface::menu(){

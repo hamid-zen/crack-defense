@@ -34,12 +34,13 @@ class arbitre
 public:
     arbitre(t_number ind,typeplayer plyr1=typeplayer::player,typeplayer plyr2=typeplayer::none , unsigned int port=8080);
     void update(t_action x, bool first_player=true);
+    void updatePlayer(t_action x, bool first_player=true);
     void updateFirstPlayer(t_action x);
     void updateSecondPlayer(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
-    game& getJoueur() const;
-    game& getJoueur2() const;
+    game& player1() const;
+    game& player2() const;
     void init(t_number seed = 0);
     delay & getDelays(bool first_player=true);
     t_number getFrame() const {return _nb_frame;}
@@ -60,11 +61,11 @@ public:
     sf::Socket::Status recieve_number(t_number &number);
 
 private:
-    std::unique_ptr<game> _joueur1;
-    std::unique_ptr<game> _joueur2;
+    std::unique_ptr<game> _player1;
+    std::unique_ptr<game> _player2;
     float _vertical_speed;
     t_number _nb_frame;
-    delay delays ;
-    delay delays2 ;
+    std::unique_ptr<delay> delay_player1 ;
+    std::unique_ptr<delay> delay_player2 ;
 };
 
