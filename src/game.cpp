@@ -619,7 +619,7 @@ t_num ai::sum_color_distance(grid const & grille) const
 { //+ la somme est petite + les cases de meme couleur sont proches
     int cpt(0);
 
-    std::vector<std::vector<position>> vec_colors(8);
+  /*  std::vector<std::vector<position>> vec_colors(8);
     for (unsigned int j(0); j < grille.max_height(); j++)
     {
         for (unsigned int i(0); i < grille.max_width(); i++)
@@ -666,7 +666,22 @@ t_num ai::sum_color_distance(grid const & grille) const
                 cpt += color_distances(vec[j], vec[i]);
             }
         }
-    }
+    }*/
+
+     for (unsigned int j(0); j < grille.max_height()-1; j++)
+    {
+        for (unsigned int i(0); i < grille.max_width()-1; i++)
+        {
+            if(grille(position(i, j)) != t_colors::empty_cell){
+                if(grille(position(i, j)) ==grille(position(i+1, j)) ){
+                    cpt+=1;
+                } 
+                if(grille(position(i, j)) ==grille(position(i, j+1)) ){
+                    cpt+=1;
+                }
+
+            }
+        }}
     return cpt;
 }
 
@@ -775,6 +790,7 @@ std::vector<t_action> ai::play_what()
 }
 t_action ai::getCoup(t_num frame)
 {
+   
     if (frame % frequence_frame == 0)
     {
         if (path.size() == 0)
@@ -792,7 +808,11 @@ t_action ai::getCoup(t_num frame)
     else
         return t_action::nothing;
 }
-
+void ai::setAction(t_action const & a) {
+   if(a==t_action::accelerate){
+        path.insert(path.begin(),a);
+    }
+}
 void ai::print_container()
 {
     std::cout << "ai \n";

@@ -117,7 +117,7 @@ public:
     std::vector<coup> best_blow(int profondeur) ;
     std::vector<t_action> play_what() ;
     bool is_ai() const override{return true;}
-    void setAction(t_action const & a) override{}
+    void setAction(t_action const & a) override;
     t_action getCoup(t_num frame) override ;
     void print_container() override;
 private:
