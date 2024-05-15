@@ -203,6 +203,10 @@ void interface::play()
         else if(_arbitre->jeu_duo())
             _arbitre->update(action_utilisateur2, false);
 
+        if (!_arbitre->jeu_res() && action_utilisateur1 == t_action::pause){
+            window.close();
+            pause_screen();
+        }
         auto vec(_arbitre->getDelays().cells_align);
 
         // Affichage de la board
