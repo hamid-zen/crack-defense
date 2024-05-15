@@ -10,7 +10,7 @@ TO DO :
     gerer les bug 
     respecter la regles des trois sur tte les classe + fonction const si possible
     vérifier les commentaire  + nom des fonction / attribus bien en anglais
-    
+    essayer de bien factoriser le code (surtout l'affichage)
 
 
 
