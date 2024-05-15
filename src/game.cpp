@@ -600,7 +600,7 @@ std::vector<t_action> ai::chemin(position const &p1, position const &p2)
         // ajuster la ligne
         if (difY > 0) // il faut descendre
             vec.insert(vec.end(), difY, t_action::go_down);
-        else if (difX < 0) // si =0 pas besoin de se deplacer en hauteur
+        else if (difY < 0) // si =0 pas besoin de se deplacer en hauteur
             vec.insert(vec.end(), -1 * difY, t_action::go_up);
 
         vec.push_back(t_action::exchange);
