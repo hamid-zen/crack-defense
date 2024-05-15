@@ -3,7 +3,8 @@ TO ASK GENEST :
 TO RESOLVE 
     
     
-TO DO : 
+TO DO :
+    trouver un nom de jeu
     avancer sur le rapport
     commener à faire le diapo
     gerer les bug 
