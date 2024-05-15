@@ -58,21 +58,21 @@ arbitre::arbitre(t_number ind,typeplayer plyr1,typeplayer plyr2 , unsigned int p
         } else if (plyr2!=typeplayer::none){ //jeu_duo
 
             if(plyr1==typeplayer::ai)
-                _player1=std::make_unique<ai>(12, 6, 6);
+                _player1=std::make_unique<ai>(12, 6, 6,15,1);
             else
                 _player1=std::make_unique<game>(12, 6, 6);
 
             setVerticalSpeed_Med();
 
             if(plyr2==typeplayer::ai)
-                _player2=std::make_unique<ai>(12, 6, 6);
+                _player2=std::make_unique<ai>(12, 6, 6,15,1);
             else
                 _player2=std::make_unique<game>(12, 6, 6);
 
         } else{
 
             if(plyr1==typeplayer::ai)
-                _player1=std::make_unique<ai>(12, 6, 6);
+                _player1=std::make_unique<ai>(12, 6, 6,15,1);
             else
                 _player1=std::make_unique<game>(12, 6, 6);
             setVerticalSpeed_Med();
@@ -90,7 +90,7 @@ arbitre::arbitre(t_number ind,typeplayer plyr1,typeplayer plyr2 , unsigned int p
             _player2=std::make_unique<game>(14, 8, 6);
         } else if (plyr2!=typeplayer::none){ //jeu_duo
             if(plyr1==typeplayer::ai){
-                _player1=std::make_unique<ai>(14,8, 6);
+                _player1=std::make_unique<ai>(14,8, 6,10,1);
             }
             else{
                 _player1=std::make_unique<game>(14, 8, 6); //a changer
@@ -99,13 +99,13 @@ arbitre::arbitre(t_number ind,typeplayer plyr1,typeplayer plyr2 , unsigned int p
             setVerticalSpeed_Hard();
 
             if(plyr2==typeplayer::ai)
-                _player2=std::make_unique<ai>(14,8, 6);
+                _player2=std::make_unique<ai>(14,8, 6,10,1);
             else
                 _player2=std::make_unique<game>(14, 8, 6);
 
         } else{
             if(plyr1==typeplayer::ai)
-                _player1=std::make_unique<ai>(14, 8, 6);
+                _player1=std::make_unique<ai>(14,8, 6,10,1);
             else
                 _player1=std::make_unique<game>(14, 8, 6);
 

@@ -107,8 +107,8 @@ private:
 
 class ai : public game{
 public:
-    ai(cordinate _max_height=12,cordinate _max_width=6,int colors=4,t_num frame=15);
-    std::vector<t_action> chemin(position const & p1,position const & p2);
+    ai(cordinate _max_height=12,cordinate _max_width=6,int colors=4,t_num frame=15,t_num depth=0);
+    std::vector<t_action> getPath(position const & p1,position const & p2);
     t_num color_distances(position const & p1,position const & p2) const;
     t_num sum_color_distance(grid const & grille) const;
     int estimation(game const &g)  ;
@@ -123,6 +123,7 @@ public:
 private:
     std::vector<t_action> path;
     t_num frequence_frame;
+    t_num _depth;
 };
 
 

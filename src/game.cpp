@@ -566,10 +566,10 @@ void game::transform_malus_to_cell(std::vector<position> const &align_cell, std:
 {
     _grid.transform_to_cell(align_cell, pos_cells);
 }
-ai::ai(cordinate _max_height, cordinate _max_width, int colors, t_num frame)
-    : game(_max_height, _max_width, colors), frequence_frame(frame) {}
+ai::ai(cordinate _max_height, cordinate _max_width, int colors, t_num frame,t_num depth)
+    : game(_max_height, _max_width, colors), frequence_frame(frame),_depth(depth) {}
 
-std::vector<t_action> ai::chemin(position const &p1, position const &p2)
+std::vector<t_action> ai::getPath(position const &p1, position const &p2)
 {
 
     std::vector<t_action> vec;
@@ -618,58 +618,8 @@ t_num ai::color_distances(position const &p1, position const &p2) const
 }
 
 t_num ai::sum_color_distance(grid const & grille) const
-{ //+ la somme est petite + les cases de meme couleur sont proches
+{ //+ la somme est grande + il ya des case cote à cote
     int cpt(0);
-
-  /*  std::vector<std::vector<position>> vec_colors(8);
-    for (unsigned int j(0); j < grille.max_height(); j++)
-    {
-        for (unsigned int i(0); i < grille.max_width(); i++)
-        {
-            switch (grille(position(i, j)))
-            {
-            case t_colors::empty_cell:
-                break; // l'odre des couleur dans le vec est important (difficulty)
-            case t_colors::blue:
-                vec_colors[0].push_back(position(i, j));
-                break;
-            case t_colors::sky_blue:
-                vec_colors[1].push_back(position(i, j));
-                break;
-            case t_colors::purple:
-                vec_colors[2].push_back(position(i, j));
-                break;
-            case t_colors::orange:
-                vec_colors[3].push_back(position(i, j));
-                break;
-            case t_colors::yellow:
-                vec_colors[4].push_back(position(i, j));
-                break;
-            case t_colors::white:
-                vec_colors[5].push_back(position(i, j));
-                break;
-            case t_colors::pink:
-                vec_colors[6].push_back(position(i, j));
-                break;
-            case t_colors::green:
-                vec_colors[7].push_back(position(i, j));
-                break;
-            }
-        }
-    }
-    // on a recuperé les vecteur avec pour chaque couleur toutes les positions
-    for (auto const &vec : vec_colors)
-    { // pour chaque vec de couleures
-        // pour chaque position son calcule sa distance avec toutes les autre positions de meme couleur
-        for (unsigned int i(0); i < vec.size(); i++)
-        {
-            for (unsigned int j(i + 1); j < vec.size(); j++)
-            {
-                cpt += color_distances(vec[j], vec[i]);
-            }
-        }
-    }*/
-
      for (unsigned int j(0); j < grille.max_height()-1; j++)
     {
         for (unsigned int i(0); i < grille.max_width()-1; i++)
@@ -711,19 +661,17 @@ int ai::estimation(game const &g)
 std::vector<coup> ai::lawful_blow(grid const &grille) const
 {
     std::vector<coup> vec;
-    //auto align( alignment());
-
-    for (unsigned int j(0); j < grille.max_height() - 1; j++)
-    {   for (unsigned int i(0); i < grille.max_width() - 1; i++)
+    for (unsigned int j(0); j < grille.max_height(); j++)
+    {   for (unsigned int i(0); i < grille.max_width() ; i++)
         {
             // si horizontale une des deux cases ne doit pas etre vide sinn verticale les deux ne doivent pas etre vide
             //aussi sa ne sert a rien de switch deux cases d ela meme couleur
             if(grille.cellDx(position(i, j))==0 && grille.cellDy(position(i, j))==0){
-                if (grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) )
+                if (i+1< grille.max_width() && grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) )
                 {
                     vec.push_back(coup{position(i, j), position(i + 1, j)});
                 }
-                if(grille.cellDx(position(i, j+1))==0 && grille.cellDy(position(i, j+1))==0 &&(grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)))
+                if(j+1<grille.max_height() && grille.cellDx(position(i, j+1))==0 && grille.cellDy(position(i, j+1))==0 &&(grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)))
                 {
                     vec.push_back(coup{position(i, j), position(i, j + 1)});
                 }
@@ -758,18 +706,46 @@ int ai::minMax(int profondeur,game const &g)
 
     return meilleurEstimation; // Retourne l'estimation optimale pour le joueur actuel
 }
+
 std::vector<coup> ai::best_blow(int profondeur)
-{
-    std::vector<coup> meilleurscoups;
+{   std::vector<coup> meilleurscoups;
     game g(*this);
+    auto psts(g.max_column());
+    if(psts[0].y()<=2){//si la colone la plus haute est proche de la fin 
+        if(psts[0].x()>0) //si c'est pas la premiere colone
+        {
+            coup c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+            meilleurscoups.push_back(c);
+            std::cout<<"secour 1"<<std::endl;
+
+                    return meilleurscoups;
+
+        }else if(psts.size()==1||(psts.size()>=2  && psts[1].x()!=psts[0].x()+1)){ //si c la 1ere colone et que il n'ya rien à sa gauche ou que c la premiere colone et la seul plus haute
+            coup c{position (psts[0].x()+1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+            meilleurscoups.push_back(c);
+            std::cout<<"secour 2"<<std::endl;
+                    return meilleurscoups;
+
+        }
+        else if(psts[0].x()==g.width()-1) //si c la derneire colone
+        {
+            coup c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+            meilleurscoups.push_back(c);
+        std::cout<<"secour 3"<<std::endl;
+        return meilleurscoups;
+        }
+    }
     auto coups(lawful_blow(g.getGrid()));
+    while(coups.size()==0){
+        coups=lawful_blow(getGrid());
+    }
     int meilleureEstimation = std::numeric_limits<int>::min();
     std::cout<<"coup posible : \n";
     for (auto cp : coups)
     {
         std::cout<<cp.p1.x()<<","<<cp.p1.y()<<")("<<cp.p2.x()<<","<<cp.p2.y()<<") \n";
         g.switch_cells_position(cp.p1, cp.p2);
-        int estimationCoup = minMax(profondeur,g);
+        int estimationCoup =  minMax(profondeur,g);
         std::cout<<"estimation : "<<estimationCoup<<std::endl;
         g.switch_cells_position(cp.p1, cp.p2); // annuler le coup
 
@@ -783,15 +759,22 @@ std::vector<coup> ai::best_blow(int profondeur)
         }
     }
 
+    //voir fonctionne pas
+    if(meilleureEstimation<5){
+        std::cout<<"go"<<"--------------------------------------------------";
+                setAction(t_action::accelerate);
+    }
     return meilleurscoups;
 }
+
+
 std::vector<t_action> ai::play_what()
 { 
-    auto vec(best_blow(1));
+    auto vec(best_blow(_depth));
     auto i(nombreAleatoire(vec.size()-1));
     auto coup(vec[i]);
     std::cout<<"le meilleur coup est  :"<<coup.p1.x()<<","<<coup.p1.y()<<")("<<coup.p2.x()<<","<<coup.p2.y()<<") \n";
-    auto coups(chemin(coup.p1, coup.p2));
+    auto coups(getPath(coup.p1, coup.p2));
     return coups;
 }
 t_action ai::getCoup(t_num frame)
@@ -805,7 +788,6 @@ t_action ai::getCoup(t_num frame)
             show();
             path = play_what();
         } 
-        setAction(path[0]);
         t_action act(path[0]);
         print_container();
         path.erase(path.begin());
@@ -821,7 +803,7 @@ void ai::setAction(t_action const & a) {
 }
 void ai::print_container()
 {
-    std::cout << "ai \n";
+    std::cout << "chemin \n";
     for (auto x : path)
     {
         switch (x)
