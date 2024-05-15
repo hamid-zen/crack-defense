@@ -1,16 +1,16 @@
 TO ASK GENEST : 
-    pourquoi l'ia est super nule ses methodes fonctionnent pourtant (99%) 
-    on a besoin de stocker joueur 1 et 2 dans interface (à la place d'arbitre) *******arina : oui ******** hamid et fifi : non *******
     
 TO RESOLVE 
-    malus
+    
     
 TO DO : 
-    rectifier malus ; ************************ faudra bien qu'on le fasse un jour ************************************
-    finir jeux en reseaux  ;
-    ameliorer l'ia ;
-    ajouter une sauvegarde du meilleur score(json?)
-    commencer le rapport
+    avancer sur le rapport
+    commener à faire le diapo
+    gerer les bug 
+    respecter la regles des trois sur tte les classe + fonction const si possible
+    vérifier les commentaire  + nom des fonction / attribus bien en anglais
+    
+
 
 
     
