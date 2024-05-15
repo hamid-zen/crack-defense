@@ -91,16 +91,20 @@ void game::move_target(t_direction dir)
  */
 void game::show() const
 {
+    std::cout << "  ";
+    for (unsigned int i(0); i < _grid.max_width(); i++)
+        std::cout << " " << i;
+    std::cout << std::endl;
     for (unsigned int j(0); j < _grid.max_height(); j++)
     {
-        std::cout << std::endl;
+        std::cout << ((j < 10) ? std::to_string(j)+" " : std::to_string(j));
         for (unsigned int i(0); i < _grid.max_width(); i++)
         {
-            if ((_target.x1() == i && _target.y1() == j) || (_target.x2() == i && _target.y2() == j))
-            {
-                std::cout << "|F";
-                continue;
-            }
+            // if ((_target.x1() == i && _target.y1() == j) || (_target.x2() == i && _target.y2() == j))
+            // {
+            //     std::cout << "|F";
+            //     continue;
+            // }
             if (_grid(position(i, j)) == t_colors::empty_cell)
             {
                 std::cout << "| ";
@@ -118,16 +122,14 @@ void game::show() const
                 }
             }
         }
-        std::cout << "|";
+        std::cout << "|\n";
     }
-    std::cout << "\n"
-              << " ";
+    // std::cout << "\n"
+    //           << " ";
+    std::cout << "   ";
     for (unsigned int k(0); k < _grid.max_width(); k++)
-    {
-        std::cout << "_"
-                  << " ";
-    }
-    std::cout << std::endl;
+        std::cout << "_ ";
+    std::cout << "\n  ";
     for (unsigned int i(0); i < _grid.max_width(); i++)
     {
         if (_grid(position(i, _grid.max_height())) == t_colors::empty_cell)
@@ -221,7 +223,7 @@ bool game::switch_cells_target()
     return _grid.switch_cell(position(_target.x1(), _target.y1()), position(_target.x2(), _target.y2()));
 }
 
-std::vector<position> game::vertical_alignment()
+std::vector<position> game::vertical_alignment()const
 {
     std::vector<position> vec;
     t_colors clr;
@@ -256,7 +258,7 @@ std::vector<position> game::vertical_alignment()
     return vec;
 }
 
-std::vector<position> game::horizontal_alignment()
+std::vector<position> game::horizontal_alignment()const
 {
     std::vector<position> vec;
     t_colors clr;
@@ -290,7 +292,7 @@ std::vector<position> game::horizontal_alignment()
     return vec;
 }
 
-std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
+std::vector<position> game::horizontal_alignment(std::vector<position> const &p) const
 {
     std::vector<position> vec;
     bool trouve(false);
@@ -350,7 +352,7 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
     return vec;
 }
 
-std::vector<position> game::alignment()
+std::vector<position> game::alignment() const
 {
     auto vec(vertical_alignment());
     if (vec.size() >=3)
@@ -701,7 +703,7 @@ int ai::estimation(game const &g)
         }
     }
     count += vec.size()*100;
-    count -= static_cast<int>(sum_color_distance(gm.getGrid())*0.01);
+    count += sum_color_distance(gm.getGrid());
 
     return count;
 }
@@ -709,21 +711,25 @@ int ai::estimation(game const &g)
 std::vector<coup> ai::lawful_blow(grid const &grille) const
 {
     std::vector<coup> vec;
+    //auto align( alignment());
+
     for (unsigned int j(0); j < grille.max_height() - 1; j++)
-    {
-        for (unsigned int i(0); i < grille.max_width() - 1; i++)
+    {   for (unsigned int i(0); i < grille.max_width() - 1; i++)
         {
             // si horizontale une des deux cases ne doit pas etre vide sinn verticale les deux ne doivent pas etre vide
             //aussi sa ne sert a rien de switch deux cases d ela meme couleur
-            if (grille(position(i, j)) != grille(position(i + 1, j)))
-            {
-                vec.push_back(coup{position(i, j), position(i + 1, j)});
-            }
-            if( (grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)))
-            {
-                vec.push_back(coup{position(i, j), position(i, j + 1)});
-            }
+            if(grille.cellDx(position(i, j))==0 && grille.cellDy(position(i, j))==0){
+                if (grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) )
+                {
+                    vec.push_back(coup{position(i, j), position(i + 1, j)});
+                }
+                if(grille.cellDx(position(i, j+1))==0 && grille.cellDy(position(i, j+1))==0 &&(grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)))
+                {
+                    vec.push_back(coup{position(i, j), position(i, j + 1)});
+                }
+           }
         }
+        
     }
     return vec;
 }
@@ -781,7 +787,7 @@ std::vector<coup> ai::best_blow(int profondeur)
 }
 std::vector<t_action> ai::play_what()
 { 
-    auto vec(best_blow(0));
+    auto vec(best_blow(1));
     auto i(nombreAleatoire(vec.size()-1));
     auto coup(vec[i]);
     std::cout<<"le meilleur coup est  :"<<coup.p1.x()<<","<<coup.p1.y()<<")("<<coup.p2.x()<<","<<coup.p2.y()<<") \n";

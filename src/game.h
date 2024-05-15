@@ -44,10 +44,10 @@ public:
     void drop(position p1,position p2); 
     bool cells_above() const;//il y'a des cases au dessus de la cases au dessus du target
     bool cells_above(position p1,position p2) const;
-    std::vector<position>  vertical_alignment();
-    std::vector<position> horizontal_alignment();
-    std::vector<position> horizontal_alignment(std::vector<position> const & p); //retourne les alignement horizontale qui sont adjacetn a l'align vertical prit en paramettre
-    std::vector<position>  alignment();
+    std::vector<position>  vertical_alignment() const;
+    std::vector<position> horizontal_alignment() const;
+    std::vector<position> horizontal_alignment(std::vector<position> const & p) const; //retourne les alignement horizontale qui sont adjacetn a l'align vertical prit en paramettre
+    std::vector<position>  alignment() const;
     void delete_alignement(std::vector<position>  const & v);
     position getcell1target() const; //recupere la position de la premiere case du viseur
     position getcell2target() const;
