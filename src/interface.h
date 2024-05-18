@@ -19,6 +19,7 @@ t_number t_textures_to_index(t_textures texture);
 class interface{
 public:
     interface();
+    void intro();
     void play();
     void menu();
     void menu_lan(bool disconnected= false);
