@@ -402,15 +402,18 @@ void game::slideColumn(cordinate x, std::vector<position *> &cells)
     }
     while (y > 0)
     {
-        auto position_to_add(new position(x, y));
-        if (std::find(cells.begin(), cells.end(), position_to_add) == cells.end()){
-            if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y)))
+
+        position* position_to_add = new position(x, y);
+        if (std::find_if(cells.begin(), cells.end(), [&](position* p){ return *p == *position_to_add; }) == cells.end()){
+            if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y))){
                 cells.push_back(new position(x, y));
+                std::cout << "added: " << toString_color(_grid(position(x,y))) << ", at position " << x << ", " << y << "\n";
+            }
             else if (is_garbage(position(x,y))) {
                 std::cout << "position: x= " << x << ", y= "<< y << "\n";
                 std::cout << "garbage: " << is_garbage(position(x,y)) << ", hanging: "<< hanging_malus(position(x,y)) << "\n";
             }
-            if(is_garbage(position(x,y)) and hanging_malus(position(x,y))){
+            if(is_garbage(position(x,y)) /* and hanging_malus(position(x,y)) */){
                 std::cout << "garbage: x= " << x << ", y= "<< y << "\n";
                 auto x_first_malus = firstMalus(position(x,y)).x();
                 auto malus_size = getsize(position(x,y));
@@ -532,6 +535,11 @@ bool game::hanging_malus(position p)
     return _grid.hanging_garbage(p);
 }
 
+bool game::hanging_malus_slide(position p,std::vector<position *> const &slide)
+{
+    return _grid.hanging_garbage_slide(p,slide);
+}
+
 bool game::not_hanging(position const &p) const
 {
     return _grid.not_hanging(p);
@@ -559,7 +567,7 @@ bool game::is_garbage(position const &p) const
 
 void game::update_garbage_height() 
 {
-    _grid.update_garbage();
+   // _grid.update_garbage();
 }
 
 void game::transform_malus_to_cell(std::vector<position> const &align_cell, std::vector<position *> &pos_cells)

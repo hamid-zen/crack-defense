@@ -246,32 +246,40 @@ std::vector<int> vec;
 
 
 void grid::generate_garbage(std::vector<position*> & malus){
-    auto vec(max_column());
-    int taille ;
-    int debut;
-    cordinate j(vec[0].y()-1);
-    if(vec[0].x()==max_width()-1){ //si la colone la plus haute est la derniere
-        debut=vec[0].x()-1; //on commence le malus dans la colone d'avant
-        taille=2;
-    }else {
-        debut=vec[0].x();
-        if(vec.size()>1){
-            taille=vec[vec.size()-1].x()-vec[0].x()+1;
-        }else{
+    // auto vec(max_column());
+    // int taille ;
+    // int debut;
+    // cordinate j(vec[0].y()-1);
+    // if(vec[0].x()==max_width()-1){ //si la colone la plus haute est la derniere
+    //     debut=vec[0].x()-1; //on commence le malus dans la colone d'avant
+    //     taille=2;
+    // }else {
+    //     debut=vec[0].x();
+    //     if(vec.size()>1){
+    //         taille=vec[vec.size()-1].x()-vec[0].x()+1;
+    //     }else{
 
-            taille= nombreAleatoire(_max_width-vec[0].x())+1;
-        }
-    }
+    //         taille= nombreAleatoire(_max_width-vec[0].x())+1;
+    //     }
+    // }
     
-    _board[(debut+0) + (j*_max_width)]=std::make_unique<malusCell>(t_colors::garbage,false,true);
-   // malus.push_back(new position(debut,j));
+    // _board[debut]=std::make_unique<malusCell>(t_colors::garbage,false,true);
+    // malus.push_back(new position(debut,0));
 
-    for(int i(1);i<(taille-1);i++){
-        _board[(debut+i) +(j*_max_width)]=std::make_unique<malusCell>(t_colors::garbage,true,true);
-       // malus.push_back(new position(debut+i,j));
-    }
-    //malus.push_back(new position(debut+taille-1,j));
-    _board[(debut+taille-1) + (j*_max_width)]=std::make_unique<malusCell>(t_colors::garbage,true,false);
+    // for(int i(1);i<(taille-1);i++){
+    //     _board[(debut+i)]=std::make_unique<malusCell>(t_colors::garbage,true,true);
+    //     malus.push_back(new position(debut+i,0));
+    // }
+    // malus.push_back(new position(debut+taille-1,0));
+    // _board[(debut+taille-1)]=std::make_unique<malusCell>(t_colors::garbage,true,false);
+    _board[2]=std::make_unique<malusCell>(t_colors::garbage,false,true);
+    _board[3]=std::make_unique<malusCell>(t_colors::garbage,true,true);
+    _board[4]=std::make_unique<malusCell>(t_colors::garbage,true,true);
+    _board[5]=std::make_unique<malusCell>(t_colors::garbage,true,false);
+    malus.push_back(new position(2,0));
+    malus.push_back(new position(3,0));
+    malus.push_back(new position(4,0));
+    malus.push_back(new position(5,0));
 
 
 }
@@ -286,9 +294,24 @@ bool grid::estMalus(position const & p) const{
 bool grid::not_hanging(position const & p) const{ 
     if (p.y() == max_height() - 1)
         return true;
-    else if (_board[p.x()+ (p.y() + 1)*_max_width] !=nullptr)
+    else if (_board[p.x()+ (p.y() + 1)*_max_width] && _board[p.x()+ (p.y() + 1)*_max_width]->dy()==0 )
     {
         return true;
+    }
+    else
+        return false;
+}
+
+bool grid::not_hanging_malus(position const &p, std::vector<position *> slide) const
+{
+    auto pos_bott = position(p.x(),p.y()+1);
+    if (p.y() == max_height() - 1)
+        return true;
+    else if (_board[p.x()+ (p.y() + 1)*_max_width] && (_board[p.x()+ (p.y() + 1)*_max_width]->dy()==0 && std::find_if(slide.begin(), slide.end(), [pos_bott](position * pos) { return *pos == pos_bott; }) == slide.end()) )
+    {
+        std::cout<<"x :"<<p.x()<<" y:"<<p.y()<<"\n";
+        return true;
+        
     }
     else
         return false;
@@ -302,7 +325,23 @@ bool grid::hanging_garbage(position const & p) const{
 
     for (unsigned int i(x); i < (x+size); i++)
     {
-        if(_board[i + y * _max_width]!=nullptr && not_hanging(position(i,y))){
+        if(_board[i + y * _max_width] && not_hanging(position(i,y))){
+            return false; // ya une des cases du malus qui est "retenue"
+        }
+    }
+    return true;
+}
+
+bool grid::hanging_garbage_slide(position const &p, std::vector<position *> slide) const
+{
+    auto y(p.y());
+    auto x(first(p).x());
+    auto size(getSize(position (p.x(), y)));
+
+    for (unsigned int i(x); i < (x+size); i++)
+    {
+        if(_board[i + y * _max_width] && not_hanging_malus(position(i,y),slide)){
+            //std::cout<<"hanging?"<<not_hanging_malus(position(i,y),slide)<<"\n";
             return false; // ya une des cases du malus qui est "retenue"
         }
     }
@@ -351,26 +390,26 @@ t_number grid::getSize(position const & p)const{
 }
 
 //modifier
-void grid::update_garbage(){
-    for (cordinate j(0); j < _max_height; j++)  {
-        auto i(0);
-        while(i < _max_width){
+// void grid::update_garbage(){
+//     for (cordinate j(0); j < _max_height; j++)  {
+//         auto i(0);
+//         while(i < _max_width){
 
-            if(_board[i + j * _max_width] !=nullptr && estMalus(position(i,j))){
-                auto size(getSize(position(i,j)));
-                if( hanging_garbage(position (i,j))){
-                    auto m(first_empty_line(position (i,j), size));
-                    for(int n(i);n<(i+size);n++){
-                        _board[n +m  * _max_width]=std::move(_board[n +j* _max_width] );
-                    }
-                }
-                i=i+size;
-            }
-            i++;
+//             if(_board[i + j * _max_width] !=nullptr && estMalus(position(i,j))){
+//                 auto size(getSize(position(i,j)));
+//                 if( hanging_garbage(position (i,j))){
+//                     auto m(first_empty_line(position (i,j), size));
+//                     for(int n(i);n<(i+size);n++){
+//                         _board[n +m  * _max_width]=std::move(_board[n +j* _max_width] );
+//                     }
+//                 }
+//                 i=i+size;
+//             }
+//             i++;
 
-        } 
-    } 
-}
+//         } 
+//     } 
+// }
 
 
 std::vector<position > grid::garbage_adjacent(position const & p) const {

@@ -78,6 +78,7 @@ public:
     std::vector<int>  highest_column() const;
     void add_garbage(std::vector<position*> & malus);
     bool hanging_malus(position p);
+    bool hanging_malus_slide(position p,std::vector<position *> const &slide);
     bool not_hanging(position const & p) const;
     score get_score()const;
     void inc_score(score x);

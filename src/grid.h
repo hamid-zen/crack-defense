@@ -2,6 +2,7 @@
 #include "cell.h"
 #include "rand.h" 
 #include <iostream>
+#include<algorithm>
 
 using t_mat = std::vector<std::unique_ptr<cell>>;
 using t_number_color=uint16_t ;
@@ -34,8 +35,10 @@ public:
     void generate_garbage(std::vector<position*> & malus);
     bool estMalus(position const & p) const;
     bool not_hanging(position const & p) const;
+    bool not_hanging_malus(position const & p,std::vector<position *>slide) const;
     void update_garbage();
     bool hanging_garbage(position const & p) const;
+    bool hanging_garbage_slide(position const & p,std::vector<position *>slide)const;
     cordinate first_empty_line(position const & fst_cell,int size) const; //premiere ligne vide en partant du bas
     std::vector<position >  garbage_adjacent(position const & p) const ; //retourne les malus adjacent a la position p
     void transform_to_cell(std::vector<position> const & align_cell,std::vector<position* > &pos_cells);
