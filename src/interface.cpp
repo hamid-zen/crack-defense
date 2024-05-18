@@ -4,7 +4,7 @@
 // #E882E8 color target
 // #255,255,255 color case vide
 //
-interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), _arbitre() {
+interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), _arbitre(), _window(sf::VideoMode(572, 324), "Habibi", sf::Style::Titlebar | sf::Style::Close) {
     _arbitre = std::make_unique<arbitre>(0); // TODO: enlever
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
@@ -56,9 +56,10 @@ void interface::play()
     _number_score_2.setFillColor(color_line);
 
 
-    // On init la window
-    sf::RenderWindow window(sf::VideoMode((total_width), (total_height)), "Habibi");
-    window.setFramerateLimit(30);
+    // On init la _window
+    _window.create(sf::VideoMode(total_width, total_height), "habibi", sf::Style::Titlebar | sf::Style::Close);
+    _window.setFramerateLimit(30);
+    _window.clear(color_background);
 
 
     // On dessine les bordures
@@ -97,19 +98,19 @@ void interface::play()
 
     std::vector<score_particle *> particles_p1, particles_p2;
 
-    while (window.isOpen() && (_arbitre->getDelays(true).activated || (_arbitre->jeu_duo()&& _arbitre->getDelays(false).activated )))
+    while (_window.isOpen() && (_arbitre->getDelays(true).activated || (_arbitre->jeu_duo()&& _arbitre->getDelays(false).activated )))
     {
-        window.clear(color_background);
+        _window.clear(color_background);
 
         sf::Event e;
         t_action action_utilisateur1(t_action::nothing);
         t_action action_utilisateur2(t_action::nothing);
 
-        while (window.pollEvent(e))
+        while (_window.pollEvent(e))
         {
             //TODO: remplacer par un appel a une methode meth(event, &first_player):t_action
             if (e.type == sf::Event::Closed){
-                window.close();
+                _window.close();
                 _music.stop();
             }
             if (e.type == sf::Event::KeyPressed)
@@ -134,7 +135,6 @@ void interface::play()
                     action_utilisateur1 = t_action::generate_malus;
                 else if (e.key.code == sf::Keyboard::Escape){
                     _music.stop();
-                    window.close();
                     if (_arbitre->jeu_res()) // ca veut dire qu'on se deconnecte donc on reviens au menu_lan
                         menu_lan(true);
                 }
@@ -186,7 +186,7 @@ void interface::play()
                 while (recieving_status != sf::Socket::Done) {
                     if (recieving_status == sf::Socket::Disconnected) { // socket deconnecté
                         std::cout << "disconnected\n";
-                        window.close();
+                        _window.close();
                         menu_lan(true);
                     }
                     recieving_status = _arbitre->recieve_action(remote_player_action);
@@ -195,7 +195,6 @@ void interface::play()
                 _arbitre->update(remote_player_action, false);
 
                 if (action_utilisateur1 == t_action::pause || remote_player_action == t_action::pause) {
-                    window.close();
                     pause_screen();
                 }
 
@@ -204,7 +203,6 @@ void interface::play()
             _arbitre->update(action_utilisateur2, false);
 
         if (!_arbitre->jeu_res() && action_utilisateur1 == t_action::pause){
-            window.close();
             pause_screen();
         }
         auto vec(_arbitre->getDelays().cells_align);
@@ -245,7 +243,7 @@ void interface::play()
                     }
                 }
 
-                window.draw(s_tile);
+                _window.draw(s_tile);
                 s_tile.setRotation(0);
                 s_tile.setScale(1, 1);
 
@@ -254,7 +252,7 @@ void interface::play()
                 {
                     s_target.setPosition(_width_cell * j+thickness_line, _width_cell * i+thickness_line - _arbitre->player1().grid_dy());
 
-                    window.draw(s_target);
+                    _window.draw(s_target);
                 }
             }
         }
@@ -266,7 +264,7 @@ void interface::play()
             load_texture(s_tile, color, true);
 
             s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre->player1().height() - _arbitre->player1().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
-            window.draw(s_tile);
+            _window.draw(s_tile);
         }
 
         // Affichage second joueur
@@ -304,7 +302,7 @@ void interface::play()
                             particles_p2.push_back(new score_particle(position(s_tile.getPosition().x,s_tile.getPosition().y),position(_number_score_2.getPosition().x, _number_score_2.getPosition().y),0.01));
                     }
 
-                    window.draw(s_tile);
+                    _window.draw(s_tile);
                     s_tile.setRotation(0);
                     s_tile.setScale(1, 1);
 
@@ -312,7 +310,7 @@ void interface::play()
                     if (_arbitre->player2().getcell1target() == position(j, i) || _arbitre->player2().getcell2target() == position(j, i))
                     {
                         s_target.setPosition(play_tab_width+score_tab_width + 64 * j+thickness_line, 64 * i+thickness_line - _arbitre->player2().grid_dy());
-                        window.draw(s_target);
+                        _window.draw(s_target);
                     }
                 }
             }
@@ -327,7 +325,7 @@ void interface::play()
                 s_tile.setPosition(play_tab_width+score_tab_width +  _width_cell * j +thickness_line + _width_cell/2, _width_cell * _arbitre->player2().height()  +thickness_line - _arbitre->player2().grid_dy() + _width_cell/2);
                 s_tile.setScale(1, 1);
 
-                window.draw(s_tile);
+                _window.draw(s_tile);
             }
         }
 
@@ -353,7 +351,7 @@ void interface::play()
                 _sound_xp.play();
             }
 
-            window.draw(s_xp);
+            _window.draw(s_xp);
         }
         for(auto it(particles_p2.begin()); it != particles_p2.end(); it++){
             s_xp.rotate(18);
@@ -376,24 +374,24 @@ void interface::play()
                 _sound_xp.play();
             }
 
-            window.draw(s_xp);
+            _window.draw(s_xp);
         }
 
         // On display
-        window.draw(_number_score_1);
-        window.draw(_text_score_1);
-        window.draw(line1);
-        window.draw(line2);
-        window.draw(line3);
-        window.draw(line4);
-        window.draw(line5);
+        _window.draw(_number_score_1);
+        _window.draw(_text_score_1);
+        _window.draw(line1);
+        _window.draw(line2);
+        _window.draw(line3);
+        _window.draw(line4);
+        _window.draw(line5);
         if(_arbitre->jeu_duo()){
-            window.draw(_number_score_2);
-            window.draw(_text_score_2);
-            window.draw(line6);
+            _window.draw(_number_score_2);
+            _window.draw(_text_score_2);
+            _window.draw(line6);
         }
         angle+=5;
-        window.display();
+        _window.display();
     }
     
 
@@ -403,12 +401,48 @@ void interface::play()
     _sound_loose.setVolume(10);
     _sound_loose.play();
 
-    window.close();
+    _window.close();
     
     if (_arbitre->player1().is_lost())
         game_over_screen(true, _arbitre->player1().get_score());
     else if (_arbitre->jeu_duo() && _arbitre->player2().is_lost())
         game_over_screen(false, _arbitre->player2().get_score());
+}
+
+void interface::intro()
+{
+    unsigned int gif_frames_number = 61;
+    unsigned int current_frame = 0;
+    std::vector<sf::Texture> gif_frames;
+
+    sf::Sprite image_to_show;
+
+    // on charge les textures
+    for (unsigned int i(0); i < gif_frames_number; i++) {
+        sf::Texture current_frame;
+        current_frame.loadFromFile("../animations/intro/frame_" + std::to_string(i) + ".jpg");
+        gif_frames.push_back(current_frame);
+    }
+
+    image_to_show.setTexture(gif_frames[current_frame]);
+
+    while(_window.isOpen()){
+
+        sf::Event e;
+        while (_window.pollEvent(e)){
+            if (e.type == sf::Event::Closed)
+                _window.close();
+            else if (e.type == sf::Event::KeyPressed || e.type == sf::Event::MouseButtonPressed)
+                menu();
+        }
+
+        // on choisit la texture a afficher
+        current_frame = (current_frame+1)%gif_frames_number;
+        image_to_show.setTexture(gif_frames[current_frame]);
+
+        _window.draw(image_to_show);
+        _window.display();
+    }
 }
 
 void interface::menu(){
@@ -429,9 +463,9 @@ void interface::menu(){
     sf::Color color_background = sf::Color::Black;
     sf::Color color_line = sf::Color(255, 87, 217);
 
-    //window
-    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
-    window.setFramerateLimit(30); // Pour set le framerate
+    //_window
+    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
+    _window.clear(color_background);
 
     //border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
@@ -542,13 +576,13 @@ void interface::menu(){
     _vector_second_player_choice.push_back(sf::String("BOT"));
 
     
-    while(window.isOpen()){
+    while(_window.isOpen()){
         sf::Event e;
         
-        while (window.pollEvent(e))
+        while (_window.pollEvent(e))
         {
             if (e.type == sf::Event::Closed)
-                window.close();
+                _window.close();
             if (e.type == sf::Event::KeyPressed)
             {
                 if(_sound.getStatus()!=sf::Music::Status::Playing){
@@ -560,7 +594,7 @@ void interface::menu(){
                 {
                     if(_index_choice_pos == _choices.size()-1){
                         _difficulty = _index_difficulties_choice; // vu qu'on appel pas directement play on doit garder le choix de difficulté
-                        window.close();
+                        _window.close();
                         if(_index_first_player_choice==2) //wlan
                         {
                             menu_lan();
@@ -591,7 +625,7 @@ void interface::menu(){
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
 
-                window.close();
+                _window.close();
                 else if(e.key.code == sf::Keyboard::Key::Up)
                 {   
                     if(_index_choice_pos>0)
@@ -634,7 +668,7 @@ void interface::menu(){
                 }
                 else if(e.key.code == sf::Keyboard::Key::H)
                 {
-                    window.close();
+                    _window.close();
                     menu_regle();
                 }
             }
@@ -657,22 +691,22 @@ void interface::menu(){
         _choice_target.setSize(sf::Vector2f(_choices[_index_choice_pos]->getGlobalBounds().width*1.1,_choices[_index_choice_pos]->getGlobalBounds().height + 20));
         _choice_target.setOrigin(sf::Vector2f( _choices[_index_choice_pos]->getOrigin().x, _choices[_index_choice_pos]->getOrigin().y));
 
-        window.clear(color_background);
-        window.draw(_text_help);
-        window.draw(line1);
-        window.draw(line2);
-        window.draw(line3);
-        window.draw(line4);
-        window.draw(_text_difficulty);
-        window.draw(_text_menu);
-        window.draw(_text_first_player);
-        window.draw(_text_second_player);
-        window.draw(_text_play);
-        window.draw(_difficulty_choice);
-        window.draw(_first_player_choice);
-        window.draw(_second_player_choice);
-        window.draw(_choice_target);
-        window.display();
+        _window.clear(color_background);
+        _window.draw(_text_help);
+        _window.draw(line1);
+        _window.draw(line2);
+        _window.draw(line3);
+        _window.draw(line4);
+        _window.draw(_text_difficulty);
+        _window.draw(_text_menu);
+        _window.draw(_text_first_player);
+        _window.draw(_text_second_player);
+        _window.draw(_text_play);
+        _window.draw(_difficulty_choice);
+        _window.draw(_first_player_choice);
+        _window.draw(_second_player_choice);
+        _window.draw(_choice_target);
+        _window.display();
     }
 
 }
@@ -697,8 +731,8 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
     line4.setFillColor(color_line);
     line4.setPosition(0,height_window-thickness_line);
 
-    sf::RenderWindow window(sf::VideoMode((width_window), (height_window)), "Habibi");
-    window.setFramerateLimit(30);
+    sf::RenderWindow _window(sf::VideoMode((width_window), (height_window)), "Habibi");
+    _window.setFramerateLimit(30);
 
     // game over sprite
     sf::Sprite s_game_over;
@@ -754,24 +788,24 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
     _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
 
     sf::Clock clock; // pour faire clignoter le score
-    while(window.isOpen()){
+    while(_window.isOpen()){
 
-        window.clear(color_background);
+        _window.clear(color_background);
 
         sf::Event e;
 
-        while (window.pollEvent(e)){
+        while (_window.pollEvent(e)){
             if (e.type == sf::Event::Closed)
-                window.close();
+                _window.close();
             else if (e.type == sf::Event::KeyPressed)
             {
                 if(e.key.code == sf::Keyboard::Key::Enter)
                 {
                     if(_index_choice_pos == 0){ // main menu
-                        window.close();
+                        _window.close();
                         menu();
                     } else if (_index_choice_pos == 1) {
-                        window.close();
+                        _window.close();
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Up)
@@ -804,17 +838,17 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
 
             clock.restart(); // on remet a zero la clock
         }
-        window.draw(s_game_over);
-        window.draw(line1);
-        window.draw(line2);
-        window.draw(line3);
-        window.draw(line4);
-        window.draw(_text_looser);
-        window.draw(_text_main_menu);
-        window.draw(_text_exit);
-        window.draw(_score_gagnant);
-        window.draw(_choice_target);
-        window.display();
+        _window.draw(s_game_over);
+        _window.draw(line1);
+        _window.draw(line2);
+        _window.draw(line3);
+        _window.draw(line4);
+        _window.draw(_text_looser);
+        _window.draw(_text_main_menu);
+        _window.draw(_text_exit);
+        _window.draw(_score_gagnant);
+        _window.draw(_choice_target);
+        _window.display();
     }
 }
 
@@ -827,9 +861,9 @@ void interface::pause_screen()
     sf::Color color_background = sf::Color::Black;
     sf::Color color_line = sf::Color(255, 87, 217);
     
-    // window
-    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
-    window.setFramerateLimit(30); // Pour set le framerate
+    // _window
+    sf::RenderWindow _window(sf::VideoMode(width_window, height_window), "Habibi");
+    _window.setFramerateLimit(30); // Pour set le framerate
     
     // border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
@@ -889,15 +923,15 @@ void interface::pause_screen()
     _choice_target.setOrigin(_choice_target.getGlobalBounds().width/2,_choice_target.getGlobalBounds().height/2);
     _choice_target.setPosition(sf::Vector2f( _choices[_index_choice_pos]->getPosition().x+5,_choices[_index_choice_pos]->getPosition().y+17));
     
-    while(window.isOpen()){
+    while(_window.isOpen()){
         
-        window.clear(color_background);
+        _window.clear(color_background);
         
         sf::Event e;
         
-        while (window.pollEvent(e)){
+        while (_window.pollEvent(e)){
             if (e.type == sf::Event::Closed)
-                window.close();
+                _window.close();
             else if (e.type == sf::Event::KeyPressed)
             {
                 if(e.key.code == sf::Keyboard::Key::Enter)
@@ -908,14 +942,12 @@ void interface::pause_screen()
                             _arbitre->send_action(t_action::resume);
                             std::cout << "sent: resume\n";
                         }
-                        window.close();
                         play();
 
                     } else if (_index_choice_pos == 1) { // main_menu
-                        window.close();
                         menu();
                     } else { // exit
-                        window.close();
+                        _window.close();
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Up)
@@ -934,7 +966,6 @@ void interface::pause_screen()
         if (_arbitre->jeu_res()){ // on check si l'autre joueur a repris le jeu
             t_action remote_player_action(t_action::nothing);
             if (_arbitre->recieve_action(remote_player_action) == sf::Socket::Done && remote_player_action == t_action::resume){
-                window.close();
                 play();
             }
         }
@@ -942,16 +973,16 @@ void interface::pause_screen()
         // updating target position and size
         _choice_target.setPosition(sf::Vector2f(_choices[_index_choice_pos]->getPosition().x+5, _choices[_index_choice_pos]->getPosition().y+17));
         
-        window.draw(s_game_over);
-        window.draw(_text_resume);
-        window.draw(_text_main_menu);
-        window.draw(_text_exit);
-        window.draw(_choice_target);
-        window.draw(line1);
-        window.draw(line2);
-        window.draw(line3);
-        window.draw(line4);
-        window.display();
+        _window.draw(s_game_over);
+        _window.draw(_text_resume);
+        _window.draw(_text_main_menu);
+        _window.draw(_text_exit);
+        _window.draw(_choice_target);
+        _window.draw(line1);
+        _window.draw(line2);
+        _window.draw(line3);
+        _window.draw(line4);
+        _window.display();
     }
 }
 
@@ -1024,9 +1055,9 @@ void interface::menu_lan(bool disconnected){
     sf::Color color_background = sf::Color::Black;
     sf::Color color_line = sf::Color(255, 87, 217);
 
-    //window
-    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
-    window.setFramerateLimit(30); // Pour set le framerate
+    //_window
+    sf::RenderWindow _window(sf::VideoMode(width_window, height_window), "Habibi");
+    _window.setFramerateLimit(30); // Pour set le framerate
 
     //border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
@@ -1131,14 +1162,14 @@ void interface::menu_lan(bool disconnected){
     t_number port;
     sf::Sprite s_disconnect;
 
-    while(window.isOpen()){
+    while(_window.isOpen()){
 
         sf::Event e;
-        window.clear(color_background);
+        _window.clear(color_background);
 
-        while (window.pollEvent(e)){
+        while (_window.pollEvent(e)){
             if (e.type == sf::Event::Closed)
-                window.close();
+                _window.close();
             else if (e.type == sf::Event::KeyPressed)
             {
                 if(_sound_move.getStatus()!=sf::Music::Status::Playing)
@@ -1196,7 +1227,7 @@ void interface::menu_lan(bool disconnected){
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
                 {
-                    window.close();
+                    _window.close();
                     menu();
                 }
             }
@@ -1269,38 +1300,38 @@ void interface::menu_lan(bool disconnected){
                 waiting_circle.setTexture(_textures[t_textures_to_index(t_textures::loading_0) + index_circle_texture]);
                 clock_for_circle.restart(); // on remet le compteur a zero
             }
-            window.draw(waiting_circle);
+            _window.draw(waiting_circle);
         }
 
         if (_arbitre->connected()){ // si connecté on met le check_mark, un countdown et on affiche le boutton play
 
             _arbitre->init(seed);
             _text_countdown.setString("PLAYIN IN " + std::to_string(static_cast<t_number>(5 - clock_since_connection.getElapsedTime().asSeconds())));
-            window.draw(_text_countdown);
+            _window.draw(_text_countdown);
 
             waiting_circle.setTexture(_textures[t_textures_to_index(t_textures::check_mark)]);
-            window.draw(waiting_circle);
+            _window.draw(waiting_circle);
 
             if (clock_since_connection.getElapsedTime().asSeconds() >= 5){ // on attend 2 secondes avant de jouer
-                window.close();
+                _window.close();
                 play();
             }
         }
 
         // On affiche la texture si il s'agit d'une deconnexion
-        window.draw(_text_title);
-        window.draw(_choice_target);
-        window.draw(_text_type);
-        window.draw(_type_choice);
-        window.draw(_text_ip);
-        window.draw(_ip);
-        window.draw(_text_port);
-        window.draw(_port);
-        window.draw(_text_connect);
-        window.draw(line1);
-        window.draw(line2);
-        window.draw(line3);
-        window.draw(line4);
+        _window.draw(_text_title);
+        _window.draw(_choice_target);
+        _window.draw(_text_type);
+        _window.draw(_type_choice);
+        _window.draw(_text_ip);
+        _window.draw(_ip);
+        _window.draw(_text_port);
+        _window.draw(_port);
+        _window.draw(_text_connect);
+        _window.draw(line1);
+        _window.draw(line2);
+        _window.draw(line3);
+        _window.draw(line4);
 
         if (disconnected && !_arbitre->connected()) { // afichage de deconnexion si deconnecté
             if (static_cast<t_number>(clock_for_disconnect.getElapsedTime().asMilliseconds()) % 500 <= 250)
@@ -1308,10 +1339,10 @@ void interface::menu_lan(bool disconnected){
             else
                 _text_disconnect.setFillColor(sf::Color::Transparent);
 
-            window.draw(_text_disconnect);
+            _window.draw(_text_disconnect);
         }
 
-        window.display();
+        _window.display();
     }
 }
 
@@ -1398,9 +1429,9 @@ void interface::menu_regle(){
     sf::Color color_background = sf::Color::Black;
     sf::Color color_line = sf::Color(255, 87, 217);
 
-    //window
-    sf::RenderWindow window(sf::VideoMode(width_window, height_window), "Habibi");
-    window.setFramerateLimit(30); // Pour set le framerate
+    //_window
+    sf::RenderWindow _window(sf::VideoMode(width_window, height_window), "Habibi");
+    _window.setFramerateLimit(30); // Pour set le framerate
 
     //border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 +thickness_line));
@@ -1484,13 +1515,13 @@ void interface::menu_regle(){
     _controls.push_back(sf::String("accelerate j1"));
 
     
-    while(window.isOpen()){
+    while(_window.isOpen()){
         sf::Event e;
         
-        while (window.pollEvent(e))
+        while (_window.pollEvent(e))
         {
             if (e.type == sf::Event::Closed)
-                window.close();
+                _window.close();
             if (e.type == sf::Event::KeyPressed)
             {
                 if(_sound_move.getStatus()!=sf::Music::Status::Playing)
@@ -1499,7 +1530,7 @@ void interface::menu_regle(){
                 
                 if(e.key.code == sf::Keyboard::Key::Escape)
                 {
-                    window.close();
+                    _window.close();
                     menu();
                 }
                 else if(e.key.code == sf::Keyboard::Key::Up)
@@ -1534,27 +1565,27 @@ void interface::menu_regle(){
         _text_joueur1.setPosition(width_window/2  ,thickness_line  + height_window / 7);
 
 
-        window.clear(color_background);
+        _window.clear(color_background);
 
         // sprite display joueur 1
         s_fleches.setPosition(thickness_line, s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_fleches);
+        _window.draw(s_fleches);
         s_ctrl_2.setPosition(s_ctrl_2.getGlobalBounds().width*3 + thickness_line, s_ctrl_2.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_ctrl_2);
+        _window.draw(s_ctrl_2);
         s_shift_2.setPosition(s_shift_2.getGlobalBounds().width*4 + thickness_line, s_shift_2.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_shift_2);
+        _window.draw(s_shift_2);
         s_tab.setPosition(s_tab.getGlobalBounds().width*5 + thickness_line, s_tab.getGlobalBounds().height+s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
-        window.draw(s_tab);
+        _window.draw(s_tab);
 
         // sprite display joueur 2
         s_touches.setPosition(thickness_line, s_touches.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_touches);
+        _window.draw(s_touches);
         s_ctrl_1.setPosition(s_ctrl_1.getGlobalBounds().width*3 + thickness_line, s_touches.getGlobalBounds().height+s_ctrl_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_ctrl_1);
+        _window.draw(s_ctrl_1);
         s_shift_1.setPosition(s_shift_1.getGlobalBounds().width*4 + thickness_line, s_touches.getGlobalBounds().height+s_shift_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_shift_1);
+        _window.draw(s_shift_1);
         s_enter.setPosition(s_enter.getGlobalBounds().width*5 + thickness_line, s_touches.getGlobalBounds().height+s_enter.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        window.draw(s_enter);
+        _window.draw(s_enter);
 
         // line_choice
         sf::RectangleShape line_choice(sf::Vector2f(30, 5));
@@ -1567,16 +1598,16 @@ void interface::menu_regle(){
         _text_explication.setString(_controls[_index_controls_choice]);
         _text_explication.setPosition((width_window - _text_explication.getLocalBounds().width)/2, thickness_line  + height_window / 1.2);
 
-        window.draw(line1);
-        window.draw(line2);
-        window.draw(line3);
-        window.draw(line4);
-        window.draw(line_choice);
-        window.draw(_text_joueur2);
-        window.draw(_text_menu);
-        window.draw(_text_joueur1);
-        window.draw(_text_explication);
-        window.display();
+        _window.draw(line1);
+        _window.draw(line2);
+        _window.draw(line3);
+        _window.draw(line4);
+        _window.draw(line_choice);
+        _window.draw(_text_joueur2);
+        _window.draw(_text_menu);
+        _window.draw(_text_joueur1);
+        _window.draw(_text_explication);
+        _window.display();
     }
 }
 
