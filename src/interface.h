@@ -39,7 +39,8 @@ private:
     sf::SoundBuffer _buffer_sound_loose;
     sf::SoundBuffer _buffer_sound_play;
     sf::SoundBuffer _buffer_sound_xp;
-    
+    sf::RenderWindow _window;
+
     // Est-ce une bonne pratique
     // est-ce que je dois la mettre en static ? (logiquement)
     std::vector<sf::Texture> _textures;
