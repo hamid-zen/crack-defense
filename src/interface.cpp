@@ -5,6 +5,7 @@
 // #255,255,255 color case vide
 //
 interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), _arbitre(), _window(sf::VideoMode(572, 324), "Habibi", sf::Style::Titlebar | sf::Style::Close) {
+    _window.setFramerateLimit(30);
     _arbitre = std::make_unique<arbitre>(0); // TODO: enlever
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
