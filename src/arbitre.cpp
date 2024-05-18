@@ -8,10 +8,10 @@ arbitre::arbitre(t_number ind, typeplayer plyr1, typeplayer plyr2, unsigned int 
 
 {
     delay_player1 = std::make_unique<delay>();
-    *delay_player1 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+    *delay_player1 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0,true,-1};
 
     delay_player2 = std::make_unique<delay>();
-    *delay_player2 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0};
+    *delay_player2 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0,true,-1};
 
     bool jeu_reseau(plyr1 == typeplayer::client || plyr1 == typeplayer::server);
     bool server_game(plyr1 == typeplayer::server);
@@ -149,13 +149,15 @@ void arbitre::update(t_action x, bool first_player)
         _player2->setAction(x);
         updatePlayer(_player2->getCoup(getFrame()), false);
     }
-    else if (first_player)
+    else if (first_player && delay_player1->activated)
     {
+        std::cout<<"first \n";
         _player1->setAction(x);
         updatePlayer(_player1->getCoup(getFrame()), true);
     }
-    else
+    else if(jeu_duo() && !first_player and delay_player2->activated)
     {
+        std::cout<<"second \n";
         _player2->setAction(x);
         updatePlayer(_player2->getCoup(getFrame()), false);
     }
@@ -163,8 +165,8 @@ void arbitre::update(t_action x, bool first_player)
 
 void arbitre::updatePlayer(t_action x, bool first_player)
 {
-    game *player_to_update = ((first_player) ? (_player1.get()) : (_player2.get()));
-    delay *delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
+    game * player_to_update = ((first_player) ? (_player1.get()) : (_player2.get()));
+    delay * delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
 
     player_to_update->inc_score(delay_to_update->score);
     delay_to_update->score = 0;
@@ -437,6 +439,25 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     {
         delay_to_update->angle += 24;
         delay_to_update->scale -= 0.1;
+    }
+    if(player_to_update->is_lost())delay_to_update->activated=false;
+    if(first_player and jeu_duo() and !delay_player2->activated ){
+        if( delay_player1->time_left==-1)
+            delay_player1->time_left=600;
+        else if( delay_player1->time_left==0){
+            delay_player1->activated=false;
+        }
+        else 
+             delay_player1->time_left--;
+    }
+    if(!first_player and jeu_duo() and !delay_player1->activated ){
+        if( delay_player2->time_left==-1)
+            delay_player2->time_left=600;
+        else if( delay_player2->time_left==0){
+            delay_player2->activated=false;
+        }
+        else 
+             delay_player2->time_left--;
     }
 }
 

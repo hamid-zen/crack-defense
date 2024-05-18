@@ -4,6 +4,9 @@
 #include<utility>
 
 using frame = int16_t ;
+using times = int16_t ;
+
+
 
 
 struct delay {
@@ -20,6 +23,8 @@ struct delay {
     t_number angle;
     float scale;
     char score;
+    bool activated;
+    times time_left;
     std::vector<position *> cells_slide ;
     std::vector<position > cells_align ;
 };

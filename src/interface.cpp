@@ -97,7 +97,7 @@ void interface::play()
 
     std::vector<score_particle *> particles_p1, particles_p2;
 
-    while (window.isOpen() && !_arbitre->lost())
+    while (window.isOpen() && (_arbitre->getDelays(true).activated || (_arbitre->jeu_duo()&& _arbitre->getDelays(false).activated )))
     {
         window.clear(color_background);
 
@@ -395,6 +395,7 @@ void interface::play()
         angle+=5;
         window.display();
     }
+    
 
 
     sf::Sound _sound_loose ;
@@ -403,7 +404,7 @@ void interface::play()
     _sound_loose.play();
 
     window.close();
-
+    
     if (_arbitre->player1().is_lost())
         game_over_screen(true, _arbitre->player1().get_score());
     else if (_arbitre->jeu_duo() && _arbitre->player2().is_lost())
