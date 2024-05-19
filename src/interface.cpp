@@ -440,7 +440,6 @@ void interface::play()
     _sound_loose.setVolume(10);
     _sound_loose.play();
 
-    _window.close();
     
     if (_arbitre->player1().is_lost())
         game_over_screen(true, _arbitre->player1().get_score());
@@ -600,7 +599,6 @@ void interface::menu(){
                 {
                     if(_index_choice_pos == _choices.size()-1){
                         _difficulty = _index_difficulties_choice; // vu qu'on appel pas directement play on doit garder le choix de difficulté
-                        _window.close();
                         if(_index_first_player_choice==2) //wlan
                         {
                             menu_lan();
@@ -630,8 +628,7 @@ void interface::menu(){
                     }
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
-
-                _window.close();
+                    _window.close();
                 else if(e.key.code == sf::Keyboard::Key::Up)
                 {   
                     if(_index_choice_pos>0)
@@ -674,7 +671,6 @@ void interface::menu(){
                 }
                 else if(e.key.code == sf::Keyboard::Key::H)
                 {
-                    _window.close();
                     menu_regle();
                 }
             }
@@ -814,7 +810,6 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
                 if(e.key.code == sf::Keyboard::Key::Enter)
                 {
                     if(_index_choice_pos == 0){ // main menu
-                        _window.close();
                         menu();
                     } else if (_index_choice_pos == 1) {
                         _window.close();
@@ -1249,7 +1244,6 @@ void interface::menu_lan(bool disconnected){
                 }
                 else if(e.key.code == sf::Keyboard::Key::Escape)
                 {
-                    _window.close();
                     menu();
                 }
             }
@@ -1335,7 +1329,6 @@ void interface::menu_lan(bool disconnected){
             _window.draw(waiting_circle);
 
             if (clock_since_connection.getElapsedTime().asSeconds() >= 5){ // on attend 2 secondes avant de jouer
-                _window.close();
                 play();
             }
         }
@@ -1560,7 +1553,6 @@ void interface::menu_regle(){
                 
                 if(e.key.code == sf::Keyboard::Key::Escape)
                 {
-                    _window.close();
                     menu();
                 }
                 else if(e.key.code == sf::Keyboard::Key::Up)
