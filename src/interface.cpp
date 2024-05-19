@@ -1,9 +1,5 @@
 #include "interface.h"
 
-
-// #E882E8 color target
-// #255,255,255 color case vide
-//
 interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), _arbitre(), _window(sf::VideoMode(572, 324), "Habibi", sf::Style::Titlebar | sf::Style::Close) {
     _window.setFramerateLimit(30);
     _arbitre = std::make_unique<arbitre>(0); // TODO: enlever
@@ -11,6 +7,48 @@ interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), 
     load_textures();
 }
 
+/**
+ * @brief affiche l'animation d'intro du jeu
+ */
+void interface::intro()
+{
+    unsigned int gif_frames_number = 61;
+    unsigned int current_frame = 0;
+    std::vector<sf::Texture> gif_frames;
+
+    sf::Sprite image_to_show;
+
+    // on charge les textures
+    for (unsigned int i(0); i < gif_frames_number; i++) {
+        sf::Texture current_frame;
+        current_frame.loadFromFile("../animations/intro/frame_" + std::to_string(i) + ".jpg");
+        gif_frames.push_back(current_frame);
+    }
+
+    image_to_show.setTexture(gif_frames[current_frame]);
+
+    while(_window.isOpen()){
+
+        sf::Event e;
+        while (_window.pollEvent(e)){
+            if (e.type == sf::Event::Closed)
+                _window.close();
+            else if (e.type == sf::Event::KeyPressed || e.type == sf::Event::MouseButtonPressed)
+                menu();
+        }
+
+        // on choisit la texture a afficher
+        current_frame = (current_frame+1)%gif_frames_number;
+        image_to_show.setTexture(gif_frames[current_frame]);
+
+        _window.draw(image_to_show);
+        _window.display();
+    }
+}
+
+/**
+ * @brief fait tout le travail une fois le jeu lancé (gere l'affichage, gere les input utilisateur, met a joue l'etat du jeu)
+ */
 void interface::play()
 {
     sf::Sound _sound_xp;
@@ -410,42 +448,9 @@ void interface::play()
         game_over_screen(false, _arbitre->player2().get_score());
 }
 
-void interface::intro()
-{
-    unsigned int gif_frames_number = 61;
-    unsigned int current_frame = 0;
-    std::vector<sf::Texture> gif_frames;
-
-    sf::Sprite image_to_show;
-
-    // on charge les textures
-    for (unsigned int i(0); i < gif_frames_number; i++) {
-        sf::Texture current_frame;
-        current_frame.loadFromFile("../animations/intro/frame_" + std::to_string(i) + ".jpg");
-        gif_frames.push_back(current_frame);
-    }
-
-    image_to_show.setTexture(gif_frames[current_frame]);
-
-    while(_window.isOpen()){
-
-        sf::Event e;
-        while (_window.pollEvent(e)){
-            if (e.type == sf::Event::Closed)
-                _window.close();
-            else if (e.type == sf::Event::KeyPressed || e.type == sf::Event::MouseButtonPressed)
-                menu();
-        }
-
-        // on choisit la texture a afficher
-        current_frame = (current_frame+1)%gif_frames_number;
-        image_to_show.setTexture(gif_frames[current_frame]);
-
-        _window.draw(image_to_show);
-        _window.display();
-    }
-}
-
+/**
+ * @brief affiche le menu principal du jeu et gere les inputs utilisateur (nombre et type des joueurs, difficulté)
+ */
 void interface::menu(){
 
     sf::Sound _sound ;
@@ -711,6 +716,12 @@ void interface::menu(){
     }
 
 }
+
+/**
+ * @brief Affiche un menu si le jeu est terminé (un des joueurs au moins a perdu
+ * @param first_player_lost si le premier joueur a perdu (dans le cas d'un jeu duo)
+ * @param score highscore (score a afficher)
+ */
 void interface::game_over_screen(bool first_player_lost, t_number score)
 {
     // TODO: adapter dans le cas ou jeu a deux joueur
@@ -853,6 +864,9 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
     }
 }
 
+/**
+ * @brief affiche un menu dans le cas d'une pause
+ */
 void interface::pause_screen()
 {
     // TODO: adapter dans le cas ou jeu a deux joueur
@@ -987,6 +1001,9 @@ void interface::pause_screen()
     }
 }
 
+/**
+ * @brief charge toutes les textures dans un tableau
+ */
 void interface::load_textures()
 {
     _textures[t_textures_to_index(t_textures::Blue)].loadFromFile("../textures/single_blocks/Blue_colored.png");
@@ -1041,6 +1058,10 @@ void interface::load_textures()
     _buffer_sound_xp.loadFromFile("../sound/xp.wav");
 }
 
+/**
+ * @brief affiche le menu de connexion du jeu en ligne et gere les inputs utilisateur (type de joueur, ip et port)
+ * @param disconnected pour affiche que l'autre joueur est deconnecté
+ */
 void interface::menu_lan(bool disconnected){
 
     sf::Sound _sound_move ;
@@ -1347,6 +1368,12 @@ void interface::menu_lan(bool disconnected){
     }
 }
 
+/**
+ * @brief charge une texture concernant une couleur et une shade dans un sprite SFML
+ * @param sprite Sprite dans lequel on veut charger la texture
+ * @param color element de t_colors qui categorise une couleur en question
+ * @param shade si la couleur doit etre assombrie (ligne qui monte)
+ */
 void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) const
 {
     if (!shade) {
@@ -1416,7 +1443,9 @@ void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) con
     }
 }
 
-
+/**
+ * @brief menu qui affiche l'aide (commandes du jeu)
+ */
 void interface::menu_regle(){
 
     sf::Sound _sound_move ;
@@ -1612,6 +1641,11 @@ void interface::menu_regle(){
     }
 }
 
+/**
+ * @brief transforme un t_texture (enum class) en t_number (u_int_16b)
+ * @param texture t_texture a transformer en int
+ * @return la valeur entiere associée au t_textures
+ */
 t_number t_textures_to_index(t_textures texture)
 {
     return static_cast<t_number>(texture);
