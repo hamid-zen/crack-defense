@@ -95,7 +95,7 @@ public:
     virtual bool is_remote() const {return false;}
     const grid &   getGrid() const{return _grid;}
     virtual void setAction(t_action const & a){_next_action=a;}
-    virtual t_action getCoup(t_num frame)  { return _next_action;}
+    virtual t_action getBlow(t_num frame)  { return _next_action;}
     virtual void print_container(){ std::cout<<"joueur \n";};
 private:
     t_action _next_action;
@@ -113,13 +113,13 @@ public:
     t_num color_distances(position const & p1,position const & p2) const;
     t_num sum_color_distance(grid const & grille) const;
     int estimation(game const &g)  ;
-    std::vector<coup> lawful_blow(grid const &grille) const; //retourne tout les coups licites sauf si deux cases vides aucun interet
+    std::vector<blow> lawful_blow(grid const &grille) const; //retourne tout les coups licites sauf si deux cases vides aucun interet
     int minMax(int profondeur,game const &g);
-    std::vector<coup> best_blow(int profondeur) ;
+    std::vector<blow> best_blow(int profondeur) ;
     std::vector<t_action> play_what() ;
     bool is_ai() const override{return true;}
     void setAction(t_action const & a) override;
-    t_action getCoup(t_num frame) override ;
+    t_action getBlow(t_num frame) override ;
     void print_container() override;
 private:
     std::vector<t_action> path;
