@@ -4,6 +4,8 @@ TO RESOLVE
     
     
 TO DO :
+    enlever fonctions inutiles
+    commentaires doxygene
     trouver un nom de jeu
     avancer sur le rapport
     commener à faire le diapo
