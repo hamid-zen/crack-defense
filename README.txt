@@ -1,7 +1,7 @@
 TO ASK GENEST : 
     
 TO RESOLVE 
-    
+    les malus ne se generent pas automatiquement
     
 TO DO :
     enlever fonctions inutiles
