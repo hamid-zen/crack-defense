@@ -666,9 +666,9 @@ int ai::estimation(game const &g)
     return count;
 }
 
-std::vector<coup> ai::lawful_blow(grid const &grille) const
+std::vector<blow> ai::lawful_blow(grid const &grille) const
 {
-    std::vector<coup> vec;
+    std::vector<blow> vec;
     for (unsigned int j(0); j < grille.max_height(); j++)
     {   for (unsigned int i(0); i < grille.max_width() ; i++)
         {
@@ -677,11 +677,11 @@ std::vector<coup> ai::lawful_blow(grid const &grille) const
             if(grille.cellDx(position(i, j))==0 && grille.cellDy(position(i, j))==0){
                 if (i+1< grille.max_width() && grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) )
                 {
-                    vec.push_back(coup{position(i, j), position(i + 1, j)});
+                    vec.push_back(blow{position(i, j), position(i + 1, j)});
                 }
                 if(j+1<grille.max_height() && grille.cellDx(position(i, j+1))==0 && grille.cellDy(position(i, j+1))==0 &&(grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)))
                 {
-                    vec.push_back(coup{position(i, j), position(i, j + 1)});
+                    vec.push_back(blow{position(i, j), position(i, j + 1)});
                 }
            }
         }
@@ -697,73 +697,73 @@ int ai::minMax(int profondeur,game const &g)
     {
         return estimation(x);
     }
-    auto coups(lawful_blow(x.getGrid()));
+    auto blows(lawful_blow(x.getGrid()));
     int meilleurEstimation = std::numeric_limits<int>::min();
-    // Parcours de tous les coups possibles
-    for (auto coup : coups)
+    // Parcours de tous les blows possibles
+    for (auto blow : blows)
     {
-        // Simulation du coup
-        x.switch_cells_position(coup.p1, coup.p2);
-        // Récursion pour évaluer les coups possibles
-        int estimationCoup = minMax(profondeur - 1,x);
-        // Annulation de la simulation du coup
-        x.switch_cells_position(coup.p1, coup.p2);
+        // Simulation du blow
+        x.switch_cells_position(blow.p1, blow.p2);
+        // Récursion pour évaluer les blows possibles
+        int estimationblow = minMax(profondeur - 1,x);
+        // Annulation de la simulation du blow
+        x.switch_cells_position(blow.p1, blow.p2);
         // Mise à jour de la meilleure estimation
-        meilleurEstimation = std::max(meilleurEstimation, estimationCoup);
+        meilleurEstimation = std::max(meilleurEstimation, estimationblow);
     }
 
     return meilleurEstimation; // Retourne l'estimation optimale pour le joueur actuel
 }
 
-std::vector<coup> ai::best_blow(int profondeur)
-{   std::vector<coup> meilleurscoups;
+std::vector<blow> ai::best_blow(int profondeur)
+{   std::vector<blow> meilleursblows;
     game g(*this);
     auto psts(g.max_column());
     if(psts[0].y()<=2){//si la colone la plus haute est proche de la fin 
         if(psts[0].x()>0) //si c'est pas la premiere colone
         {
-            coup c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
-            meilleurscoups.push_back(c);
+            blow c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+            meilleursblows.push_back(c);
             std::cout<<"secour 1"<<std::endl;
 
-                    return meilleurscoups;
+                    return meilleursblows;
 
         }else if(psts.size()==1||(psts.size()>=2  && psts[1].x()!=psts[0].x()+1)){ //si c la 1ere colone et que il n'ya rien à sa gauche ou que c la premiere colone et la seul plus haute
-            coup c{position (psts[0].x()+1,psts[0].y()),position(psts[0].x(),psts[0].y())};
-            meilleurscoups.push_back(c);
+            blow c{position (psts[0].x()+1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+            meilleursblows.push_back(c);
             std::cout<<"secour 2"<<std::endl;
-                    return meilleurscoups;
+                    return meilleursblows;
 
         }
         else if(psts[0].x()==g.width()-1) //si c la derneire colone
         {
-            coup c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
-            meilleurscoups.push_back(c);
+            blow c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+            meilleursblows.push_back(c);
         std::cout<<"secour 3"<<std::endl;
-        return meilleurscoups;
+        return meilleursblows;
         }
     }
-    auto coups(lawful_blow(g.getGrid()));
-    while(coups.size()==0){
-        coups=lawful_blow(getGrid());
+    auto blows(lawful_blow(g.getGrid()));
+    while(blows.size()==0){
+        blows=lawful_blow(getGrid());
     }
     int meilleureEstimation = std::numeric_limits<int>::min();
-    std::cout<<"coup posible : \n";
-    for (auto cp : coups)
+    std::cout<<"blow posible : \n";
+    for (auto cp : blows)
     {
         std::cout<<cp.p1.x()<<","<<cp.p1.y()<<")("<<cp.p2.x()<<","<<cp.p2.y()<<") \n";
         g.switch_cells_position(cp.p1, cp.p2);
-        int estimationCoup =  minMax(profondeur,g);
-        std::cout<<"estimation : "<<estimationCoup<<std::endl;
-        g.switch_cells_position(cp.p1, cp.p2); // annuler le coup
+        int estimationblow =  minMax(profondeur,g);
+        std::cout<<"estimation : "<<estimationblow<<std::endl;
+        g.switch_cells_position(cp.p1, cp.p2); // annuler le blow
 
-        if (estimationCoup > meilleureEstimation)
+        if (estimationblow > meilleureEstimation)
         {
-            meilleurscoups.clear();
-            meilleurscoups.push_back(cp);
-            meilleureEstimation = estimationCoup;
-        }else if(estimationCoup == meilleureEstimation){
-            meilleurscoups.push_back(cp);
+            meilleursblows.clear();
+            meilleursblows.push_back(cp);
+            meilleureEstimation = estimationblow;
+        }else if(estimationblow == meilleureEstimation){
+            meilleursblows.push_back(cp);
         }
     }
 
@@ -772,7 +772,7 @@ std::vector<coup> ai::best_blow(int profondeur)
         std::cout<<"go"<<"--------------------------------------------------";
                 setAction(t_action::accelerate);
     }
-    return meilleurscoups;
+    return meilleursblows;
 }
 
 
@@ -780,12 +780,12 @@ std::vector<t_action> ai::play_what()
 { 
     auto vec(best_blow(_depth));
     auto i(nombreAleatoire(vec.size()-1));
-    auto coup(vec[i]);
-    std::cout<<"le meilleur coup est  :"<<coup.p1.x()<<","<<coup.p1.y()<<")("<<coup.p2.x()<<","<<coup.p2.y()<<") \n";
-    auto coups(getPath(coup.p1, coup.p2));
-    return coups;
+    auto blow(vec[i]);
+    std::cout<<"le meilleur blow est  :"<<blow.p1.x()<<","<<blow.p1.y()<<")("<<blow.p2.x()<<","<<blow.p2.y()<<") \n";
+    auto blows(getPath(blow.p1, blow.p2));
+    return blows;
 }
-t_action ai::getCoup(t_num frame)
+t_action ai::getBlow(t_num frame)
 {
    
     if (frame % frequence_frame == 0)
@@ -849,7 +849,6 @@ void ai::print_container()
         }
     }
 }
-
 // remote_game
 std::string actionToString(t_action action) {
     switch (action) {
