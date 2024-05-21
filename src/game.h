@@ -20,7 +20,7 @@ enum class t_direction{
     left
 };
 
-struct coup{
+struct blow{
     position p1;
     position p2;
 };

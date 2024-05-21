@@ -145,21 +145,21 @@ void arbitre::update(t_action x, bool first_player)
     if (jeu_duo() && x == t_action::generate_malus)
     {
         _player1->setAction(x);
-        updatePlayer(_player1->getCoup(getFrame()), true);
+        updatePlayer(_player1->getBlow(getFrame()), true);
         _player2->setAction(x);
-        updatePlayer(_player2->getCoup(getFrame()), false);
+        updatePlayer(_player2->getBlow(getFrame()), false);
     }
     else if (first_player && delay_player1->activated)
     {
         std::cout<<"first \n";
         _player1->setAction(x);
-        updatePlayer(_player1->getCoup(getFrame()), true);
+        updatePlayer(_player1->getBlow(getFrame()), true);
     }
     else if(jeu_duo() && !first_player and delay_player2->activated)
     {
         std::cout<<"second \n";
         _player2->setAction(x);
-        updatePlayer(_player2->getCoup(getFrame()), false);
+        updatePlayer(_player2->getBlow(getFrame()), false);
     }
 }
 
