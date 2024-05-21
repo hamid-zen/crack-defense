@@ -1211,7 +1211,7 @@ void interface::menu_lan(bool disconnected){
     sf::Color color_line = sf::Color(255, 87, 217);
 
     //_window
-    sf::RenderWindow _window(sf::VideoMode(width_window, height_window), "Habibi");
+    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
     _window.setFramerateLimit(30); // Pour set le framerate
 
     //border
