@@ -557,6 +557,21 @@ sf::Socket::Status arbitre::recieve_number(t_number &number)
     return sf::Socket::Error; // TODO: peut etre remplacer par une exception
 }
 
+void arbitre::send_string(std::string message)
+{
+    auto joueur = dynamic_cast<remote_game *>(_player1.get());
+    if (joueur)
+        joueur->send_string(message);
+}
+
+sf::Socket::Status arbitre::recieve_string(std::string &message)
+{
+    auto joueur = dynamic_cast<remote_game *>(_player1.get());
+    if (joueur)
+        return joueur->recieve_string(message);
+    return sf::Socket::Error; // TODO: peut etre remplacer par une exception
+}
+
 void arbitre::increment_delays_y_pos(bool first_player)
 {
     delay *delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));

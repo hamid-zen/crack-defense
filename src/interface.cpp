@@ -5,6 +5,7 @@ interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), 
     _arbitre = std::make_unique<arbitre>(0); // TODO: enlever
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
+    _window.close();
 }
 
 /**
@@ -43,6 +44,138 @@ void interface::intro()
 
         _window.draw(image_to_show);
         _window.display();
+    }
+}
+
+void interface::chat()
+{
+    // on cree une nouvelle window
+    //TODO: peu etre la mettre a coté de la window de base
+    //TODO: peu etre gerer la deconnexion
+    t_number total_height(500), total_width(500);
+    _window.close();
+    sf::RenderWindow window(sf::VideoMode(total_height, total_width), "habibi", sf::Style::Titlebar | sf::Style::Close);
+    sf::Color color_background = sf::Color::Black;
+    t_number thickness_line = 10;
+    sf::Color color_line = sf::Color(255, 87, 217);
+
+    window.clear(color_background);
+
+    sf::RectangleShape line1(sf::Vector2f(thickness_line, total_height +thickness_line));
+    line1.setFillColor(color_line);
+    sf::RectangleShape line2(sf::Vector2f(total_width-thickness_line, thickness_line));
+    line2.setFillColor(color_line);
+    sf::RectangleShape line3(sf::Vector2f(thickness_line, total_height + thickness_line));
+    line3.setFillColor(color_line);
+    line3.setPosition(total_width-thickness_line,0);
+    sf::RectangleShape line4(sf::Vector2f(total_width, thickness_line));
+    line4.setFillColor(color_line);
+    line4.setPosition(0,total_height-thickness_line);
+
+    sf::Sprite s_send_icon;
+    s_send_icon.setTexture(_textures[t_textures_to_index(t_textures::chat_icon)]);
+    s_send_icon.setOrigin((s_send_icon.getGlobalBounds().width)/(2*s_send_icon.getScale().x), (s_send_icon.getGlobalBounds().height)/(2*s_send_icon.getScale().y));
+    s_send_icon.setPosition(total_width/1.1, total_height/1.1);
+
+    sf::Text text_message("AMEK DINNA", _font);
+    text_message.setPosition(total_width/20, s_send_icon.getPosition().y - s_send_icon.getOrigin().y);
+    text_message.setFillColor(sf::Color::White);
+
+    sf::RectangleShape message_target(sf::Vector2f(total_width - thickness_line*4 - s_send_icon.getGlobalBounds().width, text_message.getGlobalBounds().height*2));
+    message_target.setFillColor(sf::Color::Transparent);
+    message_target.setOutlineThickness(1);
+    message_target.setOutlineColor(sf::Color::Yellow);
+    message_target.setPosition(text_message.getPosition().x - 10, text_message.getPosition().y);
+
+    std::string message_input, message_recieved;
+    std::vector<std::pair<bool, std::string>> messages;
+    t_number messages_focus(0);
+    bool disconnected(false);
+    sf::Clock clock_for_disconnect;
+
+    while(window.isOpen()){
+        sf::Event e;
+
+        while (window.pollEvent(e)){
+            if (e.type == sf::Event::Closed)
+                window.close();
+            else if (e.type == sf::Event::MouseButtonPressed) {
+
+                auto x_mouse(sf::Mouse::getPosition(window).x), y_mouse(sf::Mouse::getPosition(window).y); // coordonnée du click
+                auto x_min(s_send_icon.getPosition().x-s_send_icon.getOrigin().x), x_max(s_send_icon.getPosition().x-s_send_icon.getOrigin().x+s_send_icon.getLocalBounds().width); // coordonnée x de l'icone
+                auto y_min(s_send_icon.getPosition().y-s_send_icon.getOrigin().y), y_max(s_send_icon.getPosition().y-s_send_icon.getOrigin().y+s_send_icon.getLocalBounds().height); // coordonnée y de l'icone
+
+                if (x_mouse <= x_max && x_mouse >= x_min && y_mouse <= y_max && y_mouse >= y_min) { // si click sur l'icone
+                    _arbitre->send_string(message_input);
+                    if (!disconnected) {
+                        messages.push_back({true, message_input});
+                        message_input = "";
+                    }
+                }
+            }
+            else if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Key::Enter) { // on click sur entrée
+                _arbitre->send_string(message_input);
+                if (!disconnected) {
+                    messages.push_back({true, message_input});
+                    message_input = "";
+                }
+            }
+            else if(e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Key::BackSpace) { // effacer la derniere lettre du message
+                if (message_input.length() != 0 && !disconnected)
+                    message_input = message_input.substr(0, message_input.length()-1);
+            }
+            else if (e.type == sf::Event::TextEntered){
+                if (e.text.unicode >= 32 && message_input.length() < 30 && !disconnected)
+                    message_input += e.text.unicode;
+
+            }
+            else if (e.type == sf::Event::MouseWheelMoved){
+                if (e.mouseWheel.delta > 0 && messages_focus > 0)
+                    --messages_focus;
+                else if (e.mouseWheel.delta < 0 && messages_focus < messages.size()-9)
+                    ++messages_focus;
+            }
+        }
+
+        window.clear(color_background);
+
+        auto recieve_status(_arbitre->recieve_string(message_recieved));
+        if (recieve_status == sf::Socket::Done) {
+            messages.push_back({false, message_recieved});
+        }
+        else if (recieve_status == sf::Socket::Disconnected)
+            disconnected = true;
+
+        for (auto i(0); i < 9 && messages_focus + i < messages.size(); i++) { // on print que 9 messages (a cause de la hauteur de la fenetre)
+            sf::Text message_source((messages[messages_focus + i].first ? "you: " : "opponent: "), _font);
+            message_source.setFillColor((messages[messages_focus + i].first ? sf::Color::Green : sf::Color::Red));
+            message_source.setPosition(thickness_line, thickness_line + i*message_target.getSize().y);
+            window.draw(message_source);
+
+            sf::Text message(messages[messages_focus + i].second, _font);
+            message.setPosition(thickness_line + message_source.getLocalBounds().width, thickness_line + i*message_target.getSize().y);
+            window.draw(message);
+        }
+        text_message.setString(message_input);
+
+        window.draw(line1);
+        window.draw(line2);
+        window.draw(line3);
+        window.draw(line4);
+        window.draw(s_send_icon);
+        if (disconnected) {
+            text_message.setString("CONNECTION LOST");
+            text_message.setPosition(total_width/2 - text_message.getLocalBounds().width/2, text_message.getPosition().y);
+            if (static_cast<t_number>(clock_for_disconnect.getElapsedTime().asMilliseconds()) % 500 <= 250)
+                text_message.setFillColor(sf::Color::White);
+            else
+                text_message.setFillColor(sf::Color::Transparent);
+
+        }
+        window.draw(text_message);
+        window.draw(message_target);
+
+        window.display();
     }
 }
 
@@ -1046,6 +1179,7 @@ void interface::load_textures()
     _textures[t_textures_to_index(t_textures::game_over)].loadFromFile("../textures/game_over.png");
     _textures[t_textures_to_index(t_textures::pause)].loadFromFile("../textures/pause.png");
     _textures[t_textures_to_index(t_textures::check_mark)].loadFromFile("../textures/check_mark.png");
+    _textures[t_textures_to_index(t_textures::chat_icon)].loadFromFile("../textures/chat_icon.png");
 
     _buffer_sound_choice_move.loadFromFile("../sound/Menu_Sounds_Hover.wav");
     _buffer_sound_loose.loadFromFile("../sound/Menu_Sounds_Save_Savefile.wav");
@@ -1265,8 +1399,12 @@ void interface::menu_lan(bool disconnected){
 
         // on affiche l'ip local et le port default (8080) que si serveur est choisi
         if (_index_type_choice == 0){
+
             _ip.setString(sf::String(sf::IpAddress::LocalHost.toString()));
+            _ip.setOrigin(sf::Vector2f((_ip.getGlobalBounds().width)/(2*_ip.getScale().x),(_ip.getGlobalBounds().height)/(2*_ip.getScale().y)));
+
             _port.setString("8080");
+            _port.setOrigin(sf::Vector2f((_port.getGlobalBounds().width)/(2*_port.getScale().x),(_port.getGlobalBounds().height)/(2*_port.getScale().y)));
 
             // On remet l'input a zero
             _ip_input = "";
@@ -1274,7 +1412,9 @@ void interface::menu_lan(bool disconnected){
         }
         else {
             _ip.setString(_ip_input);
+            _ip.setOrigin(sf::Vector2f((_ip.getGlobalBounds().width)/(2*_ip.getScale().x),(_ip.getGlobalBounds().height)/(2*_ip.getScale().y)));
             _port.setString(_port_input);
+            _port.setOrigin(sf::Vector2f((_port.getGlobalBounds().width)/(2*_port.getScale().x),(_port.getGlobalBounds().height)/(2*_port.getScale().y)));
         }
 
 
@@ -1328,8 +1468,9 @@ void interface::menu_lan(bool disconnected){
             waiting_circle.setTexture(_textures[t_textures_to_index(t_textures::check_mark)]);
             _window.draw(waiting_circle);
 
-            if (clock_since_connection.getElapsedTime().asSeconds() >= 5){ // on attend 2 secondes avant de jouer
-                play();
+            if (clock_since_connection.getElapsedTime().asSeconds() >= 0){ // on attend 2 secondes avant de jouer // TODO: modifier
+                _window.close();
+                chat();
             }
         }
 

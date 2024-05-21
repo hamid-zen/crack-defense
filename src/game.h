@@ -146,6 +146,8 @@ public:
     sf::Socket::Status send_action(const t_action &action);
     sf::Socket::Status recieve_number(t_number &number);
     sf::Socket::Status send_number(const t_number &number);
+    sf::Socket::Status recieve_string(std::string &message);
+    sf::Socket::Status send_string(const std::string &message);
     bool connected() const { return _socket.getRemoteAddress() != sf::IpAddress::None; }
     virtual t_remote_game type() const =0;
     bool is_remote() const override {return true;}

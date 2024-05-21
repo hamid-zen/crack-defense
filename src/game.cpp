@@ -936,9 +936,34 @@ sf::Socket::Status remote_game::recieve_number(t_number &number)
 
 sf::Socket::Status remote_game::send_number(const t_number &number)
 {
-
     sf::Packet packet;
     packet << number;
+    sf::Socket::Status send_status(_socket.send(packet));
+    return send_status;
+}
+
+sf::Socket::Status remote_game::recieve_string(std::string &message)
+{
+    sf::Packet packet;
+    sf::Socket::Status recieve_status(_socket.receive(packet));
+
+    if (recieve_status == sf::Socket::Disconnected)
+    {
+        std::cout << "recieving failed: disconnected\n";//TODO: return une exception pour pouvoir afficher une erreur
+        _socket.disconnect();
+    }
+    else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
+    {
+        packet >> message;
+        packet.clear();
+    }
+    return recieve_status;
+}
+
+sf::Socket::Status remote_game::send_string(const std::string &message)
+{
+    sf::Packet packet;
+    packet << message;
     sf::Socket::Status send_status(_socket.send(packet));
     return send_status;
 }

@@ -64,6 +64,8 @@ public:
     sf::Socket::Status recieve_action(t_action &action);
     void send_number(t_number number);
     sf::Socket::Status recieve_number(t_number &number);
+    void send_string(std::string message);
+    sf::Socket::Status recieve_string(std::string &message);
 
 private:
     std::unique_ptr<game> _player1;
