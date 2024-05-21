@@ -47,6 +47,9 @@ void interface::intro()
     }
 }
 
+/**
+ * @brief affiche une fenetre chat
+ */
 void interface::chat()
 {
     // on cree une nouvelle window
@@ -163,7 +166,8 @@ void interface::chat()
         window.draw(line3);
         window.draw(line4);
         window.draw(s_send_icon);
-        if (disconnected) {
+
+        if (disconnected) { // afficher si deconnexion
             text_message.setString("CONNECTION LOST");
             text_message.setPosition(total_width/2 - text_message.getLocalBounds().width/2, text_message.getPosition().y);
             if (static_cast<t_number>(clock_for_disconnect.getElapsedTime().asMilliseconds()) % 500 <= 250)
@@ -172,6 +176,7 @@ void interface::chat()
                 text_message.setFillColor(sf::Color::Transparent);
 
         }
+
         window.draw(text_message);
         window.draw(message_target);
 
