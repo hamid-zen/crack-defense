@@ -690,7 +690,7 @@ std::vector<blow> ai::lawful_blow(grid const &grille) const
     return vec;
 }
 
-int ai::minMax(int profondeur,game const &g)
+int ai::Max(int profondeur,game const &g)
 {  
     auto x(g);
     if (profondeur == 0)
@@ -705,7 +705,7 @@ int ai::minMax(int profondeur,game const &g)
         // Simulation du blow
         x.switch_cells_position(blow.p1, blow.p2);
         // Récursion pour évaluer les blows possibles
-        int estimationblow = minMax(profondeur - 1,x);
+        int estimationblow =  Max(profondeur - 1,x);
         // Annulation de la simulation du blow
         x.switch_cells_position(blow.p1, blow.p2);
         // Mise à jour de la meilleure estimation
@@ -720,28 +720,25 @@ std::vector<blow> ai::best_blow(int profondeur)
     game g(*this);
     auto psts(g.max_column());
     if(psts[0].y()<=2){//si la colone la plus haute est proche de la fin 
-        if(psts[0].x()>0) //si c'est pas la premiere colone
-        {
+        if(psts[0].x()>0) //si la premiere colone la plus haute c'est pas la colone [0]
+        { //on jette la case à gauche
             blow c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
             meilleursblows.push_back(c);
-            std::cout<<"secour 1"<<std::endl;
+            return meilleursblows;
 
-                    return meilleursblows;
-
-        }else if(psts.size()==1||(psts.size()>=2  && psts[1].x()!=psts[0].x()+1)){ //si c la 1ere colone et que il n'ya rien à sa gauche ou que c la premiere colone et la seul plus haute
+        }else if(psts.size()==1 || psts[1].x()!=1){ //si la 1ere colone est une max_column et que il n'ya rien à sa droite 
+        //on jette la case à droite
             blow c{position (psts[0].x()+1,psts[0].y()),position(psts[0].x(),psts[0].y())};
             meilleursblows.push_back(c);
-            std::cout<<"secour 2"<<std::endl;
-                    return meilleursblows;
+            return meilleursblows;
 
-        }
-        else if(psts[0].x()==g.width()-1) //si c la derneire colone
-        {
-            blow c{position (psts[0].x()-1,psts[0].y()),position(psts[0].x(),psts[0].y())};
+        }else if(psts[psts.size()-1].x()<width()-1){ //si la derniere colonnes la plus haute n'est pas la colone width-1
+        //on jette la deniere  case à droite
+        blow c{position (psts[psts.size()-1].x()+1,psts[psts.size()-1].y()),position(psts[psts.size()-1].x(),psts[psts.size()-1].y())};
             meilleursblows.push_back(c);
-        std::cout<<"secour 3"<<std::endl;
-        return meilleursblows;
+            return meilleursblows;      
         }
+        
     }
     auto blows(lawful_blow(g.getGrid()));
     while(blows.size()==0){
@@ -753,7 +750,7 @@ std::vector<blow> ai::best_blow(int profondeur)
     {
         std::cout<<cp.p1.x()<<","<<cp.p1.y()<<")("<<cp.p2.x()<<","<<cp.p2.y()<<") \n";
         g.switch_cells_position(cp.p1, cp.p2);
-        int estimationblow =  minMax(profondeur,g);
+        int estimationblow =  Max(profondeur,g);
         std::cout<<"estimation : "<<estimationblow<<std::endl;
         g.switch_cells_position(cp.p1, cp.p2); // annuler le blow
 
@@ -767,10 +764,8 @@ std::vector<blow> ai::best_blow(int profondeur)
         }
     }
 
-    //voir fonctionne pas
-    if(meilleureEstimation<5){
-        std::cout<<"go"<<"--------------------------------------------------";
-                setAction(t_action::accelerate);
+    if(meilleureEstimation<5){ //le coup ne vaut pas le cout d'etre jouer vaut mieux faire accelerate la grille
+        meilleursblows.clear();
     }
     return meilleursblows;
 }
@@ -779,10 +774,18 @@ std::vector<blow> ai::best_blow(int profondeur)
 std::vector<t_action> ai::play_what()
 { 
     auto vec(best_blow(_depth));
-    auto i(nombreAleatoire(vec.size()-1));
+    std::vector<t_action> blows;
+
+    if(vec.size()>0){ // si il y'a au moins un bon coup à jouer
+    auto i(nombreAleatoire(vec.size()-1)); //on prend aleatoirement l'un des meilleur coup
     auto blow(vec[i]);
     std::cout<<"le meilleur blow est  :"<<blow.p1.x()<<","<<blow.p1.y()<<")("<<blow.p2.x()<<","<<blow.p2.y()<<") \n";
-    auto blows(getPath(blow.p1, blow.p2));
+     blows=getPath(blow.p1, blow.p2); //et on retourne le chamin d'actoin pour executer ce coup
+    }
+    else //sinon on retourne l'action accelerate 
+    {
+        blows.push_back(t_action::accelerate);
+    }
     return blows;
 }
 t_action ai::getBlow(t_num frame)
