@@ -8,7 +8,6 @@ TO RESOLVE
     bot vs standard ne fonctionne pas jsp prk !!!!!!!!!!! 
 TO DO :
     gerer les bug 
-    l'ia ne balance pas tte les cases trop hautes à completer
     enlever fonctions inutiles
     commentaires
     respecter la regles des trois sur tte les classe + fonction const si possible
