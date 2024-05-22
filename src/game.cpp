@@ -853,6 +853,11 @@ void ai::print_container()
     }
 }
 // remote_game
+/**
+ * @brief transforme un t_action en std::string
+ * @param action a transformer
+ * @return version string de l'action
+ */
 std::string actionToString(t_action action) {
     switch (action) {
     case t_action::go_right: return "go_right";
@@ -886,6 +891,11 @@ remote_game::remote_game(cordinate _max_height, cordinate _max_width, t_number_c
     game(_max_height, _max_width, colors), _socket()
 {}
 
+/**
+ * @brief envoi une action a travers la socket
+ * @param action a envoyer
+ * @return status de l'envoi
+ */
 sf::Socket::Status remote_game::send_action(const t_action &action)
 {
     sf::Packet packet;
@@ -897,6 +907,11 @@ sf::Socket::Status remote_game::send_action(const t_action &action)
     return send_status;
 }
 
+/**
+ * @brief reçoie un nombre a travers la socket
+ * @param nombre reçu
+ * @return status de la reception
+ */
 sf::Socket::Status remote_game::recieve_number(t_number &number)
 {   
     sf::Packet packet;
@@ -936,6 +951,11 @@ sf::Socket::Status remote_game::recieve_number(t_number &number)
     return recieve_status;
 }
 
+/**
+ * @brief envoi un nombre a travers la socket
+ * @param nombre a envoyer
+ * @return status de l'envoi
+ */
 sf::Socket::Status remote_game::send_number(const t_number &number)
 {
     sf::Packet packet;
@@ -944,6 +964,11 @@ sf::Socket::Status remote_game::send_number(const t_number &number)
     return send_status;
 }
 
+/**
+ * @brief reçoie une chaine de caractere a travers la socket
+ * @param chaine de caractere reçue
+ * @return status de la reception
+ */
 sf::Socket::Status remote_game::recieve_string(std::string &message)
 {
     sf::Packet packet;
@@ -962,6 +987,11 @@ sf::Socket::Status remote_game::recieve_string(std::string &message)
     return recieve_status;
 }
 
+/**
+ * @brief envoi une chaine de caractere a travers la socket
+ * @param chaine de caractere a envoyer
+ * @return status de l'envoi
+ */
 sf::Socket::Status remote_game::send_string(const std::string &message)
 {
     sf::Packet packet;
@@ -970,7 +1000,11 @@ sf::Socket::Status remote_game::send_string(const std::string &message)
     return send_status;
 }
 
-
+/**
+ * @brief reçoie une action a travers la socket
+ * @param action reçue
+ * @return status de la reception
+ */
 sf::Socket::Status remote_game::recieve_action(t_action &action)
 {
     sf::Packet packet;
@@ -1016,10 +1050,11 @@ server::server(unsigned int port, cordinate _max_height, cordinate _max_width, t
 {
     _listner.setBlocking(false);
     _listner.listen(_port);
-    // if (_listner.listen(_port) != sf::Socket::Done)
-    //     std::cout << "Erreur ecoute\n"; //TODO: return une exception pour pouvoir afficher une erreur
 }
 
+/**
+ * @brief accapte une connexion entrante (et la mettant en non bloquante)
+ */
 void server::connect_client()
 {
     _socket.setBlocking(false);
@@ -1028,14 +1063,19 @@ void server::connect_client()
         std::cout << "Client connecté " << _socket.getRemoteAddress() << ":" << _socket.getLocalPort() << "\n";
     }
 }
+
 client::client(cordinate _max_height, cordinate _max_width, t_number_color colors) :
     remote_game(_max_height, _max_width)
 {}
 
+/**
+ * @brief envoi une demande de connexion
+ * @param server_ip adresse ip de la destination
+ * @param port port de destination
+ */
 void client::connect(const sf::IpAddress &server_ip, unsigned int port)
 {
     _socket.setBlocking(false);
     std::cout << "Connexion sur " << server_ip.toString() << ":" << port << "\n";
     _socket.connect(server_ip, port);
 }
-
