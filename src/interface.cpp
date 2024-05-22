@@ -1472,9 +1472,9 @@ void interface::menu_lan(bool disconnected){
             waiting_circle.setTexture(_textures[t_textures_to_index(t_textures::check_mark)]);
             _window.draw(waiting_circle);
 
-            if (clock_since_connection.getElapsedTime().asSeconds() >= 0){ // on attend 2 secondes avant de jouer // TODO: modifier
+            if (clock_since_connection.getElapsedTime().asSeconds() >= 4){ // on attend 2 secondes avant de jouer // TODO: modifier
                 _window.close();
-                chat();
+                play();
             }
         }
 
