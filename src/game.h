@@ -114,7 +114,7 @@ public:
     t_num sum_color_distance(grid const & grille) const;
     int estimation(game const &g)  ;
     std::vector<blow> lawful_blow(grid const &grille) const; //retourne tout les coups licites sauf si deux cases vides aucun interet
-    int minMax(int profondeur,game const &g);
+    int  Max(int profondeur,game const &g);
     std::vector<blow> best_blow(int profondeur) ;
     std::vector<t_action> play_what() ;
     bool is_ai() const override{return true;}
