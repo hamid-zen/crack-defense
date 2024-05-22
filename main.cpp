@@ -5,7 +5,7 @@
 //TODO: tout traduire en une seule langue
 int main(){
     interface _interface;
-    _interface.menu();
+    _interface.intro();
     //_interface.play();
     return 0;
 }
