@@ -1473,7 +1473,6 @@ void interface::menu_lan(bool disconnected){
             _window.draw(waiting_circle);
 
             if (clock_since_connection.getElapsedTime().asSeconds() >= 4){ // on attend 2 secondes avant de jouer // TODO: modifier
-                _window.close();
                 play();
             }
         }
