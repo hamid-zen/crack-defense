@@ -211,7 +211,7 @@ void interface::play()
     auto angle(0);
 
     // On init la partie affichage du score
-    sf::Text _text_score_1 = sf::Text("SCORE JOUEUR 1",_font,60);
+    sf::Text _text_score_1 = sf::Text("SCORE 1st PLAYER",_font,60);
     _text_score_1.setOrigin(sf::Vector2f((_text_score_1.getGlobalBounds().width)/(2*_text_score_1.getScale().x),(_text_score_1.getGlobalBounds().height)/(2*_text_score_1.getScale().y)));
     _text_score_1.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/20));
     _text_score_1.setFillColor(color_line);
@@ -221,7 +221,7 @@ void interface::play()
     _number_score_1.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/20 + 100));
     _number_score_1.setFillColor(color_line);
 
-    sf::Text _text_score_2 = sf::Text("SCORE JOUEUR 2",_font,60);
+    sf::Text _text_score_2 = sf::Text("SCORE 2nd PLAYER",_font,60);
     _text_score_2.setOrigin(sf::Vector2f((_text_score_2.getGlobalBounds().width)/(2*_text_score_2.getScale().x),(_text_score_2.getGlobalBounds().height)/(2*_text_score_2.getScale().y)));
     _text_score_2.setPosition(sf::Vector2f(play_tab_width+(score_tab_width/2), total_height/1.3));
     _text_score_2.setFillColor(color_line);
