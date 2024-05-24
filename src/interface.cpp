@@ -12,7 +12,7 @@ interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), 
  */
 void interface::intro()
 {
-    unsigned int gif_frames_number = 61;
+    unsigned int gif_frames_number = 91;
     unsigned int current_frame = 0;
     std::vector<sf::Texture> gif_frames;
 
