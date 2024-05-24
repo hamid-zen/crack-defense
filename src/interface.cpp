@@ -21,27 +21,48 @@ void interface::intro()
     // on charge les textures
     for (unsigned int i(0); i < gif_frames_number; i++) {
         sf::Texture current_frame;
-        current_frame.loadFromFile("../animations/intro/frame_" + std::to_string(i) + ".jpg");
+        current_frame.loadFromFile("../animations/intro/frame_" + std::to_string(i) + ".png");
         gif_frames.push_back(current_frame);
     }
-
+    
+    // on init la pemiere texture et on place le sprite
     image_to_show.setTexture(gif_frames[current_frame]);
+    image_to_show.setOrigin(image_to_show.getLocalBounds().width/2, image_to_show.getLocalBounds().height/2);
+    image_to_show.setPosition(_window.getSize().x/2, _window.getSize().y/2);
+    
+    // on init le rectangle qui va s'occuper du fondu
+    sf::RectangleShape fadin_rectangle(sf::Vector2f(image_to_show.getLocalBounds().width, image_to_show.getLocalBounds().height));
+    fadin_rectangle.setOrigin(fadin_rectangle.getLocalBounds().width/2, fadin_rectangle.getLocalBounds().height/2);
+    fadin_rectangle.setPosition(_window.getSize().x/2, _window.getSize().y/2);
+
+    auto opacity = 0;
+    bool fade = false;
 
     while(_window.isOpen()){
 
         sf::Event e;
+        
         while (_window.pollEvent(e)){
             if (e.type == sf::Event::Closed)
                 _window.close();
             else if (e.type == sf::Event::KeyPressed || e.type == sf::Event::MouseButtonPressed)
-                menu();
+                fade = true;
         }
 
         // on choisit la texture a afficher
         current_frame = (current_frame+1)%gif_frames_number;
         image_to_show.setTexture(gif_frames[current_frame]);
+        
+        fadin_rectangle.setFillColor(sf::Color(0, 0, 0, opacity));
+        
+        // on met a jour l'opacité si on peut toujours (< 255) sinon on lance le jeu
+        if (opacity > 245)
+            menu();
+        else if (fade == true)
+            opacity += 7;
 
         _window.draw(image_to_show);
+        _window.draw(fadin_rectangle);
         _window.display();
     }
 }
