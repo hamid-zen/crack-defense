@@ -5,7 +5,8 @@ a quelle point on doit detailler la partie technique ?
 que faire maitenant ? on a le temp de rajouter des fonctionnalité ?
 TO RESOLVE 
     les malus ne se generent pas automatiquement
-    bot vs standard ne fonctionne pas jsp prk !!!!!!!!!!! 
+    bug
+    changer sky_blue car trop resemblant a blue
 TO DO :
     gerer les bug 
     enlever fonctions inutiles
