@@ -272,6 +272,8 @@ void grid::generate_garbage(std::vector<position*> & malus){
     // }
     // malus.push_back(new position(debut+taille-1,0));
     // _board[(debut+taille-1)]=std::make_unique<malusCell>(t_colors::garbage,true,false);
+
+    
     _board[2]=std::make_unique<malusCell>(t_colors::garbage,false,true);
     _board[3]=std::make_unique<malusCell>(t_colors::garbage,true,true);
     _board[4]=std::make_unique<malusCell>(t_colors::garbage,true,true);

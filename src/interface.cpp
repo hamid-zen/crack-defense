@@ -292,8 +292,21 @@ void interface::play()
             direction = sf::Vector2f(sco.x()+20-pos.x(),sco.y()+20-pos.y());
         }
     };
-
     std::vector<score_particle *> particles_p1, particles_p2;
+
+    struct combo {
+        position pos ;
+        float vitesse ;
+        float acceleration;
+        combo(position p,float vit):pos(p),vitesse(vit) {
+            acceleration =  -0.4f;
+        }
+    };
+    std::vector<combo *>combos;
+
+    sf::Text _combo_text = sf::Text(sf::String("X1"),_font,25);
+    _combo_text.setOrigin(sf::Vector2f((_combo_text.getGlobalBounds().width)/(2*_combo_text.getScale().x),(_combo_text.getGlobalBounds().height)/(2*_combo_text.getScale().y)));
+
 
     while (_window.isOpen() && (_arbitre->getDelays(true).activated || (_arbitre->jeu_duo()&& _arbitre->getDelays(false).activated )))
     {
@@ -437,8 +450,13 @@ void interface::play()
 
                         if (s_tile.getScale().x <= 0.01)
                             particles_p1.push_back(new score_particle(position(s_tile.getPosition().x,s_tile.getPosition().y),position(_number_score_1.getPosition().x, _number_score_1.getPosition().y),0.01));
+                        if (s_tile.getScale().x > 0.9){
+                            //std::cout<<"combo push\n";
+                            combos.push_back(new combo(position(s_tile.getPosition().x,s_tile.getPosition().y),10.0f));
+                        }
                     }
                 }
+                
 
                 _window.draw(s_tile);
                 s_tile.setRotation(0);
@@ -462,6 +480,26 @@ void interface::play()
 
             s_tile.setPosition(_width_cell * j+thickness_line + _width_cell/2, _width_cell * _arbitre->player1().height() - _arbitre->player1().grid_dy()+thickness_line+_width_cell/2); // adapter la vitesse par rapport a la taille de la fenetre
             _window.draw(s_tile);
+        }
+
+        auto it = combos.begin();
+        while (it!=combos.end()){
+            if((*it)->vitesse<0){
+                delete *it ;
+                it=combos.erase(it);
+            }
+            else {
+                std::cout<<(*it)->pos.x()<<"   "<<(*it)->pos.y() - (*it)->vitesse ;
+                (*it)->pos.sety((*it)->pos.y() - (*it)->vitesse);
+                _combo_text.setPosition((*it)->pos.x(),(*it)->pos.y()  )  ;
+                _combo_text.setString("X"+std::to_string(_arbitre->getDelays().combo));
+                (*it)->vitesse = (*it)->vitesse + (*it)->acceleration;
+                std::cout<<(*it)->vitesse<<std::endl;
+                _window.draw(_combo_text);
+                it++;
+            }
+            
+            
         }
 
         // Affichage second joueur

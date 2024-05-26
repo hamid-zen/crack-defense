@@ -8,10 +8,10 @@ arbitre::arbitre(t_number ind, typeplayer plyr1, typeplayer plyr2, unsigned int 
 
 {
     delay_player1 = std::make_unique<delay>();
-    *delay_player1 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0,true,-1};
+    *delay_player1 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0, true, -1,0};
 
     delay_player2 = std::make_unique<delay>();
-    *delay_player2 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0,true,-1};
+    *delay_player2 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0, true, -1,0};
 
     bool jeu_reseau(plyr1 == typeplayer::client || plyr1 == typeplayer::server);
     bool server_game(plyr1 == typeplayer::server);
@@ -151,13 +151,13 @@ void arbitre::update(t_action x, bool first_player)
     }
     else if (first_player && delay_player1->activated)
     {
-        std::cout<<"first \n";
+        //std::cout << "first \n";
         _player1->setAction(x);
         updatePlayer(_player1->getBlow(getFrame()), true);
     }
-    else if(jeu_duo() && !first_player and delay_player2->activated)
+    else if (jeu_duo() && !first_player and delay_player2->activated)
     {
-        std::cout<<"second \n";
+        //std::cout << "second \n";
         _player2->setAction(x);
         updatePlayer(_player2->getBlow(getFrame()), false);
     }
@@ -165,10 +165,11 @@ void arbitre::update(t_action x, bool first_player)
 
 void arbitre::updatePlayer(t_action x, bool first_player)
 {
-    game * player_to_update = ((first_player) ? (_player1.get()) : (_player2.get()));
-    delay * delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
+    game *player_to_update = ((first_player) ? (_player1.get()) : (_player2.get()));
+    delay *delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
 
-    player_to_update->inc_score(delay_to_update->score);
+    player_to_update->inc_score(delay_to_update->score * delay_to_update->combo);
+    std::cout<<delay_to_update->score<<"//"<<delay_to_update->combo<<std::endl;
     delay_to_update->score = 0;
     // player_to_update->update_garbage_height();
     auto it = delay_to_update->cells_slide.begin();
@@ -181,9 +182,11 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         }
         else
         {
-            if (((*player_to_update)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and player_to_update->cellDy(position(cells->x(), cells->y() + 1)) == 0 and player_to_update->cellDy(*cells) == 0) )
+            if (((*player_to_update)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and player_to_update->cellDy(position(cells->x(), cells->y() + 1)) == 0 and player_to_update->cellDy(*cells) == 0))
             {
-                std::cout << "erased: " << toString_color((*player_to_update)(*cells)) << ", at position: " << cells->x() << ", " << cells->y() << "\n";
+                if(first_player)std::cout<<"player1 : ";
+                else std::cout<<"player2 :"; 
+                std::cout <<"erased: " << toString_color((*player_to_update)(*cells)) << ", at position: " << cells->x() << ", " << cells->y() << "\n";
                 delete cells;
                 it = delay_to_update->cells_slide.erase(it); // Supprimer l'élément et mettre à jour l'itérateur
             }
@@ -214,7 +217,7 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         }
         else
         {
-            if ((player_to_update->cellDy(*cells)==0 && player_to_update->is_garbage(*cells) and !player_to_update->hanging_malus_slide(*cells,delay_to_update->cells_slide)))
+            if ((player_to_update->cellDy(*cells) == 0 && player_to_update->is_garbage(*cells) and !player_to_update->hanging_malus_slide(*cells, delay_to_update->cells_slide)))
             {
                 std::cout << "erased: " << toString_color((*player_to_update)(*cells)) << ", at position: " << cells->x() << ", " << cells->y() << "\n";
                 delete cells;
@@ -305,20 +308,31 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         }
         case t_action::change_direction:
         {
-            player_to_update->rotate_target();
+            if(!delay_to_update->cells_switch1 && !delay_to_update->cells_switch2)
+                player_to_update->rotate_target();
             break;
         }
         case t_action::exchange:
         {
             if (!player_to_update->target_cells_empty() and delay_to_update->cells_switch1 == nullptr and delay_to_update->cells_switch2 == nullptr and !(player_to_update->target_verticale() and player_to_update->one_case_empty()) and !(player_to_update->is_garbage(player_to_update->getcell1target()) || player_to_update->is_garbage(player_to_update->getcell2target())))
             {
+                position first_cell = position(player_to_update->getcell1target().x(), player_to_update->getcell1target().y());
+                position snd_cell =  position(player_to_update->getcell2target().x(), player_to_update->getcell2target().y());
+                auto it = std::find_if(delay_to_update->cells_align.begin(), delay_to_update->cells_align.end(), [&first_cell](position & pos)
+                                       { return pos == first_cell; });
+                auto it2 = std::find_if(delay_to_update->cells_align.begin(), delay_to_update->cells_align.end(), [&snd_cell](position & pos)
+                                        { return pos == snd_cell; });
+                if (it == delay_to_update->cells_align.end() && it2 == delay_to_update->cells_align.end() && player_to_update->cellDx(first_cell) == 0 && player_to_update->cellDy(first_cell) == 0 && player_to_update->cellDx(snd_cell) == 0 && player_to_update->cellDy(snd_cell) == 0)
+                {
 
-                if (player_to_update->target_verticale())
-                    delay_to_update->switch_vertical = true;
-                else
-                    delay_to_update->switch_vertical = false;
-                delay_to_update->cells_switch1 = new position(player_to_update->getcell1target().x(), player_to_update->getcell1target().y());
-                delay_to_update->cells_switch2 = new position(player_to_update->getcell2target().x(), player_to_update->getcell2target().y());
+                    if (player_to_update->target_verticale())
+                        delay_to_update->switch_vertical = true;
+                    else
+                        delay_to_update->switch_vertical = false;
+
+                    delay_to_update->cells_switch1 = new position(player_to_update->getcell1target().x(), player_to_update->getcell1target().y());
+                    delay_to_update->cells_switch2 = new position(player_to_update->getcell2target().x(), player_to_update->getcell2target().y());
+                }
             }
 
             break;
@@ -348,7 +362,7 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         if (player_to_update->grid_dy() >= 64)
         {
             player_to_update->add_new_row();
-            increment_delays_y_pos();
+            increment_delays_y_pos(delay_to_update);
 
             // On remet a zero grid_dy
             player_to_update->setGrid_dy(0);
@@ -366,13 +380,13 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         if (player_to_update->grid_dy() >= 64)
         {
             player_to_update->add_new_row(150);
-            increment_delays_y_pos();
+            increment_delays_y_pos(delay_to_update);
 
             // On remet a zero grid_dy
             player_to_update->setGrid_dy(0);
             delay_to_update->newline = false;
             _vertical_speed = delay_to_update->oldspeed;
-            std::cout << "1";
+            
         }
         else
         {
@@ -386,11 +400,13 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     auto v(player_to_update->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
     if (v.size() >= 3)
     {
+        
         if (delay_to_update->last_frame_alignment == -1) // pas encore initialisé
         {
-            delay_to_update->last_frame_alignment = getFrame();
+            
+            //delay_to_update->last_frame_alignment = getFrame();
         }
-        else if (((getFrame() - (delay_to_update->last_frame_alignment) < 90) || (v.size() > 4)) && getFrame() - delay_to_update->last_garbage > 60) // si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
+        else if ((getFrame() - (delay_to_update->last_frame_alignment) < 90) ) // si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
         {
             /* if(jeu_duo()) //si jeu a deux joueur les alignement causent des malus à l'adversaire
             {
@@ -401,19 +417,24 @@ void arbitre::updatePlayer(t_action x, bool first_player)
             delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
             delay_to_update->last_garbage=getFrame();
                player_to_update->add_garbage(delay_to_update->cells_slide);}*/
+           
+            //delay_to_update->last_frame_alignment = getFrame();
+        }
+        else{
+            
         }
 
-        if (delay_to_update->last_garbage > 0)
-        {
-            std::cout << "cells slide " << std::endl;
-            for (auto e : delay_to_update->cells_slide)
-            {
-                std::cout << e->x() << ',' << e->y() << std::endl;
-            }
-            player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
+        // if (delay_to_update->last_garbage > 0)
+        // {
+            
+        //     // for (auto e : delay_to_update->cells_slide)
+        //     // {
+        //     //     std::cout << e->x() << ',' << e->y() << std::endl;
+        //     // }
+        //     player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
 
-            // ajouter que les cases glissent
-        }
+        //     // ajouter que les cases glissent
+        // }
 
         v = player_to_update->alignment();
     }
@@ -422,14 +443,20 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     {
         delay_to_update->angle = 0;
         delay_to_update->scale = 1;
-        for (auto it : delay_to_update->cells_align)
-        {
-            std::cout << it.x() << "//" << it.y() << std::endl;
+        if(delay_to_update->combo==0){
+            delay_to_update->combo++;
         }
-        std::cout << "fin";
+        else if(getFrame()-delay_to_update->last_frame_alignment<120){
+            delay_to_update->combo++;
+            delay_to_update->last_frame_alignment = getFrame();
+        }
+        else {
+            delay_to_update->combo=1;
+        }
         // player_to_update->inc_score(getdelay_to_update().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
+            
             auto col(v[i].x());
             player_to_update->delete_cell(v[i]);
             player_to_update->slideColumn(col, delay_to_update->cells_slide);
@@ -440,24 +467,29 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         delay_to_update->angle += 24;
         delay_to_update->scale -= 0.1;
     }
-    if(player_to_update->is_lost())delay_to_update->activated=false;
-    if(first_player and jeu_duo() and !delay_player2->activated ){
-        if( delay_player1->time_left==-1)
-            delay_player1->time_left=600;
-        else if( delay_player1->time_left==0){
-            delay_player1->activated=false;
+    if (player_to_update->is_lost())
+        delay_to_update->activated = false;
+    if (first_player and jeu_duo() and !delay_player2->activated)
+    {
+        if (delay_player1->time_left == -1)
+            delay_player1->time_left = 600;
+        else if (delay_player1->time_left == 0)
+        {
+            delay_player1->activated = false;
         }
-        else 
-             delay_player1->time_left--;
+        else
+            delay_player1->time_left--;
     }
-    if(!first_player and jeu_duo() and !delay_player1->activated ){
-        if( delay_player2->time_left==-1)
-            delay_player2->time_left=600;
-        else if( delay_player2->time_left==0){
-            delay_player2->activated=false;
+    if (!first_player and jeu_duo() and !delay_player1->activated)
+    {
+        if (delay_player2->time_left == -1)
+            delay_player2->time_left = 600;
+        else if (delay_player2->time_left == 0)
+        {
+            delay_player2->activated = false;
         }
-        else 
-             delay_player2->time_left--;
+        else
+            delay_player2->time_left--;
     }
 }
 
@@ -572,10 +604,8 @@ sf::Socket::Status arbitre::recieve_string(std::string &message)
     return sf::Socket::Error; // TODO: peut etre remplacer par une exception
 }
 
-void arbitre::increment_delays_y_pos(bool first_player)
+void arbitre::increment_delays_y_pos(delay * delay_to_update)
 {
-    delay *delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
-
     for (auto &it : delay_to_update->cells_align)
     {
         it.sety(it.y() - 1);

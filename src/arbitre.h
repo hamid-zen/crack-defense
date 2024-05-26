@@ -25,6 +25,7 @@ struct delay {
     char score;
     bool activated;
     times time_left;
+    t_number combo;
     std::vector<position *> cells_slide ;
     std::vector<position > cells_align ;
 };
@@ -52,7 +53,7 @@ public:
     void setVerticalSpeed_Med(){_vertical_speed = 1.5;};  
     void setVerticalSpeed_Hard(){_vertical_speed = 2;};
     bool jeu_duo() const ;
-    void increment_delays_y_pos(bool first_player = true ) ;
+    void increment_delays_y_pos(delay * delay_to_update) ;
     bool lost() const ;
 
     bool jeu_res() const;

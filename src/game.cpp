@@ -407,18 +407,18 @@ void game::slideColumn(cordinate x, std::vector<position *> &cells)
         if (std::find_if(cells.begin(), cells.end(), [&](position* p){ return *p == *position_to_add; }) == cells.end()){
             if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y))){
                 cells.push_back(new position(x, y));
-                std::cout << "added: " << toString_color(_grid(position(x,y))) << ", at position " << x << ", " << y << "\n";
+                //std::cout << "added: " << toString_color(_grid(position(x,y))) << ", at position " << x << ", " << y << "\n";
             }
             else if (is_garbage(position(x,y))) {
-                std::cout << "position: x= " << x << ", y= "<< y << "\n";
-                std::cout << "garbage: " << is_garbage(position(x,y)) << ", hanging: "<< hanging_malus(position(x,y)) << "\n";
+                //std::cout << "position: x= " << x << ", y= "<< y << "\n";
+                //std::cout << "garbage: " << is_garbage(position(x,y)) << ", hanging: "<< hanging_malus(position(x,y)) << "\n";
             }
             if(is_garbage(position(x,y)) /* and hanging_malus(position(x,y)) */){
-                std::cout << "garbage: x= " << x << ", y= "<< y << "\n";
+                //std::cout << "garbage: x= " << x << ", y= "<< y << "\n";
                 auto x_first_malus = firstMalus(position(x,y)).x();
                 auto malus_size = getsize(position(x,y));
                 for(t_number i(x_first_malus);i < malus_size+x_first_malus;i++){
-                    std::cout << "added: " << toString_color(_grid(position(i,y))) << ", at position " << i << ", " << y << "\n";
+                    //std::cout << "added: " << toString_color(_grid(position(i,y))) << ", at position " << i << ", " << y << "\n";
                     cells.push_back(new position(i,y));
                 }
             }
@@ -745,13 +745,13 @@ std::vector<blow> ai::best_blow(int profondeur)
         blows=lawful_blow(getGrid());
     }
     int meilleureEstimation = std::numeric_limits<int>::min();
-    std::cout<<"blow posible : \n";
+    //std::cout<<"blow posible : \n";
     for (auto cp : blows)
     {
-        std::cout<<cp.p1.x()<<","<<cp.p1.y()<<")("<<cp.p2.x()<<","<<cp.p2.y()<<") \n";
+        //std::cout<<cp.p1.x()<<","<<cp.p1.y()<<")("<<cp.p2.x()<<","<<cp.p2.y()<<") \n";
         g.switch_cells_position(cp.p1, cp.p2);
         int estimationblow =  Max(profondeur,g);
-        std::cout<<"estimation : "<<estimationblow<<std::endl;
+        //std::cout<<"estimation : "<<estimationblow<<std::endl;
         g.switch_cells_position(cp.p1, cp.p2); // annuler le blow
 
         if (estimationblow > meilleureEstimation)
@@ -779,7 +779,7 @@ std::vector<t_action> ai::play_what()
     if(vec.size()>0){ // si il y'a au moins un bon coup à jouer
     auto i(nombreAleatoire(vec.size()-1)); //on prend aleatoirement l'un des meilleur coup
     auto blow(vec[i]);
-    std::cout<<"le meilleur blow est  :"<<blow.p1.x()<<","<<blow.p1.y()<<")("<<blow.p2.x()<<","<<blow.p2.y()<<") \n";
+    //std::cout<<"le meilleur blow est  :"<<blow.p1.x()<<","<<blow.p1.y()<<")("<<blow.p2.x()<<","<<blow.p2.y()<<") \n";
      blows=getPath(blow.p1, blow.p2); //et on retourne le chamin d'actoin pour executer ce coup
     }
     else //sinon on retourne l'action accelerate 
@@ -795,12 +795,12 @@ t_action ai::getBlow(t_num frame)
     {
         if (path.size() == 0)
         {
-            std::cout << "path calculated with grid: \n";
-            show();
+            //std::cout << "path calculated with grid: \n";
+            //show();
             path = play_what();
         } 
         t_action act(path[0]);
-        print_container();
+        //print_container();
         path.erase(path.begin());
         return (act);
     }
@@ -814,39 +814,39 @@ void ai::setAction(t_action const & a) {
 }
 void ai::print_container()
 {
-    std::cout << "chemin \n";
+    //std::cout << "chemin \n";
     for (auto x : path)
     {
         switch (x)
         {
         case t_action::go_right:
         {
-            std::cout << "Right ";
+            //std::cout << "Right ";
             break;
         }
         case t_action::go_left:
         {
-            std::cout << "left ";
+            //std::cout << "left ";
             break;
         }
         case t_action::go_up:
         {
-            std::cout << "up ";
+            //std::cout << "up ";
             break;
         }
         case t_action::go_down:
         {
-            std::cout << "Down ";
+            //std::cout << "Down ";
             break;
         }
         case t_action::change_direction:
         {
-            std::cout << "Rotate ";
+            //std::cout << "Rotate ";
             break;
         }
         case t_action::exchange:
         {
-            std::cout << "swicth ";
+            //std::cout << "swicth ";
             break;
         }
         }
