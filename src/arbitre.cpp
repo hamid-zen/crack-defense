@@ -168,8 +168,6 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     game *player_to_update = ((first_player) ? (_player1.get()) : (_player2.get()));
     delay *delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
     if(delay_to_update->score_signal){
-        std::cout<<"yes\n";
-        std::cout<<delay_to_update->score<<" "<<delay_to_update->combo;
         player_to_update->inc_score(delay_to_update->score );
         delay_to_update->score = 0;
         delay_to_update->score_signal=false;
