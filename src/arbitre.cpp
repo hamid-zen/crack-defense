@@ -8,10 +8,10 @@ arbitre::arbitre(t_number ind, typeplayer plyr1, typeplayer plyr2, unsigned int 
 
 {
     delay_player1 = std::make_unique<delay>();
-    *delay_player1 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0, true, -1,0};
+    *delay_player1 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0, true, -1,0,false};
 
     delay_player2 = std::make_unique<delay>();
-    *delay_player2 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0, true, -1,0};
+    *delay_player2 = {false, nullptr, nullptr, 0, 0, 0, false, _vertical_speed, -1, 0, 0, 1, 0, true, -1,0,false};
 
     bool jeu_reseau(plyr1 == typeplayer::client || plyr1 == typeplayer::server);
     bool server_game(plyr1 == typeplayer::server);
@@ -167,10 +167,13 @@ void arbitre::updatePlayer(t_action x, bool first_player)
 {
     game *player_to_update = ((first_player) ? (_player1.get()) : (_player2.get()));
     delay *delay_to_update = ((first_player) ? (delay_player1.get()) : (delay_player2.get()));
-
-    player_to_update->inc_score(delay_to_update->score * delay_to_update->combo);
-    std::cout<<delay_to_update->score<<"//"<<delay_to_update->combo<<std::endl;
-    delay_to_update->score = 0;
+    if(delay_to_update->score_signal){
+        std::cout<<"yes\n";
+        std::cout<<delay_to_update->score<<" "<<delay_to_update->combo;
+        player_to_update->inc_score(delay_to_update->score );
+        delay_to_update->score = 0;
+        delay_to_update->score_signal=false;
+    }
     // player_to_update->update_garbage_height();
     auto it = delay_to_update->cells_slide.begin();
     while (it != delay_to_update->cells_slide.end())
@@ -458,7 +461,7 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         // player_to_update->inc_score(getdelay_to_update().cells_align.size());
         for (std::size_t i(0); i < v.size(); i++)
         {
-            
+            delay_to_update->score+=1*delay_to_update->combo;
             auto col(v[i].x());
             player_to_update->delete_cell(v[i]);
             player_to_update->slideColumn(col, delay_to_update->cells_slide);

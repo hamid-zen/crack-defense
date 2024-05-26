@@ -23,9 +23,11 @@ struct delay {
     t_number angle;
     float scale;
     char score;
+
     bool activated;
     times time_left;
-    t_number combo;
+    char combo;
+    bool score_signal;
     std::vector<position *> cells_slide ;
     std::vector<position > cells_align ;
 };

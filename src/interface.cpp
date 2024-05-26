@@ -496,13 +496,13 @@ void interface::play()
                 it=combos.erase(it);
             }
             else {
-                std::cout<<(*it)->pos.x()<<"   "<<(*it)->pos.y() - (*it)->vitesse ;
+                //std::cout<<(*it)->pos.x()<<"   "<<(*it)->pos.y() - (*it)->vitesse ;
                 (*it)->pos.sety((*it)->pos.y() - (*it)->vitesse);
                 _combo_text.setPosition((*it)->pos.x(),(*it)->pos.y()  )  ;
                 _combo_text.setString("X"+std::to_string(_arbitre->getDelays().combo));
                 _combo_text.setFillColor(generateRandomColor());
                 (*it)->vitesse = (*it)->vitesse + (*it)->acceleration;
-                std::cout<<(*it)->vitesse<<std::endl;
+               // std::cout<<(*it)->vitesse<<std::endl;
                 _window.draw(_combo_text);
                 it++;
             }
@@ -590,7 +590,7 @@ void interface::play()
             else {
                 particles_p1.erase(it);
                 it--;
-                _arbitre->getDelays().score++;
+                _arbitre->getDelays().score_signal=true;
                 _sound_xp.play();
             }
 
@@ -613,7 +613,7 @@ void interface::play()
             else {
                 particles_p2.erase(it);
                 it--;
-                _arbitre->getDelays(false).score++;
+                _arbitre->getDelays(false).score_signal=true;
                 _sound_xp.play();
             }
 
