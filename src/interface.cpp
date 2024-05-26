@@ -1,4 +1,11 @@
 #include "interface.h"
+#include <random>
+
+
+sf::Color generateRandomColor() {
+    return sf::Color(rand() % 256, rand() % 256, rand() % 256);
+}
+
 
 interface::interface():_width(6), _difficulty(4), _textures(40, sf::Texture()), _arbitre(), _window(sf::VideoMode(64*6+20, 64*12+20), "Habibi", sf::Style::Titlebar | sf::Style::Close) {
     _window.setFramerateLimit(30);
@@ -493,6 +500,7 @@ void interface::play()
                 (*it)->pos.sety((*it)->pos.y() - (*it)->vitesse);
                 _combo_text.setPosition((*it)->pos.x(),(*it)->pos.y()  )  ;
                 _combo_text.setString("X"+std::to_string(_arbitre->getDelays().combo));
+                _combo_text.setFillColor(generateRandomColor());
                 (*it)->vitesse = (*it)->vitesse + (*it)->acceleration;
                 std::cout<<(*it)->vitesse<<std::endl;
                 _window.draw(_combo_text);

@@ -401,40 +401,40 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     if (v.size() >= 3)
     {
         
-        if (delay_to_update->last_frame_alignment == -1) // pas encore initialisé
-        {
-            
-            //delay_to_update->last_frame_alignment = getFrame();
-        }
-        else if ((getFrame() - (delay_to_update->last_frame_alignment) < 90) ) // si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
-        {
-            /* if(jeu_duo()) //si jeu a deux joueur les alignement causent des malus à l'adversaire
-            {
-            delay_to_update2.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-            delay_to_update2.last_garbage=getFrame();
-               _player2->add_garbage(delay_to_update2.cells_slide);}
-            else{
-            delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-            delay_to_update->last_garbage=getFrame();
-               player_to_update->add_garbage(delay_to_update->cells_slide);}*/
-           
-            //delay_to_update->last_frame_alignment = getFrame();
-        }
-        else{
-            
-        }
-
-        // if (delay_to_update->last_garbage > 0)
+        // if (delay_to_update->last_frame_alignment == -1) // pas encore initialisé
         // {
             
-        //     // for (auto e : delay_to_update->cells_slide)
-        //     // {
-        //     //     std::cout << e->x() << ',' << e->y() << std::endl;
-        //     // }
-        //     player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
-
-        //     // ajouter que les cases glissent
+        //     //delay_to_update->last_frame_alignment = getFrame();
         // }
+        // else if ((getFrame() - (delay_to_update->last_frame_alignment) < 90) ) // si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
+        // {
+        //     /* if(jeu_duo()) //si jeu a deux joueur les alignement causent des malus à l'adversaire
+        //     {
+        //     delay_to_update2.last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+        //     delay_to_update2.last_garbage=getFrame();
+        //        _player2->add_garbage(delay_to_update2.cells_slide);}
+        //     else{
+        //     delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+        //     delay_to_update->last_garbage=getFrame();
+        //        player_to_update->add_garbage(delay_to_update->cells_slide);}*/
+           
+        //     //delay_to_update->last_frame_alignment = getFrame();
+        // }
+        // else{
+            
+        // }
+
+        // // if (delay_to_update->last_garbage > 0)
+        // // {
+            
+        // //     // for (auto e : delay_to_update->cells_slide)
+        // //     // {
+        // //     //     std::cout << e->x() << ',' << e->y() << std::endl;
+        // //     // }
+        // //     player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
+
+        // //     // ajouter que les cases glissent
+        // // }
 
         v = player_to_update->alignment();
     }
@@ -443,14 +443,16 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     {
         delay_to_update->angle = 0;
         delay_to_update->scale = 1;
-        if(delay_to_update->combo==0){
+        if( delay_to_update->combo==0 || delay_to_update->last_frame_alignment==-1){
             delay_to_update->combo++;
+            delay_to_update->last_frame_alignment=getFrame();
         }
         else if(getFrame()-delay_to_update->last_frame_alignment<120){
             delay_to_update->combo++;
             delay_to_update->last_frame_alignment = getFrame();
         }
         else {
+            delay_to_update->last_frame_alignment=getFrame();
             delay_to_update->combo=1;
         }
         // player_to_update->inc_score(getdelay_to_update().cells_align.size());
