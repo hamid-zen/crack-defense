@@ -246,44 +246,22 @@ std::vector<int> vec;
 
 
 void grid::generate_garbage(std::vector<position*> & malus){
-    // auto vec(max_column());
-    // int taille ;
-    // int debut;
-    // cordinate j(vec[0].y()-1);
-    // if(vec[0].x()==max_width()-1){ //si la colone la plus haute est la derniere
-    //     debut=vec[0].x()-1; //on commence le malus dans la colone d'avant
-    //     taille=2;
-    // }else {
-    //     debut=vec[0].x();
-    //     if(vec.size()>1){
-    //         taille=vec[vec.size()-1].x()-vec[0].x()+1;
-    //     }else{
+    auto highest_columns(highest_column());
+    auto start(highest_columns[0]), end((highest_columns.size() == 1) ? _max_width-1 : highest_columns.back()), size(end-start+1);
+    std::cout << "start: " << start << " - end: " << end << "\n";
 
-    //         taille= nombreAleatoire(_max_width-vec[0].x())+1;
-    //     }
-    // }
-    
-    // _board[debut]=std::make_unique<malusCell>(t_colors::garbage,false,true);
-    // malus.push_back(new position(debut,0));
-
-    // for(int i(1);i<(taille-1);i++){
-    //     _board[(debut+i)]=std::make_unique<malusCell>(t_colors::garbage,true,true);
-    //     malus.push_back(new position(debut+i,0));
-    // }
-    // malus.push_back(new position(debut+taille-1,0));
-    // _board[(debut+taille-1)]=std::make_unique<malusCell>(t_colors::garbage,true,false);
-
-    
-    _board[2]=std::make_unique<malusCell>(t_colors::garbage,false,true);
-    _board[3]=std::make_unique<malusCell>(t_colors::garbage,true,true);
-    _board[4]=std::make_unique<malusCell>(t_colors::garbage,true,true);
-    _board[5]=std::make_unique<malusCell>(t_colors::garbage,true,false);
-    malus.push_back(new position(2,0));
-    malus.push_back(new position(3,0));
-    malus.push_back(new position(4,0));
-    malus.push_back(new position(5,0));
-
-
+    for (auto i(0); i < size; i++){
+        if (i == 0){ // start
+            _board[start]=std::make_unique<malusCell>(t_colors::garbage, false, true);
+            malus.push_back(new position(start,0));
+        } else if (i == size-1) { // end
+            _board[end]=std::make_unique<malusCell>(t_colors::garbage, true, false);
+            malus.push_back(new position(end,0));
+        } else { // middle
+            _board[start+i]=std::make_unique<malusCell>(t_colors::garbage, true, true);
+            malus.push_back(new position(start+i,0));
+        }
+    }
 }
 
 bool grid::estMalus(position const & p) const{
