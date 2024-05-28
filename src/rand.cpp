@@ -14,3 +14,5 @@ void mysrand(t_number seed) {
 std::uint32_t seed() {
     return next;
 }
+
+// estimation
