@@ -1818,26 +1818,27 @@ void interface::menu_regle()
     std::vector<sf::Sprite *> _choices;
 
     // add choice_pos
-    _choices.push_back(&s_fleches);
-    _choices.push_back(&s_ctrl_2);
-    _choices.push_back(&s_shift_2);
-    _choices.push_back(&s_tab);
     _choices.push_back(&s_touches);
     _choices.push_back(&s_ctrl_1);
     _choices.push_back(&s_shift_1);
     _choices.push_back(&s_enter);
+    _choices.push_back(&s_fleches);
+    _choices.push_back(&s_ctrl_2);
+    _choices.push_back(&s_shift_2);
+    _choices.push_back(&s_tab);
 
     // number_player_choice
     std::vector<sf::String> _controls;
     t_number _index_controls_choice = 0;
-    _controls.push_back(sf::String("Move j2"));
-    _controls.push_back(sf::String("rotate j2"));
-    _controls.push_back(sf::String("switch j2"));
-    _controls.push_back(sf::String("accelerate j2"));
+    
     _controls.push_back(sf::String("Move j1"));
     _controls.push_back(sf::String("rotate j1"));
     _controls.push_back(sf::String("switch j1"));
     _controls.push_back(sf::String("accelerate j1"));
+    _controls.push_back(sf::String("Move j2"));
+    _controls.push_back(sf::String("rotate j2"));
+    _controls.push_back(sf::String("switch j2"));
+    _controls.push_back(sf::String("accelerate j2"));
 
     while (_window.isOpen())
     {
@@ -1890,23 +1891,27 @@ void interface::menu_regle()
         _window.clear(color_background);
 
         // sprite display joueur 1
-        s_fleches.setPosition(thickness_line, s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        s_fleches.setPosition(thickness_line, s_touches.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        
         _window.draw(s_fleches);
-        s_ctrl_2.setPosition(s_ctrl_2.getGlobalBounds().width * 3 + thickness_line, s_ctrl_2.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        s_ctrl_2.setPosition(s_ctrl_1.getGlobalBounds().width * 3 + thickness_line, s_touches.getGlobalBounds().height + s_ctrl_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        
         _window.draw(s_ctrl_2);
-        s_shift_2.setPosition(s_shift_2.getGlobalBounds().width * 4 + thickness_line, s_shift_2.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        s_shift_2.setPosition(s_shift_1.getGlobalBounds().width * 4 + thickness_line, s_touches.getGlobalBounds().height + s_shift_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        
         _window.draw(s_shift_2);
-        s_tab.setPosition(s_tab.getGlobalBounds().width * 5 + thickness_line, s_tab.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
+        s_tab.setPosition(s_enter.getGlobalBounds().width * 5 + thickness_line, s_touches.getGlobalBounds().height + s_enter.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        
         _window.draw(s_tab);
 
         // sprite display joueur 2
-        s_touches.setPosition(thickness_line, s_touches.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        s_touches.setPosition(thickness_line, s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_touches);
-        s_ctrl_1.setPosition(s_ctrl_1.getGlobalBounds().width * 3 + thickness_line, s_touches.getGlobalBounds().height + s_ctrl_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        s_ctrl_1.setPosition(s_ctrl_2.getGlobalBounds().width * 3 + thickness_line, s_ctrl_2.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_ctrl_1);
-        s_shift_1.setPosition(s_shift_1.getGlobalBounds().width * 4 + thickness_line, s_touches.getGlobalBounds().height + s_shift_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        s_shift_1.setPosition(s_shift_2.getGlobalBounds().width * 4 + thickness_line, s_shift_2.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_shift_1);
-        s_enter.setPosition(s_enter.getGlobalBounds().width * 5 + thickness_line, s_touches.getGlobalBounds().height + s_enter.getGlobalBounds().height + thickness_line + height_window / 2.75);
+        s_enter.setPosition(s_tab.getGlobalBounds().width * 5 + thickness_line, s_tab.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_enter);
 
         // line_choice
