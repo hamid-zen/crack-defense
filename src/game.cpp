@@ -650,13 +650,22 @@ int ai::estimation(game const &g)
     int count(0);
     game gm(g);
     auto vec(gm.alignment());
+    bool first_bonus(false);
+    bool snd_bonus(false);
     // parcourir les alignement et voir si il y'a des alignement sur les colones les plus haute si c'est le cas maximiser l'estimation
     auto colonnes_hautes(highest_column());
     for (auto const &pst : vec)
     {
-        if (std::find(colonnes_hautes.begin(), colonnes_hautes.end(), pst.x()) != colonnes_hautes.end())
+        if (std::find(colonnes_hautes.begin(), colonnes_hautes.end(), pst.x()) != colonnes_hautes.end() && !first_bonus)
         {
             count += 100;
+            first_bonus=true;
+        }
+        if((g.getGrid().garbage_adjacent(pst)).size()>0 && !snd_bonus){
+            count+=200;
+            snd_bonus=true;
+        }
+        if(first_bonus==true && snd_bonus){ //si on est rentré dans l'une des condition d'avant pas besoin de continuer de parcourir les alignement
             break;
         }
     }
