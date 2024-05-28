@@ -399,41 +399,42 @@ void arbitre::updatePlayer(t_action x, bool first_player)
     }
 
     auto v(player_to_update->alignment()); // faut verifier les allignement meme si on a pas fait de swotch les cases qui monte peuvent former un alignement
-    if (v.size() >= 3)
-    {
+    // if (v.size() >= 3)
+    // {
         
-        if (delay_to_update->last_frame_alignment == -1) // pas encore initialisé
-            delay_to_update->last_frame_alignment = getFrame();
-        else if ((getFrame() - (delay_to_update->last_frame_alignment) < 90) && (getFrame() - (delay_to_update->last_garbage) > 150)) // si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
-        {
-            if(jeu_duo()) //si jeu a deux joueur les alignement causent des malus à l'adversaire
-            {
-                delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-                if (player_to_update == _player1.get())
-                    _player2->add_garbage(delay_to_update->cells_slide);
-                else
-                    _player1->add_garbage(delay_to_update->cells_slide);
-                delay_to_update->last_garbage=getFrame();
-            } else {
-                delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
-                player_to_update->add_garbage(delay_to_update->cells_slide);
-                delay_to_update->last_garbage=getFrame();
-            }
-        }
+    //     if (delay_to_update->last_frame_alignment == -1) // pas encore initialisé
+    //         delay_to_update->last_frame_alignment = getFrame();
+    //     else if ((getFrame() - (delay_to_update->last_frame_alignment) < 90) && (getFrame() - (delay_to_update->last_garbage) > 150)) // si les deux alignement ont ete fait en moins de 3 sec (90 frame) et qu'on vient pas tout juste degenerer un malus
+    //     {
+    //         if(jeu_duo()) //si jeu a deux joueur les alignement causent des malus à l'adversaire
+    //         {
+    //             delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+    //             if (player_to_update == _player1.get())
+    //                 _player2->add_garbage(delay_player2->cells_slide);
+    //             else
+    //                 _player1->add_garbage(delay_to_update->cells_slide);
+    //             delay_to_update->last_garbage=getFrame();
+    //         } else {
+    //             delay_to_update->last_frame_alignment=getFrame(); //ou que c'est un alignement de 5 et plus on genere un malus
+    //             player_to_update->add_garbage(delay_to_update->cells_slide);
+    //             delay_to_update->last_garbage=getFrame();
+    //         }
+    //     }
 
-        if (delay_to_update->last_garbage > 0)
-        {
+    //     if (delay_to_update->last_garbage > 0)
+    //     {
             
-            // for (auto e : delay_to_update->cells_slide)
-            // {
-            //     std::cout << e->x() << ',' << e->y() << std::endl;
-            // }
-            player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
+    //         // for (auto e : delay_to_update->cells_slide)
+    //         // {
+    //         //     std::cout << e->x() << ',' << e->y() << std::endl;
+    //         // }
+    //         player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
 
-            // ajouter que les cases glissent
-        }
-        v = player_to_update->alignment();
-    }
+    //         // ajouter que les cases glissent
+    //     }
+    //     v = player_to_update->alignment();
+    // }
+    
     delay_to_update->cells_align = v;
     if (delay_to_update->angle >= 360 || delay_to_update->scale <= 0)
     {
@@ -446,6 +447,17 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         else if(getFrame()-delay_to_update->last_frame_alignment<120){
             delay_to_update->combo++;
             delay_to_update->last_frame_alignment = getFrame();
+            if(delay_to_update->combo % 3 == 0){
+                if(jeu_duo()){
+                    if(first_player)
+                        _player2->add_garbage(delay_player2->cells_slide);
+                    else
+                        _player1->add_garbage(delay_player1->cells_slide);
+                }
+                else{
+                    player_to_update->add_garbage(delay_to_update->cells_slide);
+                }
+            }
         }
         else {
             delay_to_update->last_frame_alignment=getFrame();
@@ -488,6 +500,10 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         }
         else
             delay_player2->time_left--;
+    }
+    if (v.size() >= 3){
+        player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
+
     }
 }
 
