@@ -249,17 +249,22 @@ void grid::generate_garbage(std::vector<position*> & malus){
     auto highest_columns(highest_column());
     auto start(highest_columns[0]), end((highest_columns.size() == 1) ? _max_width-1 : highest_columns.back()), size(end-start+1);
 
-
-    for (auto i(0); i < size; i++){
-        if (i == 0){ // start
-            _board[start]=std::make_unique<malusCell>(t_colors::garbage, false, true);
-            malus.push_back(new position(start,0));
-        } else if (i == size-1) { // end
-            _board[end]=std::make_unique<malusCell>(t_colors::garbage, true, false);
-            malus.push_back(new position(end,0));
-        } else { // middle
-            _board[start+i]=std::make_unique<malusCell>(t_colors::garbage, true, true);
-            malus.push_back(new position(start+i,0));
+    if (start == end) {
+        _board[start]=std::make_unique<malusCell>(t_colors::garbage, false, false);
+        malus.push_back(new position(start,0));
+    }
+    else {
+        for (auto i(0); i < size; i++){
+            if (i == 0){ // start
+                _board[start]=std::make_unique<malusCell>(t_colors::garbage, false, true);
+                malus.push_back(new position(start,0));
+            } else if (i == size-1) { // end
+                _board[end]=std::make_unique<malusCell>(t_colors::garbage, true, false);
+                malus.push_back(new position(end,0));
+            } else { // middle
+                _board[start+i]=std::make_unique<malusCell>(t_colors::garbage, true, true);
+                malus.push_back(new position(start+i,0));
+            }
         }
     }
 }
