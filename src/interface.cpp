@@ -9,6 +9,11 @@ sf::Color generateRandomColor()
 interface::interface() : _width(6), _difficulty(4), _textures(41, sf::Texture()), _arbitre(), _window(sf::VideoMode(64 * 6 + 20, 64 * 12 + 20), "", sf::Style::Titlebar | sf::Style::Close)
 {
     _window.setFramerateLimit(30);
+    auto icon = sf::Image();
+    if (icon.loadFromFile("../textures/single_blocks/special.png"))
+        std::cout << "bueno\n";
+    std::cout << icon.getSize().x << " - " << icon.getSize().y << "\n";
+    _window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
 }
@@ -1639,7 +1644,7 @@ void interface::menu_lan(bool disconnected)
             _window.draw(waiting_circle);
         }
 
-        if (_arbitre->connected())
+        if (_arbitre && _arbitre->connected())
         { // si connecté on met le check_mark, un countdown et on affiche le boutton play
 
             _arbitre->init(seed);
