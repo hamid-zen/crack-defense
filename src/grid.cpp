@@ -223,16 +223,13 @@ void grid::new_row(int frame)
     auto x(nombreAleatoire(_max_width-1)); //colone de la case special
     auto vec(generate_random_line(_max_width));
     for (cordinate i(0); i < _max_width; i++) {
-        // if(frame==150 && i==x)
-        //     _board[i + _max_height * _max_width] = std::make_unique<cell>(t_colors::all);
-        // else
             _board[i + _max_height * _max_width] = std::make_unique<cell>(vec[i]); //ici j=max_height car on remplie la toute premiere ligne(celle qui est caché pour l'insatnt)
     }
 }
 
 std::vector<position>  grid::max_column() const{
     std::vector<position> vec;
-    cordinate  i,j;
+    cordinate  j;
     for(cordinate i(0);i<(max_height()*max_width());i++){
         if(_board[i]!=nullptr){
             vec.push_back(position(i%max_width(),i/max_width()));
@@ -254,7 +251,7 @@ std::vector<position>  grid::max_column() const{
 
 std::vector<int>  grid::highest_column() const{
 std::vector<int> vec;
-    cordinate  i,j;
+    cordinate  j;
     for(cordinate i(0);i<(max_height()*max_width());i++){
         if(_board[i]!=nullptr){
             vec.push_back(i%max_width());

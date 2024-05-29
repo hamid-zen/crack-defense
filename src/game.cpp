@@ -235,11 +235,10 @@ bool game::switch_cells_target()
 std::vector<position> game::vertical_alignment()const
 {
     std::vector<position> vec;
-    t_colors clr;
     // alignement verticale
-    for (unsigned int i(0); i < _grid.max_width(); i++)
+    for (cordinate i(0); i < _grid.max_width(); i++)
     {
-        for (unsigned int j(0); j < _grid.max_height()-2; j++)
+        for (cordinate j(0); j < _grid.max_height()-2; j++)
         {
             if ( _grid(position(i,j))!=t_colors::empty_cell && _grid(position(i,j+1))!=t_colors::empty_cell && _grid(position(i,j+2))!=t_colors::empty_cell)
             { 
@@ -270,10 +269,9 @@ std::vector<position> game::vertical_alignment()const
 std::vector<position> game::horizontal_alignment()const
 {
     std::vector<position> vec;
-    t_colors clr;
-    for (unsigned int j(0); j < _grid.max_height(); j++)
+    for (cordinate j(0); j < _grid.max_height(); j++)
     {
-        for (unsigned int i(0); i < _grid.max_width()-2; i++)
+        for (cordinate i(0); i < _grid.max_width()-2; i++)
         {
             if ( _grid(position(i,j))!=t_colors::empty_cell && _grid(position(i+1,j))!=t_colors::empty_cell && _grid(position(i+2,j))!=t_colors::empty_cell)
             { 
@@ -307,10 +305,10 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
     bool trouve(false);
     t_colors clr = _grid(p[0]);
 
-    for (unsigned int j(p[0].y()); j < p[p.size() - 1].y(); j++)
+    for (cordinate  j(p[0].y()); j < p[p.size() - 1].y(); j++)
     { // on parcours seulement les lignes de l'alignement verticale
         vec.clear();
-        for (unsigned int i(0); i < _grid.max_width(); i++)
+        for (cordinate i(0); i < _grid.max_width(); i++)
         {
             if (not_hanging(position(i, j)))
             { // vec.size()=2 et non 3
@@ -631,9 +629,9 @@ t_num ai::color_distances(position const &p1, position const &p2) const
 t_num ai::sum_color_distance(grid const & grille) const
 { //+ la somme est grande + il ya des case cote à cote
     int cpt(0);
-     for (unsigned int j(0); j < grille.max_height()-1; j++)
+     for (cordinate j(0); j < grille.max_height()-1; j++)
     {
-        for (unsigned int i(0); i < grille.max_width()-1; i++)
+        for (cordinate i(0); i < grille.max_width()-1; i++)
         {
             if(grille(position(i, j)) != t_colors::empty_cell){
                 if(grille(position(i, j)) ==grille(position(i+1, j)) ){
@@ -855,6 +853,7 @@ void ai::print_container()
             std::cout << "swicth ";
             break;
         }
+        default:{} //jamais atteint
         }
     }
 }

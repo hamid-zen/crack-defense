@@ -436,7 +436,7 @@ void arbitre::updatePlayer(t_action x, bool first_player)
             delay_to_update->combo++;
             delay_to_update->last_frame_alignment=getFrame();
         }
-        else if(getFrame()-delay_to_update->last_frame_alignment<120){
+        else if(getFrame()-delay_to_update->last_frame_alignment<180){
             delay_to_update->combo++;
             delay_to_update->last_frame_alignment = getFrame();
             if(delay_to_update->combo % 3 == 0){

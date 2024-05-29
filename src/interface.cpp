@@ -735,7 +735,6 @@ void interface::play()
         game_over_screen(true, _arbitre->player1().get_score());
     else {
         auto score_player_1(_arbitre->player1().get_score()), score_player_2(_arbitre->player2().get_score());
-        std::cout << "score1: " << score_player_1 << " - score2: " << score_player_2 << "\n";
         if (score_player_1 > score_player_2)
             game_over_screen(false, score_player_1);
         else
