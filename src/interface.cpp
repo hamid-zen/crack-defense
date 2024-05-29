@@ -6,10 +6,9 @@ sf::Color generateRandomColor()
     return sf::Color(rand() % 256, rand() % 256, rand() % 256);
 }
 
-interface::interface() : _width(6), _difficulty(4), _textures(40, sf::Texture()), _arbitre(), _window(sf::VideoMode(64 * 6 + 20, 64 * 12 + 20), "Habibi", sf::Style::Titlebar | sf::Style::Close)
+interface::interface() : _width(6), _difficulty(4), _textures(41, sf::Texture()), _arbitre(), _window(sf::VideoMode(64 * 6 + 20, 64 * 12 + 20), "", sf::Style::Titlebar | sf::Style::Close)
 {
     _window.setFramerateLimit(30);
-    _arbitre = std::make_unique<arbitre>(0); // TODO: enlever
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
 }
@@ -274,7 +273,8 @@ void interface::play()
     _number_score_2.setFillColor(color_line);
 
     // On init la _window
-    _window.create(sf::VideoMode(total_width, total_height), "habibi", sf::Style::Titlebar | sf::Style::Close);
+    _window.setSize(sf::Vector2u(total_width, total_height));
+    _window.setView(sf::View(sf::FloatRect(0, 0, total_width, total_height)));
     _window.setFramerateLimit(30);
     _window.clear(color_background);
 
@@ -743,7 +743,9 @@ void interface::menu()
     sf::Color color_line = sf::Color(255, 87, 217);
 
     //_window
-    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
+    _window.setSize(sf::Vector2u(total_width, total_height));
+    _window.setView(sf::View(sf::FloatRect(0, 0, total_width, total_height)));
+    _window.setFramerateLimit(30);
     _window.clear(color_background);
 
     // border
@@ -1014,8 +1016,10 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
     line4.setFillColor(color_line);
     line4.setPosition(0, height_window - thickness_line);
 
-    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
-    _window.setFramerateLimit(30);
+    _window.setSize(sf::Vector2u(width_window, height_window));
+    _window.setView(sf::View(sf::FloatRect(0, 0, width_window, height_window)));
+    _window.setTitle("Brick Clash");
+    _window.clear(color_background);
 
     // game over sprite
     sf::Sprite s_game_over;
@@ -1151,8 +1155,10 @@ void interface::pause_screen()
     sf::Color color_line = sf::Color(255, 87, 217);
 
     // _window
-    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
-    _window.setFramerateLimit(30); // Pour set le framerate
+    _window.setSize(sf::Vector2u(width_window, height_window));
+    _window.setView(sf::View(sf::FloatRect(0, 0, width_window, height_window)));
+    _window.setTitle("Brick Clash");
+    _window.clear(color_background);
 
     // border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 + thickness_line));
@@ -1362,8 +1368,10 @@ void interface::menu_lan(bool disconnected)
     sf::Color color_line = sf::Color(255, 87, 217);
 
     //_window
-    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
-    _window.setFramerateLimit(30); // Pour set le framerate
+    _window.setSize(sf::Vector2u(width_window, height_window));
+    _window.setView(sf::View(sf::FloatRect(0, 0, width_window, height_window)));
+    _window.setTitle("Brick Clash");
+    _window.clear(color_background);
 
     // border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 + thickness_line));
@@ -1757,7 +1765,6 @@ void interface::load_texture(sf::Sprite &sprite, t_colors color, bool shade) con
  */
 void interface::menu_regle()
 {
-
     sf::Sound _sound_move;
     _sound_move.setBuffer(_buffer_sound_choice_move);
     _sound_move.setVolume(5);
@@ -1770,8 +1777,10 @@ void interface::menu_regle()
     sf::Color color_line = sf::Color(255, 87, 217);
 
     //_window
-    _window.create(sf::VideoMode(width_window, height_window), "habibi", sf::Style::Titlebar | sf::Style::Close);
-    _window.setFramerateLimit(30); // Pour set le framerate
+    _window.setSize(sf::Vector2u(width_window, height_window));
+    _window.setView(sf::View(sf::FloatRect(0, 0, width_window, height_window)));
+    _window.setTitle("Brick Clash");
+    _window.clear(color_background);
 
     // border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 + thickness_line));
@@ -1791,12 +1800,14 @@ void interface::menu_regle()
     sf::Text _text_joueur1(sf::String("PLAYER 1"), _font);
     sf::Text _text_joueur2(sf::String("PLAYER 2"), _font);
     sf::Text _text_menu(sf::String("RULES"), _font);
+    sf::Text _text_pause(sf::String("PAUSE"), _font);
     sf::Text _text_explication(sf::String(""), _font);
 
     // text scale
     _text_menu.setScale(2, 2);
     _text_joueur2.setScale(1.5, 1.5);
     _text_joueur1.setScale(1.5, 1.5);
+    _text_pause.setScale(1.5, 1.5);
 
     // textorigin
     _text_menu.setOrigin(sf::Vector2f((_text_menu.getGlobalBounds().width) / (2 * _text_menu.getScale().x), (_text_menu.getGlobalBounds().height) / (2 * _text_menu.getScale().y)));
@@ -1807,14 +1818,16 @@ void interface::menu_regle()
     _text_menu.setPosition(width_window / 2, thickness_line + height_window / 20);
     _text_joueur2.setPosition(width_window / 2, thickness_line + height_window / 10);
     _text_joueur1.setPosition(width_window / 2, thickness_line + height_window / 17);
+    _text_pause.setPosition(width_window / 2 + 20, thickness_line + height_window / 1.2 - _text_pause.getGlobalBounds().height);
 
     // text_color
     _text_menu.setFillColor(color_line);
     _text_joueur2.setFillColor(color_line);
     _text_joueur1.setFillColor(color_line);
+    _text_pause.setFillColor(color_line);
 
     // sprites
-    sf::Sprite s_fleches, s_ctrl_1, s_ctrl_2, s_shift_1, s_shift_2, s_enter, s_tab, s_touches;
+    sf::Sprite s_fleches, s_ctrl_1, s_ctrl_2, s_shift_1, s_shift_2, s_enter, s_tab, s_touches, s_p;
     s_fleches.setTexture(_textures[t_textures_to_index(t_textures::DirectionalArrows)]);
     s_ctrl_1.setTexture(_textures[t_textures_to_index(t_textures::Ctrl)]);
     s_shift_1.setTexture(_textures[t_textures_to_index(t_textures::Shift)]);
@@ -1823,6 +1836,7 @@ void interface::menu_regle()
     s_ctrl_2.setTexture(_textures[t_textures_to_index(t_textures::Ctrl)]);
     s_shift_2.setTexture(_textures[t_textures_to_index(t_textures::Shift)]);
     s_tab.setTexture(_textures[t_textures_to_index(t_textures::Tab)]);
+    s_p.setTexture(_textures[t_textures_to_index(t_textures::P)]);
 
     // vector choice_pos
     std::vector<sf::Sprite *> _choices;
@@ -1902,27 +1916,34 @@ void interface::menu_regle()
 
         // sprite display joueur 1
         s_fleches.setPosition(thickness_line, s_touches.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        
         _window.draw(s_fleches);
+
         s_ctrl_2.setPosition(s_ctrl_1.getGlobalBounds().width * 3 + thickness_line, s_touches.getGlobalBounds().height + s_ctrl_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        
         _window.draw(s_ctrl_2);
+
         s_shift_2.setPosition(s_shift_1.getGlobalBounds().width * 4 + thickness_line, s_touches.getGlobalBounds().height + s_shift_1.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        
         _window.draw(s_shift_2);
+
         s_tab.setPosition(s_enter.getGlobalBounds().width * 5 + thickness_line, s_touches.getGlobalBounds().height + s_enter.getGlobalBounds().height + thickness_line + height_window / 2.75);
-        
         _window.draw(s_tab);
 
         // sprite display joueur 2
         s_touches.setPosition(thickness_line, s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_touches);
+
         s_ctrl_1.setPosition(s_ctrl_2.getGlobalBounds().width * 3 + thickness_line, s_ctrl_2.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_ctrl_1);
+
         s_shift_1.setPosition(s_shift_2.getGlobalBounds().width * 4 + thickness_line, s_shift_2.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_shift_1);
+
         s_enter.setPosition(s_tab.getGlobalBounds().width * 5 + thickness_line, s_tab.getGlobalBounds().height + s_fleches.getGlobalBounds().height + thickness_line + height_window / 17);
         _window.draw(s_enter);
+
+        // sprite display pause
+        s_p.setOrigin((s_p.getGlobalBounds().width) / (2 * s_p.getScale().x), (s_p.getGlobalBounds().height) / (2 * s_p.getScale().y));
+        s_p.setPosition(width_window/2 - s_p.getGlobalBounds().width/2, thickness_line + height_window / 1.2);
+        _window.draw(s_p);
 
         // line_choice
         sf::RectangleShape line_choice(sf::Vector2f(30, 5));
@@ -1933,7 +1954,7 @@ void interface::menu_regle()
         // Affichage de l'aide
         // TODO: changer les textures
         _text_explication.setString(_controls[_index_controls_choice]);
-        _text_explication.setPosition((width_window - _text_explication.getLocalBounds().width) / 2, thickness_line + height_window / 1.2);
+        _text_explication.setPosition((width_window - _text_explication.getLocalBounds().width) / 2, thickness_line + height_window / 1.4);
 
         _window.draw(line1);
         _window.draw(line2);
@@ -1944,6 +1965,7 @@ void interface::menu_regle()
         _window.draw(_text_menu);
         _window.draw(_text_joueur1);
         _window.draw(_text_explication);
+        _window.draw(_text_pause);
         _window.display();
     }
 }
