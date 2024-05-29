@@ -1,5 +1,4 @@
 #include "game.h"
-#include "timer.h"
 #include <SFML/Graphics.hpp>
 #include<utility>
 
