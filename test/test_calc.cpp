@@ -288,7 +288,7 @@ TEST_CASE("chemin", "[ai]")
     std::cout<<"cell target 1 : "<<g.getcell1target().x()<<" , "<<g.getcell1target().y()<<std::endl;
     std::cout<<"cell target 2 : "<<g.getcell2target().x()<<" , "<<g.getcell2target().y()<<std::endl;
    // auto v(g.chemin(position(5,10),position(5,11))); //cas special 1
-    auto v(g.chemin(position(3,11),position(4,11))); //cas special 2
+    auto v(g.getPath(position(3,11),position(4,11))); //cas special 2
     for (auto x : v){
         switch (x)
         {
@@ -337,9 +337,9 @@ TEST_CASE("chemin", "[ai]")
     a.move_target(t_direction::up);
     a.move_target(t_direction::up);
 
-    std::cout<<"sum_color_distance() : "<<a.sum_color_distance()<<std::endl;
+    std::cout<<"sum_color_distance() : "<<a.sum_color_distance(a.getGrid())<<std::endl;
         a.show();
-    coup c (a.best_blow(1));
-    std::cout<<"le meilleur coup a jouer : ("<<c.p1.x()<<","<<c.p1.y()<<") ; ("<<c.p2.x()<<","<<c.p2.y()<<") \n";
+    auto c (a.best_blow(1));
+    std::cout<<"le meilleur coup a jouer : ("<<c[0].p1.x()<<","<<c[0].p1.y()<<") ; ("<<c[0].p2.x()<<","<<c[0].p2.y()<<") \n";
 
 }
