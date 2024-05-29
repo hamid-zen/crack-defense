@@ -419,6 +419,7 @@ void  grid::transform_to_cell(std::vector<position> const & align_cell, std::vec
     for (auto const & e : align_cell) {
         auto v(garbage_adjacent(e));
         for (auto const & p : v) {
+            if (estMalus(p)){
             auto pst(first(p));
             auto taille(getSize(p));
             auto vec (generate_random_line(taille));
@@ -428,6 +429,7 @@ void  grid::transform_to_cell(std::vector<position> const & align_cell, std::vec
                     _board[i+ pst.y() * _max_width]=std::make_unique<cell>(vec[i-pst.x()]);
                     pos_cells.push_back(new position(i, pst.y() ));
                 }else break;
+            }
             }
         }
 
