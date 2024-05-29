@@ -275,6 +275,7 @@ void interface::play()
     // On init la _window
     _window.setSize(sf::Vector2u(total_width, total_height));
     _window.setView(sf::View(sf::FloatRect(0, 0, total_width, total_height)));
+    _window.setTitle("Brick Clash");
     _window.setFramerateLimit(30);
     _window.clear(color_background);
 
@@ -852,6 +853,7 @@ void interface::menu()
     //_window
     _window.setSize(sf::Vector2u(width_window, height_window));
     _window.setView(sf::View(sf::FloatRect(0, 0, width_window, height_window)));
+    _window.setTitle("Brick Clash");
     _window.setFramerateLimit(30);
     _window.clear(color_background);
 
