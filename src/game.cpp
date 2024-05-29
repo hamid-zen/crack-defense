@@ -2,6 +2,7 @@
 
 game::game(cordinate _max_height, cordinate _max_width, int colors)
     : _grid(_max_height, _max_width, colors), _target(position(_max_width / 2, _max_height / 2), position(_max_width / 2, _max_height / 2 + 1)), _grid_dy(0), _score(0) {}
+
 game & game::operator=(game const & g){
     _grid=g._grid;
     _target=g._target;
