@@ -30,6 +30,7 @@ class game{
 public:
     game(cordinate _max_height=12,cordinate _max_width=6,int colors=4);
     game(game const & g)=default;
+   	game & operator=(game const & g);
     bool is_lost();
     void move_target(t_direction dir);
     void show() const;
