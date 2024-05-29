@@ -13,6 +13,15 @@ position::position(position const & p)
 }
 */
 
+
+position & position::operator=(position const & p) {
+if (this != &p) {
+_x=p._x;
+_y=p._y;
+}
+return *this;
+}
+
 cordinate position::x() const {
 	return _x;
 }
