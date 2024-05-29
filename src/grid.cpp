@@ -327,21 +327,6 @@ bool grid::not_hanging_malus(position const &p, std::vector<position *> slide) c
         return false;
 }
 
-bool grid::hanging_garbage(position const & p) const{
-
-    auto y(p.y());
-    auto x(first(p).x());
-    auto size(getSize(position (p.x(), y)));
-
-    for (unsigned int i(x); i < (x+size); i++)
-    {
-        if(_board[i + y * _max_width] && not_hanging(position(i,y))){
-            return false; // ya une des cases du malus qui est "retenue"
-        }
-    }
-    return true;
-}
-
 bool grid::hanging_garbage_slide(position const &p, std::vector<position *> slide) const
 {
     auto y(p.y());

@@ -109,12 +109,12 @@ void game::show() const
     {
         std::cout << ((j < 10) ? std::to_string(j)+" " : std::to_string(j));
         for (unsigned int i(0); i < _grid.max_width(); i++)
-        {
-            // if ((_target.x1() == i && _target.y1() == j) || (_target.x2() == i && _target.y2() == j))
-            // {
-            //     std::cout << "|F";
-            //     continue;
-            // }
+        {   //affichage avec la target 
+            /* if ((_target.x1() == i && _target.y1() == j) || (_target.x2() == i && _target.y2() == j))
+             {
+                 std::cout << "|F";
+                 continue;
+            }*/
             if (_grid(position(i, j)) == t_colors::empty_cell)
             {
                 std::cout << "| ";
@@ -164,15 +164,6 @@ void game::switch_cells_fall(position p1, position p2)
 {
     _grid.switch_cell(p1, p2);
 }
-position game::drop_position(position const &p) const
-{
-    unsigned int j(p.y());
-    while ((j + 1) < _grid.max_height() && _grid(position(p.x(), j + 1)) == t_colors::empty_cell)
-    {
-        j++;
-    }
-    return position(p.x(), j);
-}
 
 bool game::one_case_empty() const
 {
@@ -194,37 +185,6 @@ bool game::cells_above() const
 bool game::cells_above(position p1, position p2) const
 {
     return p1.y() - 1 > 0 && (getColor(position(p1.x(), p1.y() - 1)) == t_colors::empty_cell or getColor(position(p2.x(), p2.y() - 1)) == t_colors::empty_cell);
-}
-void game::drop()
-{
-    if (getColor(getcell1target()) == t_colors::empty_cell)
-    {
-        position p(getcell2target()); // la position ou se troyve la case qui doit tomber
-        auto position_final(drop_position(p));
-        _grid.switch_cell(p, position_final);
-    }
-    else
-    {
-        position p(getcell1target());
-        auto position_final(drop_position(p));
-        _grid.switch_cell(p, position_final);
-    }
-}
-void game::drop(position p1, position p2)
-{
-    if (one_case_empty(p1, p2))
-    {
-        if (_grid(p1) == t_colors::empty_cell)
-        {
-            auto fall_pos = drop_position(p1);
-            _grid.switch_cell(p1, fall_pos);
-        }
-        else
-        {
-            auto fall_pos = drop_position(p2);
-            _grid.switch_cell(p2, fall_pos);
-        }
-    }
 }
 bool game::switch_cells_target()
 {
@@ -340,7 +300,7 @@ std::vector<position> game::horizontal_alignment(std::vector<position> const &p)
                     trouve = true;
                 }
                 else
-                { //==clr
+                {// ==clr
                     vec.push_back(position(i, j));
                 }
             }
@@ -367,24 +327,15 @@ std::vector<position> game::alignment() const
         auto vec1(horizontal_alignment(vec));
         if (vec1.size()>=3) // concat
             vec.insert(vec.end(), vec1.begin(), vec1.end());
-        //inc_score(vec.size());
         return vec;
     }
     else
     {
         auto vec2(horizontal_alignment());
-        // inc_score(vec2.size());
         return vec2;
     }
 }
 
-void game::delete_alignement(std::vector<position> const &v)
-{
-    for (auto i(v.size() - 1); i > 0; i--)
-    {
-        _grid.delete_cell(v[i]);
-    }
-}
 
 void game::rotate_target()
 {
@@ -392,13 +343,11 @@ void game::rotate_target()
         _target.setSense();
     else if (_target.isHorizontal() && _target.y1() < _grid.max_height() - 1)
         _target.setSense();
-    // sinn le changement de sense est impossible on en fait rien
+    // sinon le changement de sense est impossible on  fait rien
 }
 
 void game::slideColumn(cordinate x, std::vector<position *> &cells)
-{ // x la colone
-    // x la colone
-    u_int16_t y = _grid.max_height() - 1;
+{     u_int16_t y = _grid.max_height() - 1;
     while (_grid(position(x, y)) != t_colors::empty_cell and y > 0)
     {
         y--;
@@ -531,10 +480,7 @@ void game::add_garbage(std::vector<position*> & malus)
     _grid.generate_garbage(malus);
 }
 
-bool game::hanging_malus(position p)
-{
-    return _grid.hanging_garbage(p);
-}
+
 
 bool game::hanging_malus_slide(position p,std::vector<position *> const &slide)
 {
@@ -566,15 +512,15 @@ bool game::is_garbage(position const &p) const
     return _grid.estMalus(p);
 }
 
-void game::update_garbage_height() 
-{
-   // _grid.update_garbage();
-}
 
 void game::transform_malus_to_cell(std::vector<position> const &align_cell, std::vector<position *> &pos_cells)
 {
     _grid.transform_to_cell(align_cell, pos_cells);
 }
+
+// ai 
+
+
 ai::ai(cordinate _max_height, cordinate _max_width, int colors, t_num frame,t_num depth)
     : game(_max_height, _max_width, colors), frequence_frame(frame),_depth(depth) {}
 
@@ -683,7 +629,7 @@ std::vector<blow> ai::lawful_blow(grid const &grille) const
     {   for (unsigned int i(0); i < grille.max_width() ; i++)
         {
             // si horizontale une des deux cases ne doit pas etre vide sinn verticale les deux ne doivent pas etre vide
-            //aussi sa ne sert a rien de switch deux cases d ela meme couleur
+            //aussi sa ne sert a rien de switch deux cases de la meme couleur
             if(grille.cellDx(position(i, j))==0 && grille.cellDy(position(i, j))==0 && !is_garbage(position(i, j))){
                 if (i+1< grille.max_width() && grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) && !is_garbage(position(i+1, j)))
                 {

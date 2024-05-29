@@ -43,8 +43,6 @@ public:
     arbitre(t_number ind,typeplayer plyr1=typeplayer::player,typeplayer plyr2=typeplayer::none , unsigned int port=8080);
     void update(t_action x, bool first_player=true);
     void updatePlayer(t_action x, bool first_player=true);
-    void updateFirstPlayer(t_action x);
-    void updateSecondPlayer(t_action x);
     float getVerticalSpeed() const{return _vertical_speed;}
     void incVerticalSpeed(float x=0.000001){_vertical_speed+=x;}
     game& player1() const;
@@ -57,7 +55,6 @@ public:
     bool jeu_duo() const ;
     void increment_delays_y_pos(delay * delay_to_update) ;
     bool lost() const ;
-
     bool jeu_res() const;
     bool server_game() const;
     bool connected() const;
