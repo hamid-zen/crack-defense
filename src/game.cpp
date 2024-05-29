@@ -124,8 +124,7 @@ void game::show() const
         }
         std::cout << "|\n";
     }
-    // std::cout << "\n"
-    //           << " ";
+ 
     std::cout << "   ";
     for (unsigned int k(0); k < _grid.max_width(); k++)
         std::cout << "_ ";
@@ -407,18 +406,12 @@ void game::slideColumn(cordinate x, std::vector<position *> &cells)
         if (std::find_if(cells.begin(), cells.end(), [&](position* p){ return *p == *position_to_add; }) == cells.end()){
             if ((_grid(position(x, y)) != t_colors::empty_cell) && !is_garbage(position(x, y))){
                 cells.push_back(new position(x, y));
-                //std::cout << "added: " << toString_color(_grid(position(x,y))) << ", at position " << x << ", " << y << "\n";
             }
-            else if (is_garbage(position(x,y))) {
-                //std::cout << "position: x= " << x << ", y= "<< y << "\n";
-                //std::cout << "garbage: " << is_garbage(position(x,y)) << ", hanging: "<< hanging_malus(position(x,y)) << "\n";
-            }
+           
             if(is_garbage(position(x,y)) /* and hanging_malus(position(x,y)) */){
-                //std::cout << "garbage: x= " << x << ", y= "<< y << "\n";
                 auto x_first_malus = firstMalus(position(x,y)).x();
                 auto malus_size = getsize(position(x,y));
                 for(t_number i(x_first_malus);i < malus_size+x_first_malus;i++){
-                    //std::cout << "added: " << toString_color(_grid(position(i,y))) << ", at position " << i << ", " << y << "\n";
                     cells.push_back(new position(i,y));
                 }
             }
@@ -615,7 +608,7 @@ std::vector<t_action> ai::getPath(position const &p1, position const &p2)
     }
     else
     {
-        std::cout << "changement impossible à faire " << std::endl;
+       // std::cout << "changement impossible à faire " << std::endl;
     }
     return vec;
 }
@@ -754,13 +747,10 @@ std::vector<blow> ai::best_blow(int profondeur)
         blows=lawful_blow(getGrid());
     }
     int meilleureEstimation = std::numeric_limits<int>::min();
-    //std::cout<<"blow posible : \n";
     for (auto cp : blows)
-    {
-        //std::cout<<cp.p1.x()<<","<<cp.p1.y()<<")("<<cp.p2.x()<<","<<cp.p2.y()<<") \n";
-        g.switch_cells_position(cp.p1, cp.p2);
+    {        g.switch_cells_position(cp.p1, cp.p2);
         int estimationblow =  Max(profondeur,g);
-        //std::cout<<"estimation : "<<estimationblow<<std::endl;
+
         g.switch_cells_position(cp.p1, cp.p2); // annuler le blow
 
         if (estimationblow > meilleureEstimation)
@@ -788,7 +778,6 @@ std::vector<t_action> ai::play_what()
     if(vec.size()>0){ // si il y'a au moins un bon coup à jouer
     auto i(nombreAleatoire(vec.size()-1)); //on prend aleatoirement l'un des meilleur coup
     auto blow(vec[i]);
-    //std::cout<<"le meilleur blow est  :"<<blow.p1.x()<<","<<blow.p1.y()<<")("<<blow.p2.x()<<","<<blow.p2.y()<<") \n";
      blows=getPath(blow.p1, blow.p2); //et on retourne le chamin d'actoin pour executer ce coup
     }
     else //sinon on retourne l'action accelerate 
@@ -804,8 +793,6 @@ t_action ai::getBlow(t_num frame)
     {
         if (path.size() == 0)
         {
-            //std::cout << "path calculated with grid: \n";
-            //show();
             path = play_what();
         } 
         t_action act(path[0]);
@@ -823,39 +810,39 @@ void ai::setAction(t_action const & a) {
 }
 void ai::print_container()
 {
-    //std::cout << "chemin \n";
+    std::cout << "chemin \n";
     for (auto x : path)
     {
         switch (x)
         {
         case t_action::go_right:
         {
-            //std::cout << "Right ";
+            std::cout << "Right ";
             break;
         }
         case t_action::go_left:
         {
-            //std::cout << "left ";
+            std::cout << "left ";
             break;
         }
         case t_action::go_up:
         {
-            //std::cout << "up ";
+            std::cout << "up ";
             break;
         }
         case t_action::go_down:
         {
-            //std::cout << "Down ";
+            std::cout << "Down ";
             break;
         }
         case t_action::change_direction:
         {
-            //std::cout << "Rotate ";
+            std::cout << "Rotate ";
             break;
         }
         case t_action::exchange:
         {
-            //std::cout << "swicth ";
+            std::cout << "swicth ";
             break;
         }
         }
@@ -911,8 +898,6 @@ sf::Socket::Status remote_game::send_action(const t_action &action)
     packet << action;
 
     sf::Socket::Status send_status(_socket.send(packet));
-    if (send_status == sf::Socket::Disconnected)
-        std::cout << "sending failed: disconnected\n";
     return send_status;
 }
 
@@ -926,35 +911,9 @@ sf::Socket::Status remote_game::recieve_number(t_number &number)
     sf::Packet packet;
     sf::Socket::Status recieve_status(_socket.receive(packet));
 
-    // std::string statusStr;
-
-    // switch (recieve_status) {
-    // case sf::Socket::Status::Done:
-    //     statusStr = "Done";
-    //     break;
-    // case sf::Socket::Status::NotReady:
-    //     statusStr = "Not Ready";
-    //     break;
-    // case sf::Socket::Status::Partial:
-    //     statusStr = "Partial";
-    //     break;
-    // case sf::Socket::Status::Disconnected:
-    //     statusStr = "Disconnected";
-    //     break;
-    // case sf::Socket::Status::Error:
-    //     statusStr = "Error";
-    //     break;
-    // default:
-    //     statusStr = "Unknown";
-    //     break;
-    // }
-
-    // std::cout << "Recieve_Number Status: " << statusStr << std::endl;
-
     if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
     {
         packet >> number;
-        std::cout << "recieved packet of size: " << packet.getDataSize() << " : " << number << "\n";
         packet.clear();
     }
     return recieve_status;
@@ -985,7 +944,6 @@ sf::Socket::Status remote_game::recieve_string(std::string &message)
 
     if (recieve_status == sf::Socket::Disconnected)
     {
-        std::cout << "recieving failed: disconnected\n";//TODO: return une exception pour pouvoir afficher une erreur
         _socket.disconnect();
     }
     else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
@@ -1043,7 +1001,6 @@ sf::Socket::Status remote_game::recieve_action(t_action &action)
     }
     if (recieve_status == sf::Socket::Disconnected)
     {
-        std::cout << "recieving failed: disconnected\n";//TODO: return une exception pour pouvoir afficher une erreur
         _socket.disconnect();
     }
     else if (recieve_status == sf::Socket::Done && packet.getDataSize() > 0)
@@ -1067,10 +1024,7 @@ server::server(unsigned int port, cordinate _max_height, cordinate _max_width, t
 void server::connect_client()
 {
     _socket.setBlocking(false);
-    if (_listner.accept(_socket) == sf::Socket::Done)
-    {
-        std::cout << "Client connecté " << _socket.getRemoteAddress() << ":" << _socket.getLocalPort() << "\n";
-    }
+    _listner.accept(_socket);
 }
 
 client::client(cordinate _max_height, cordinate _max_width, t_number_color colors) :
@@ -1085,6 +1039,5 @@ client::client(cordinate _max_height, cordinate _max_width, t_number_color color
 void client::connect(const sf::IpAddress &server_ip, unsigned int port)
 {
     _socket.setBlocking(false);
-    std::cout << "Connexion sur " << server_ip.toString() << ":" << port << "\n";
     _socket.connect(server_ip, port);
 }

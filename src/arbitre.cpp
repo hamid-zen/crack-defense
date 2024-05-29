@@ -151,13 +151,11 @@ void arbitre::update(t_action x, bool first_player)
     }
     else if (first_player && delay_player1->activated)
     {
-        //std::cout << "first \n";
         _player1->setAction(x);
         updatePlayer(_player1->getBlow(getFrame()), true);
     }
     else if (jeu_duo() && !first_player and delay_player2->activated)
     {
-        //std::cout << "second \n";
         _player2->setAction(x);
         updatePlayer(_player2->getBlow(getFrame()), false);
     }
@@ -185,9 +183,6 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         {
             if (((*player_to_update)(position(cells->x(), cells->y() + 1)) != t_colors::empty_cell and player_to_update->cellDy(position(cells->x(), cells->y() + 1)) == 0 and player_to_update->cellDy(*cells) == 0))
             {
-                if(first_player)std::cout<<"player1 : ";
-                else std::cout<<"player2 :"; 
-                std::cout <<"erased: " << toString_color((*player_to_update)(*cells)) << ", at position: " << cells->x() << ", " << cells->y() << "\n";
                 delete cells;
                 it = delay_to_update->cells_slide.erase(it); // Supprimer l'élément et mettre à jour l'itérateur
             }
@@ -220,7 +215,6 @@ void arbitre::updatePlayer(t_action x, bool first_player)
         {
             if ((player_to_update->cellDy(*cells) == 0 && player_to_update->is_garbage(*cells) and !player_to_update->hanging_malus_slide(*cells, delay_to_update->cells_slide)))
             {
-                std::cout << "erased: " << toString_color((*player_to_update)(*cells)) << ", at position: " << cells->x() << ", " << cells->y() << "\n";
                 delete cells;
                 it = delay_to_update->cells_slide.erase(it); // Supprimer l'élément et mettre à jour l'itérateur
             }
@@ -369,7 +363,6 @@ void arbitre::updatePlayer(t_action x, bool first_player)
             player_to_update->setGrid_dy(0);
             delay_to_update->newline = false;
             _vertical_speed = delay_to_update->oldspeed;
-            std::cout << "2";
         }
         _vertical_speed += 0.1;
         if (delay_to_update->cells_align.size() == 0)
@@ -426,7 +419,6 @@ void arbitre::updatePlayer(t_action x, bool first_player)
             
     //         // for (auto e : delay_to_update->cells_slide)
     //         // {
-    //         //     std::cout << e->x() << ',' << e->y() << std::endl;
     //         // }
     //         player_to_update->transform_malus_to_cell(v, delay_to_update->cells_slide);
 

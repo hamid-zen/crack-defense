@@ -248,7 +248,7 @@ std::vector<int> vec;
 void grid::generate_garbage(std::vector<position*> & malus){
     auto highest_columns(highest_column());
     auto start(highest_columns[0]), end((highest_columns.size() == 1) ? _max_width-1 : highest_columns.back()), size(end-start+1);
-    std::cout << "start: " << start << " - end: " << end << "\n";
+
 
     for (auto i(0); i < size; i++){
         if (i == 0){ // start
@@ -289,7 +289,6 @@ bool grid::not_hanging_malus(position const &p, std::vector<position *> slide) c
         return true;
     else if (_board[p.x()+ (p.y() + 1)*_max_width] && (_board[p.x()+ (p.y() + 1)*_max_width]->dy()==0 && std::find_if(slide.begin(), slide.end(), [pos_bott](position * pos) { return *pos == pos_bott; }) == slide.end()) )
     {
-        std::cout<<"x :"<<p.x()<<" y:"<<p.y()<<"\n";
         return true;
         
     }
@@ -321,7 +320,6 @@ bool grid::hanging_garbage_slide(position const &p, std::vector<position *> slid
     for (unsigned int i(x); i < (x+size); i++)
     {
         if(_board[i + y * _max_width] && not_hanging_malus(position(i,y),slide)){
-            //std::cout<<"hanging?"<<not_hanging_malus(position(i,y),slide)<<"\n";
             return false; // ya une des cases du malus qui est "retenue"
         }
     }
@@ -397,25 +395,21 @@ std::vector<position > grid::garbage_adjacent(position const & p) const {
     // Vérification des voisins à droite
     if(p.x() < max_width() - 1 && _board[(p.x() + 1) + p.y() * _max_width] != nullptr && _board[(p.x() + 1) + p.y() * _max_width]->estmalus()) {
         vec.push_back(position(p.x() + 1, p.y()));
-        //std::cout << "Right" << std::endl;
     }
 
     // Vérification des voisins à gauche
     if(p.x() >= 1 && _board[(p.x() - 1) + p.y() * _max_width] != nullptr && _board[(p.x() - 1) + p.y() * _max_width]->estmalus()) {
         vec.push_back(position(p.x() - 1, p.y()));
-        //std::cout << "Left" << std::endl;
     }
 
     // Vérification des voisins en bas
     if(p.y() < max_height() - 1 && _board[p.x() + (p.y() + 1) * _max_width] != nullptr && _board[(p.x() ) + (p.y()+1) * _max_width]->estmalus()) {
         vec.push_back(position(p.x(), p.y() + 1));
-        //std::cout << "Down" << std::endl;
     }
 
     // Vérification des voisins en haut
     if(p.y() >= 1 && _board[p.x() + (p.y() - 1) * _max_width] != nullptr && _board[(p.x() ) + (p.y()-1) * _max_width]->estmalus()) {
         vec.push_back(position(p.x(), p.y() - 1));
-        // std::cout << "Up" << std::endl;
     }
     return vec;
 }

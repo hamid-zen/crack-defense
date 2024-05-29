@@ -420,7 +420,6 @@ void interface::play()
             {
                 if (recieving_status == sf::Socket::Disconnected)
                 { // socket deconnecté
-                    std::cout << "disconnected\n";
                     _window.close();
                     menu_lan(true);
                 }
@@ -478,7 +477,6 @@ void interface::play()
                             particles_p1.push_back(new score_particle(position(s_tile.getPosition().x, s_tile.getPosition().y), position(_number_score_1.getPosition().x, _number_score_1.getPosition().y), 0.01));
                         if (s_tile.getScale().x > 0.9)
                         {
-                            // std::cout<<"combo push\n";
                             combosp1.push_back(new combo(position(s_tile.getPosition().x, s_tile.getPosition().y), 10.0f));
                         }
                     }
@@ -518,13 +516,11 @@ void interface::play()
             }
             else
             {
-                // std::cout<<(*it)->pos.x()<<"   "<<(*it)->pos.y() - (*it)->vitesse ;
                 (*it)->pos.sety((*it)->pos.y() - (*it)->vitesse);
                 _combo_text.setPosition((*it)->pos.x(), (*it)->pos.y());
                 _combo_text.setString("X" + std::to_string(_arbitre->getDelays().combo));
                 _combo_text.setFillColor(generateRandomColor());
                 (*it)->vitesse = (*it)->vitesse + (*it)->acceleration;
-                // std::cout<<(*it)->vitesse<<std::endl;
                 _window.draw(_combo_text);
                 it++;
             }
@@ -566,7 +562,6 @@ void interface::play()
                                 particles_p2.push_back(new score_particle(position(s_tile.getPosition().x, s_tile.getPosition().y), position(_number_score_2.getPosition().x, _number_score_2.getPosition().y), 0.01));
                             if (s_tile.getScale().x > 0.9)
                             {
-                                std::cout << "combo push\n";
                                 combosp2.push_back(new combo(position(s_tile.getPosition().x, s_tile.getPosition().y), 10.0f));
                             }
                         }
@@ -657,19 +652,16 @@ void interface::play()
         {
             if ((*it2)->vitesse < 0)
             {
-                std::cout<<"combo delete\n";
                 delete *it2;
                 it2 = combosp2.erase(it2);
             }
             else
             {
-                 std::cout<<(*it2)->pos.x()<<"   "<<(*it2)->pos.y() - (*it2)->vitesse<<std::endl ;
                 (*it2)->pos.sety((*it2)->pos.y() - (*it2)->vitesse);
                 _combo_text.setPosition((*it2)->pos.x(), (*it2)->pos.y());
                 _combo_text.setString("X" + std::to_string(_arbitre->getDelays(false).combo));
                 _combo_text.setFillColor(generateRandomColor());
                 (*it2)->vitesse = (*it2)->vitesse + (*it2)->acceleration;
-                // std::cout<<(*it)->vitesse<<std::endl;
                 _window.draw(_combo_text);
                 it2++;
             }
@@ -1217,7 +1209,6 @@ void interface::pause_screen()
                         if (_arbitre->jeu_res())
                         { // si jeu reseau on envoie un signal pour reprendre le jeu
                             _arbitre->send_action(t_action::resume);
-                            std::cout << "sent: resume\n";
                         }
                         play();
                     }
@@ -1481,13 +1472,11 @@ void interface::menu_lan(bool disconnected)
 
                         if (_index_type_choice == 0)
                         { // serveur
-                            std::cout << "server choisi\n";
                             _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::server, typeplayer::player);
                             server_choosen = true;
                         }
                         else
                         {
-                            std::cout << "client choisi\n";
                             _arbitre = std::make_unique<arbitre>(_difficulty, typeplayer::client, typeplayer::player);
                             server_choosen = false;
                         }
@@ -1577,8 +1566,6 @@ void interface::menu_lan(bool disconnected)
                     srand(time(NULL));
 
                     seed = rand() % 255 + 1;
-                    std::cout << "Choosen seed (server): " << seed << "\n";
-
                     _arbitre->send_number(seed);
 
                     tryconnect = false;
@@ -1597,7 +1584,6 @@ void interface::menu_lan(bool disconnected)
                     {
                     }
 
-                    std::cout << "Choosen seed (server): " << seed << "\n";
 
                     tryconnect = false;
                     index_circle_texture = 0;
