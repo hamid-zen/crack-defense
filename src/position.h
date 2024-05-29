@@ -14,6 +14,8 @@ public:
 	// son code (cf. fichier .cc), le déclarer "=default" comme ici, ou
 	// l'omettre (pour profiter du constructeur par recopie implicite).
 	position(position const & p) =default;
+	~position()=default;
+
 	cordinate x() const;
 	cordinate y() const;
 	void setx(cordinate x);
