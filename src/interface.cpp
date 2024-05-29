@@ -329,6 +329,11 @@ void interface::play()
     sf::Text _combo_text = sf::Text(sf::String("X1"), _font, 25);
     _combo_text.setOrigin(sf::Vector2f((_combo_text.getGlobalBounds().width) / (2 * _combo_text.getScale().x), (_combo_text.getGlobalBounds().height) / (2 * _combo_text.getScale().y)));
 
+    sf::Text timer_end_game = sf::Text("20", _font, 120);
+    timer_end_game.setOrigin(sf::Vector2f((timer_end_game.getGlobalBounds().width) / (2 * timer_end_game.getScale().x), (timer_end_game.getGlobalBounds().height) / (2 * timer_end_game.getScale().y)));
+    frame frame_end = 600;
+    timer_end_game.setFillColor(sf::Color::Red);
+
     while (_window.isOpen() && (_arbitre->getDelays(true).activated || (_arbitre->jeu_duo() && _arbitre->getDelays(false).activated)))
     {
         _window.clear(color_background);
@@ -525,6 +530,22 @@ void interface::play()
                 it++;
             }
         }
+        if (_arbitre->jeu_duo())
+        {
+            if (!_arbitre->getDelays().activated)
+            {
+                timer_end_game.setPosition(play_tab_width / 2, total_height / 2);
+                timer_end_game.setString(std::to_string(frame_end / 30));
+                frame_end--;
+                
+            }
+            else if (!_arbitre->getDelays(false).activated)
+            {
+                timer_end_game.setPosition(total_width - play_tab_width / 2, total_height / 2);
+                timer_end_game.setString(std::to_string(frame_end / 30));
+                frame_end--;
+            }
+        }
 
         // Affichage second joueur
         if (_arbitre->jeu_duo())
@@ -680,6 +701,9 @@ void interface::play()
             _window.draw(_number_score_2);
             _window.draw(_text_score_2);
             _window.draw(line6);
+        }
+        if(_arbitre->jeu_duo() && (!_arbitre->getDelays(false).activated || !_arbitre->getDelays(true).activated)){
+            _window.draw(timer_end_game);
         }
         angle += 5;
         _window.display();
