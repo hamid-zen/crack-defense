@@ -4,7 +4,36 @@
 
 grid::grid(cordinate height, cordinate width,t_number_color colors)
     : _board((height+1)*width),_max_height(height),_max_width(width),nbr_colors(colors){}
+grid::grid(grid const & g)  {
+        for (const auto& cellPtr : g._board) {
+            if (cellPtr) {
+                _board.push_back(cellPtr->clone());
+            } else {
+                _board.push_back(nullptr);
+            }
+        }
+        _max_height=g._max_height;
+        _max_width=g._max_width;
+        nbr_colors=g.nbr_colors;
+}
 
+grid & grid::operator=(grid const & g){
+if (this != &g) {
+ for (const auto& cellPtr : g._board) {
+            if (cellPtr) {
+                _board.push_back(cellPtr->clone());
+            } else {
+                _board.push_back(nullptr);
+            }
+        }
+        _max_height=g._max_height;
+        _max_width=g._max_width;
+        nbr_colors=g.nbr_colors;
+
+}
+return *this;
+
+}
 /**
  * @brief grid::couleurAleatoire
  * @return une couleur aleatoire
@@ -471,19 +500,6 @@ position grid::first(position const & p) const{
 
 bool grid::under_bounds(position const & p) const{
     return p.x()>=0 && p.x()<_max_width && p.y()>=0 && p.y()<_max_height;
-}
-
-grid::grid(grid const & g)  {
-        for (const auto& cellPtr : g._board) {
-            if (cellPtr) {
-                _board.push_back(cellPtr->clone());
-            } else {
-                _board.push_back(nullptr);
-            }
-        }
-        _max_height=g._max_height;
-        _max_width=g._max_width;
-        nbr_colors=g.nbr_colors;
 }
 
 
