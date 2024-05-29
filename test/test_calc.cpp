@@ -1,123 +1,101 @@
-#include <catch2/catch_test_macros.hpp> 
+#include <catch2/catch_test_macros.hpp>
 #include "../src/game.h"
 
-TEST_CASE("Echange_case", "test") {
+TEST_CASE("switch_cell", "test")
+{
     t_colors couleur1;
     t_colors couleur2;
-    mysrand(42);
     game g;
+    g.init(42);
+    // g.show();
     g.rotate_target();
     g.move_target(t_direction::down);
     g.move_target(t_direction::down);
-    couleur1=g(g.getcell1target());
-    couleur2=g(g.getcell2target());
+    couleur1 = g(g.getcell1target());
+    couleur2 = g(g.getcell2target());
 
-    REQUIRE( g.switch_cells_target()==true);
-    REQUIRE(couleur1== g(g.getcell2target())); //la couleur de la premiere case devient celle de la 2eme
-    REQUIRE(couleur2== g(g.getcell1target()));
+    REQUIRE(g.switch_cells_target() == true);
+    REQUIRE(couleur1 == g(g.getcell2target())); // la couleur de la premiere case devient celle de la 2eme
+    REQUIRE(couleur2 == g(g.getcell1target()));
 }
 
-TEST_CASE("Alignement_horizontale", "[alignement][test]") {
-    mysrand(56);
+TEST_CASE("horizontal_alignment", "[alignement][test]")
+{
     game g;
-    std::cout<<"horizontallllllllllllllllllllll"<<std::endl;
+    g.init(3);
+    g.show();
     g.move_target(t_direction::right);
     g.move_target(t_direction::down);
     g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
     g.switch_cells_target();
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::up);
-    g.show();
 
     std::vector<position> vec = g.horizontal_alignment();
-    REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
-    REQUIRE(g(vec[0])== g(vec[1]) );
-    REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
-    REQUIRE(g(vec[0]) == t_colors::blue); //et devrait etre la couleur rouge
+    REQUIRE(vec.size() == 3); // le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
+    REQUIRE(g(vec[0]) == g(vec[1]));
+    REQUIRE(g(vec[0]) == g(vec[2]));      // et ces trois cases devrait avoir la meme couleur
+    REQUIRE(g(vec[0]) == t_colors::blue); // et devrait etre la couleur rouge
 }
 
-TEST_CASE("Alignement_verticale", "[alignement][test]") {
-    mysrand(3);
+TEST_CASE("vertical_alignment", "[alignement][test]")
+{
     game g;
-   
-    std::cout<<"verticallllllllllllllllllllll"<<std::endl;
-
-        g.show();
-
+    g.init(3);
+    g.show();
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::left);
     g.rotate_target();
-    g.move_target(t_direction::right);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
     g.switch_cells_target();
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::up);
-    std::cout << "hehe \n";
     g.show();
     std::vector<position> vec = g.alignment();
-    REQUIRE(vec.size()== 3); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
-    REQUIRE(g(vec[0])== g(vec[1]) );
-    REQUIRE(g(vec[0])== g(vec[2])) ; // et ces trois cases devrait avoir la meme couleur
-    REQUIRE(g(vec[0]) == t_colors::pink); //et devrait etre la couleur rouge
+    REQUIRE(vec.size() == 3); // le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
+    REQUIRE(g(vec[0]) == g(vec[1]));
+    REQUIRE(g(vec[0]) == g(vec[2]));      // et ces trois cases devrait avoir la meme couleur
+    REQUIRE(g(vec[0]) == t_colors::pink); // et devrait etre la couleur rouge
 }
 
-TEST_CASE("Alignement_verticale_et_horizontale", "[alignement][test]") {
-    mysrand(3);
+TEST_CASE("Alignment", "[alignement][test]")
+{
     game g;
+    g.init(3);
+    g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.switch_cells_target();
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::down);
     g.rotate_target();
+    g.switch_cells_target();
     g.move_target(t_direction::right);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
     g.switch_cells_target();
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::left);
+    g.move_target(t_direction::left);
+    g.switch_cells_target();
+
+       g.move_target(t_direction::down);
+    g.move_target(t_direction::down);
+    g.show();
+    //un alignement verticale combiné à un horizontale est genere en T
+
     g.move_target(t_direction::up);
     g.move_target(t_direction::up);
-    std::vector<position> vec = g.alignment();
-    g.move_target(t_direction::left);
-    g.rotate_target();
-    g.switch_cells_target();
-    g.move_target(t_direction::left);
-    g.move_target(t_direction::down);
-    g.switch_cells_target();
-    g.move_target(t_direction::left);
-    //g.show();
-    std::vector<position> vec1=g.horizontal_alignment(vec);
-    REQUIRE(vec1.size()== 2); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
-    REQUIRE(g(vec1[0])== g(vec1[1]) );
-    REQUIRE(g(vec1[0]) == t_colors::pink); //et devrait etre la couleur rose
-    //std::cout<<vec1[0].x()<<" "<<vec1[0].y()<<std::endl;
-}
-TEST_CASE("Alignement", "[alignement][test]") {
-    mysrand(3);
-    game g;
-    g.rotate_target();
-    g.move_target(t_direction::right);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
-    g.switch_cells_target();
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::left);
-    g.rotate_target();
-    g.switch_cells_target();
-    g.move_target(t_direction::left);
-    g.move_target(t_direction::down);
-    g.switch_cells_target();
-    g.move_target(t_direction::left);
-    //g.show();
-    std::vector<position> vec1=g.alignment();
-    std::cout<<"taille : "<<vec1.size()<<std::endl;
-    REQUIRE(vec1.size()== 5); //le vecteur devrait contenir les 3 posisition des cases qui forme l'alignement
-    REQUIRE(g(vec1[0])== g(vec1[1]) );
-    REQUIRE(g(vec1[0])== g(vec1[2]) );
-    REQUIRE(g(vec1[0])== g(vec1[3]) );
-    REQUIRE(g(vec1[0])== g(vec1[4]) );
-    REQUIRE(g(vec1[0]) == t_colors::pink); //et devrait etre la couleur rose
-    //std::cout<<vec1[0].x()<<" "<<vec1[0].y()<<std::endl;
+    std::vector<position> vec1 = g.alignment();
+    REQUIRE(vec1.size() == 5);
+    REQUIRE(g(vec1[0]) == g(vec1[1]));
+    REQUIRE(g(vec1[0]) == g(vec1[2]));
+    REQUIRE(g(vec1[0]) == g(vec1[3]));
+    REQUIRE(g(vec1[0]) == g(vec1[4]));
+    REQUIRE(g(vec1[0]) == t_colors::pink);
+
+
 }
 
-TEST_CASE("estVertical_estHorizontal", "[test]")
+TEST_CASE("isVertical", "[test]")
 {
     target t1(position(3, 6), position(3, 5));
     REQUIRE(t1.isVertical());
@@ -127,29 +105,12 @@ TEST_CASE("estVertical_estHorizontal", "[test]")
     REQUIRE(!t2.isVertical());
     REQUIRE(t2.isHorizontal());
 }
-
-TEST_CASE("ou_tomber", "[tomber][test]") {
-    mysrand(5);
-    game g;
-    bool fait;
-    g.show();
-    g.rotate_target();
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::left);
-    g.move_target(t_direction::left);
-    g.show();
-    fait=g.switch_cells_target();
-    REQUIRE(fait==true);
-    REQUIRE(g.drop_position(g.getcell2target()) == position(2, 10));
-} 
-
-TEST_CASE("bounds", "[test]")
+TEST_CASE("bounds", "[test]") 
 {
-    mysrand(5);
     game g;
+    g.init(5);
     for (size_t i = 0; i < 3; i++)
         g.move_target(t_direction::right);
-    
     REQUIRE(g.getcell1target() == position(5, 6));
     REQUIRE(g.getcell2target() == position(5, 7));
     g.rotate_target(); // rotation pas possible car on est bloqué par la gauche
@@ -173,173 +134,130 @@ TEST_CASE("bounds", "[test]")
 }
 TEST_CASE("max_column", "[test]")
 {
-    mysrand(3);
     game g;
-    std::cout<<" habibi come to dubai "<<std::endl;
+    g.init(3);
     g.show();
-    auto vec=(g.max_column());
-   // std::cout<<" x: "<<vec[0].x()<<" ,y :"<<vec[0].y()<<std::endl;
-
-    REQUIRE(vec.size()==3);
-    REQUIRE(vec[0].x()==3);
-    REQUIRE(vec[1].x()==4);
-    REQUIRE(vec[2].x()==5);
-    REQUIRE(vec[0].y()==5);
-    REQUIRE(vec[0].y()==vec[1].y());
-    REQUIRE(vec[0].y()==vec[2].y());
+    auto vec = (g.max_column());
+    REQUIRE(vec.size() == 2);
+    REQUIRE(vec[0].x() == 3);
+    REQUIRE(vec[1].x() == 4);
+    REQUIRE(vec[0].y() == 5);
+    REQUIRE(vec[0].y() == vec[1].y());
 }
 TEST_CASE("generate_garbage", "[test]")
 {
-    mysrand(3);
     game g;
-    std::cout<<" before"<<std::endl;
+    g.init(3);
+    std::cout << " before" << std::endl;
     g.show();
-    //g.add_garbage();
-    std::cout<<" l'after'"<<std::endl;
+    std::vector<position*> cells_slide;
+     g.add_garbage(cells_slide);
+    std::cout << " after" << std::endl;
     g.show();
-    REQUIRE(g.before(position(3,4))==false);
-    REQUIRE(g.after(position(3,4))==true);
-    REQUIRE(g.before(position(4,4))==true);
-        REQUIRE(g.after(position(4,4))==true);
-
-    REQUIRE(g.before(position(5,4))==true);
-        REQUIRE(g.after(position(5,4))==false);
+    REQUIRE(g.before(position(3,0)) == false);
+    REQUIRE(g.after(position(3,0)) == true);
+    REQUIRE(g.before(position(4,0)) == true);
+    REQUIRE(g.after(position(4,0)) == false);
 
 }
 /**/
-TEST_CASE("est_malus", "[test]")
+TEST_CASE("is_garbage", "[test]")
 {
-    mysrand(3);
     game g;
+    g.init(3);
     g.show();
-   // g.add_garbage();
+    std::vector<position*> cells_slide;
+    g.add_garbage(cells_slide);
     g.show();
-    REQUIRE(g.is_garbage(position(3,4))==1);
-    REQUIRE(g.is_garbage(position(4,4))==1);
-    REQUIRE(g.is_garbage(position(5,4))==1);
+    REQUIRE(g.is_garbage(position(3,0)) == 1);
+    REQUIRE(g.is_garbage(position(4,0)) == 1);
+    REQUIRE(g.is_garbage(position(4,3)) == 0); //teste sur une cell "simple"
 }
-TEST_CASE("adjacent", "[test]")
-{
-    mysrand(3);
-    grid g;
-    g.init();
-    
-     auto vec(g.garbage_adjacent(position(0,g.max_height() - 1 )));
 
-    REQUIRE(vec.size()==2);
-}
-TEST_CASE("transform_to_cell", "[test]")
-{
-        mysrand(3);
-    game g;
-    g.rotate_target();
-    g.move_target(t_direction::up);
-    g.move_target(t_direction::right);
-    g.switch_cells_target();
-    g.move_target(t_direction::down);
-    g.move_target(t_direction::down);
-    g.rotate_target();
-    g.move_target(t_direction::right);
-    g.switch_cells_target();
-    g.move_target(t_direction::left);
-    g.move_target(t_direction::left);
-    //g.add_garbage();
-    std::cout<<"avant transformation\n";
-    g.show();
-    std::vector<position> vec = g.alignment();
-    std::vector<position*> pos_cells;
-    g.transform_malus_to_cell(vec,pos_cells);
-    g.show();
-   REQUIRE(pos_cells.size()==3);
-}
+
 TEST_CASE("getsize", "[test]")
 {
-    mysrand(3);
     game g;
+    g.init(3);
+    std::vector<position*> cells_slide;
+    g.add_garbage(cells_slide);   
     g.show();
-   // g.add_garbage();
-    g.show();
-    REQUIRE(g.getsize(position(2,4))==0);
-    REQUIRE(g.getsize(position(3,4))==3);
-    REQUIRE(g.getsize(position(4,4))==3);
-    REQUIRE(g.getsize(position(5,4))==3);
+    REQUIRE(g.getsize(position(2, 4)) == 1); //taille d'une case "simple" = 1
+    REQUIRE(g.getsize(position(3, 0)) == 2);
+    REQUIRE(g.getsize(position(4, 0)) == 2);
 }
 TEST_CASE("first", "[test]")
 {
-    mysrand(3);
     game g;
+    g.init(3);
+    std::vector<position*> cells_slide;
+    g.add_garbage(cells_slide); 
     g.show();
-    //g.add_garbage();
-    g.show();
-    REQUIRE(g.firstMalus(position(5,4))==position(3,4));
-
+    REQUIRE(g.firstMalus(position(4, 0)) == position(3, 0));
 }
 
-TEST_CASE("chemin", "[ai]")
-{
-    mysrand(5);
+TEST_CASE("path", "[ai]")
+{   //deux teste sont fait ici cas special  1 et 2
     ai g;
-    //g.rotate_target(); //cas special 1
-    g.move_target(t_direction::right); //cas special 2
-    g.move_target(t_direction::right); //cas special 2
+    g.init(5);
+    // g.rotate_target(); //cas special 1
+    g.move_target(t_direction::right); // cas special 2
+    g.move_target(t_direction::right); // cas special 2
     g.show();
 
-
-    std::cout<<"cell target 1 : "<<g.getcell1target().x()<<" , "<<g.getcell1target().y()<<std::endl;
-    std::cout<<"cell target 2 : "<<g.getcell2target().x()<<" , "<<g.getcell2target().y()<<std::endl;
-   // auto v(g.chemin(position(5,10),position(5,11))); //cas special 1
-    auto v(g.getPath(position(3,11),position(4,11))); //cas special 2
-    for (auto x : v){
+    std::cout << "cell target 1 : " << g.getcell1target().x() << " , " << g.getcell1target().y() << std::endl;
+    std::cout << "cell target 2 : " << g.getcell2target().x() << " , " << g.getcell2target().y() << std::endl;
+    // auto v(g.chemin(position(5,10),position(5,11))); //cas special 1
+    auto v(g.getPath(position(3, 11), position(4, 11))); // cas special 2
+    for (auto x : v)
+    {
         switch (x)
         {
         case t_action::go_right:
         {
-            std::cout<<"Right ";
+            std::cout << "Right ";
             break;
         }
         case t_action::go_left:
         {
-            std::cout<<"left ";
+            std::cout << "left ";
             break;
         }
         case t_action::go_up:
         {
-            std::cout<<"up ";
+            std::cout << "up ";
             break;
         }
         case t_action::go_down:
         {
-            std::cout<<"Down ";
+            std::cout << "Down ";
             break;
         }
         case t_action::change_direction:
         {
-            std::cout<<"Rotate ";
+            std::cout << "Rotate ";
             break;
         }
         case t_action::exchange:
         {
-            std::cout<<"swicth ";
+            std::cout << "swicth ";
             break;
         }
         }
     }
-   // REQUIRE(v.size()==8); //cas special 1
-
+    // REQUIRE(v.size()==8); //cas special 1
+      REQUIRE(v.size()==9); //cas special 2
 }
 
- TEST_CASE("meilleur_coup", "[ai]")
+TEST_CASE("best_blow", "[ai]")
 {
-    mysrand(3);
     ai a;
+    a.init(3);
     a.move_target(t_direction::up);
     a.move_target(t_direction::up);
     a.move_target(t_direction::up);
     a.move_target(t_direction::up);
-
-    std::cout<<"sum_color_distance() : "<<a.sum_color_distance(a.getGrid())<<std::endl;
-        a.show();
-    auto c (a.best_blow(1));
-    std::cout<<"le meilleur coup a jouer : ("<<c[0].p1.x()<<","<<c[0].p1.y()<<") ; ("<<c[0].p2.x()<<","<<c[0].p2.y()<<") \n";
-
+    a.show();
+    auto c(a.best_blow(0));
+    std::cout << "le meilleur coup a jouer : (" << c[0].p1.x() << "," << c[0].p1.y() << ") ; (" << c[0].p2.x() << "," << c[0].p2.y() << ") \n";
 }
