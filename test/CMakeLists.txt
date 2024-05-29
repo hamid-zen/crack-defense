@@ -5,7 +5,7 @@ add_executable(
   test_calc.cpp
 )
 target_link_libraries(
-  unit_tests PRIVATE gamelib Catch2::Catch2WithMain
+  unit_tests PRIVATE gamelib sfml-graphics sfml-audio sfml-window sfml-system sfml-network Catch2::Catch2WithMain
 )
 
 include(CTest)
