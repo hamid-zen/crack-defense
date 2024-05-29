@@ -686,12 +686,12 @@ std::vector<blow> ai::lawful_blow(grid const &grille) const
         {
             // si horizontale une des deux cases ne doit pas etre vide sinn verticale les deux ne doivent pas etre vide
             //aussi sa ne sert a rien de switch deux cases d ela meme couleur
-            if(grille.cellDx(position(i, j))==0 && grille.cellDy(position(i, j))==0){
-                if (i+1< grille.max_width() && grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) )
+            if(grille.cellDx(position(i, j))==0 && grille.cellDy(position(i, j))==0 && !is_garbage(position(i, j))){
+                if (i+1< grille.max_width() && grille.cellDx(position(i+1, j))==0 && grille.cellDy(position(i+1, j))==0 && grille(position(i, j)) != grille(position(i + 1, j)) && !is_garbage(position(i+1, j)))
                 {
                     vec.push_back(blow{position(i, j), position(i + 1, j)});
                 }
-                if(j+1<grille.max_height() && grille.cellDx(position(i, j+1))==0 && grille.cellDy(position(i, j+1))==0 &&(grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)))
+                if(j+1<grille.max_height() && grille.cellDx(position(i, j+1))==0 && grille.cellDy(position(i, j+1))==0 &&(grille(position(i, j)) != t_colors::empty_cell && grille(position(i, j + 1)) != t_colors::empty_cell) && grille(position(i, j)) != grille(position(i, j+1)) && !is_garbage(position(i, j+1)))
                 {
                     vec.push_back(blow{position(i, j), position(i, j + 1)});
                 }
