@@ -10,7 +10,7 @@ using dimension = u_int16_t;
 enum class t_textures {
     Blue, Red, Yellow, Orange, Pink, All, SkyBlue, Purple, Green, White,
     BlueShade, YellowShade, OrangeShade, PinkShade, RedShade, SkyBlueShade, PurpleShade, GreenShade, WhiteShade,
-    Ghost, Target, Ctrl, DirectionalArrows, Shift, Tab, Enter, Esc, DirectionalKeys, Blue_XP, Yellow_XP, Pink_XP,
+    Ghost, Target, Ctrl, DirectionalArrows, Shift, Tab, Enter, Esc, DirectionalKeys, P, Blue_XP, Yellow_XP, Pink_XP,
     loading_0, loading_1, loading_2, loading_3, loading_4, game_over, pause, check_mark, chat_icon
 };
 
