@@ -142,14 +142,14 @@ arbitre::arbitre(t_number ind, typeplayer plyr1, typeplayer plyr2, unsigned int 
 void arbitre::update(t_action x, bool first_player)
 {
     _nb_frame++;
-    if (jeu_duo() && x == t_action::generate_malus)
-    {
-        _player1->setAction(x);
-        updatePlayer(_player1->getBlow(getFrame()), true);
-        _player2->setAction(x);
-        updatePlayer(_player2->getBlow(getFrame()), false);
-    }
-    else if (first_player && delay_player1->activated)
+    // if (jeu_duo() && x == t_action::generate_malus)
+    // {
+    //     _player1->setAction(x);
+    //     updatePlayer(_player1->getBlow(getFrame()), true);
+    //     _player2->setAction(x);
+    //     updatePlayer(_player2->getBlow(getFrame()), false);
+    // }
+    if (first_player && delay_player1->activated)
     {
         _player1->setAction(x);
         updatePlayer(_player1->getBlow(getFrame()), true);
@@ -441,10 +441,15 @@ void arbitre::updatePlayer(t_action x, bool first_player)
             delay_to_update->last_frame_alignment = getFrame();
             if(delay_to_update->combo % 3 == 0){
                 if(jeu_duo()){
-                    if(first_player)
+                    if(first_player){
                         _player2->add_garbage(delay_player2->cells_slide);
-                    else
+                        if(jeu_res())
+                            send_action(t_action::generate_malus);
+                    }
+
+                    else{
                         _player1->add_garbage(delay_player1->cells_slide);
+                    }
                 }
                 else{
                     player_to_update->add_garbage(delay_to_update->cells_slide);

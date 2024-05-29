@@ -10,9 +10,7 @@ interface::interface() : _width(6), _difficulty(4), _textures(41, sf::Texture())
 {
     _window.setFramerateLimit(30);
     auto icon = sf::Image();
-    if (icon.loadFromFile("../textures/single_blocks/special.png"))
-        std::cout << "bueno\n";
-    std::cout << icon.getSize().x << " - " << icon.getSize().y << "\n";
+    icon.loadFromFile("../textures/single_blocks/special.png");
     _window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     _font.loadFromFile("../font/cyber_game.ttf");
     load_textures();
@@ -169,6 +167,13 @@ void interface::chat()
                 if (message_input.length() != 0 && !disconnected)
                     message_input = message_input.substr(0, message_input.length() - 1);
             }
+            else if (e.type == sf::Event::KeyPressed && e.key.code == sf::Keyboard::Key::Escape){
+                _window.create(sf::VideoMode(64 * 6 + 20, 64 * 12 + 20), "", sf::Style::Titlebar | sf::Style::Close);
+                window.close();
+                menu();
+
+            }
+
             else if (e.type == sf::Event::TextEntered)
             {
                 if (e.text.unicode >= 32 && message_input.length() < 30 && !disconnected)
@@ -379,6 +384,7 @@ void interface::play()
                 else if (e.key.code == sf::Keyboard::Escape)
                 {
                     _music.stop();
+                    //TODO: envoyer un disconnect
                     if (_arbitre->jeu_res()) // ca veut dire qu'on se deconnecte donc on reviens au menu_lan
                         menu_lan(true);
                 }
@@ -418,7 +424,8 @@ void interface::play()
         }
 
         // On update l'etat du jeu
-        _arbitre->update(action_utilisateur1);
+        if (!_arbitre->jeu_res())
+            _arbitre->update(action_utilisateur1);
         if (_arbitre->jeu_res() && _arbitre->connected())
         { // si jeu reseau alors on envoie l'action_utilisateur_1 et on reçoie l'action_utilisateur_2
 
@@ -427,24 +434,28 @@ void interface::play()
             t_action remote_player_action(t_action::nothing);
 
             sf::Socket::Status recieving_status(_arbitre->recieve_action(remote_player_action));
-            while (recieving_status != sf::Socket::Done)
+            if (recieving_status != sf::Socket::Done)
             {
                 if (recieving_status == sf::Socket::Disconnected)
                 { // socket deconnecté
                     _window.close();
                     menu_lan(true);
                 }
-                recieving_status = _arbitre->recieve_action(remote_player_action);
             }
+            if(remote_player_action == t_action::generate_malus){
+                _arbitre->update(remote_player_action,true);
 
-            _arbitre->update(remote_player_action, false);
+            }
+            else{
+                _arbitre->update(remote_player_action, false);
+                _arbitre->update(action_utilisateur1,true);
+            }
 
             if (action_utilisateur1 == t_action::pause || remote_player_action == t_action::pause)
-            {
                 pause_screen();
-            }
+
         }
-        else if (_arbitre->jeu_duo())
+        else if (_arbitre->jeu_duo() && !_arbitre->jeu_res())
             _arbitre->update(action_utilisateur2, false);
 
         if (!_arbitre->jeu_res() && action_utilisateur1 == t_action::pause)
@@ -720,10 +731,16 @@ void interface::play()
     _sound_loose.setVolume(10);
     _sound_loose.play();
 
-    if (_arbitre->player1().is_lost())
+    if (!_arbitre->jeu_duo())
         game_over_screen(true, _arbitre->player1().get_score());
-    else if (_arbitre->jeu_duo() && _arbitre->player2().is_lost())
-        game_over_screen(false, _arbitre->player2().get_score());
+    else {
+        auto score_player_1(_arbitre->player1().get_score()), score_player_2(_arbitre->player2().get_score());
+        std::cout << "score1: " << score_player_1 << " - score2: " << score_player_2 << "\n";
+        if (score_player_1 > score_player_2)
+            game_over_screen(false, score_player_1);
+        else
+            game_over_screen(true, score_player_2);
+    }
 }
 
 /**
@@ -1036,39 +1053,50 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
     s_game_over.setPosition(width_window / 2, thickness_line + height_window / 4);
 
     // texts
-    sf::Text _text_looser(sf::String(first_player_lost ? "PLAYER 1 LOST" : "PLAYER 2 LOST"), _font);
+    sf::Text _text_looser(sf::String(first_player_lost ? "PLAYER 2 WINS" : "PLAYER 1 WINS"), _font);
     sf::Text _text_main_menu(sf::String("MENU"), _font);
     sf::Text _text_exit(sf::String("EXIT"), _font);
     sf::Text _score_gagnant(sf::String("HIGH SCORE : " + std::to_string(score)), _font, 45);
+    sf::Text _text_chat(sf::String("CHAT"), _font);
 
     // text_scale
     _text_looser.setScale(1.5, 1.5);
     _text_main_menu.setScale(1.5, 1.5);
     _text_exit.setScale(1.5, 1.5);
+    _text_chat.setScale(1.5, 1.5);
 
     // text_color
     _text_looser.setFillColor(sf::Color::White);
     _text_main_menu.setFillColor(color_line);
     _text_exit.setFillColor(color_line);
     _score_gagnant.setFillColor(color_line);
+    _text_chat.setFillColor(color_line);
 
     // text_origin
     _text_looser.setOrigin(sf::Vector2f((_text_looser.getGlobalBounds().width) / (2 * _text_looser.getScale().x), (_text_looser.getGlobalBounds().height) / (2 * _text_looser.getScale().y)));
     _text_main_menu.setOrigin(sf::Vector2f((_text_main_menu.getGlobalBounds().width) / (2 * _text_main_menu.getScale().x), (_text_main_menu.getGlobalBounds().height) / (2 * _text_main_menu.getScale().y)));
     _text_exit.setOrigin(sf::Vector2f((_text_exit.getGlobalBounds().width) / (2 * _text_exit.getScale().x), (_text_exit.getGlobalBounds().height) / (2 * _text_exit.getScale().y)));
     _score_gagnant.setOrigin(sf::Vector2f((_score_gagnant.getGlobalBounds().width) / (2 * _score_gagnant.getScale().x), (_score_gagnant.getGlobalBounds().height) / (2 * _score_gagnant.getScale().y)));
+    _text_chat.setOrigin(sf::Vector2f((_text_chat.getGlobalBounds().width) / (2 * _text_chat.getScale().x), (_text_chat.getGlobalBounds().height) / (2 * _text_chat.getScale().y)));
+
 
     // text_position
     _text_looser.setPosition(s_game_over.getPosition().x, thickness_line + height_window / 2.75);
-    _text_main_menu.setPosition(width_window / 2, thickness_line + height_window / 1.75);
-    _text_exit.setPosition(width_window / 2, thickness_line + height_window / 1.5);
+    _text_main_menu.setPosition(width_window / 2, thickness_line + height_window / 1.85);
+    _text_exit.setPosition(width_window / 2, thickness_line + height_window / 1.6);
+    _text_chat.setPosition(width_window / 2, thickness_line + height_window / 1.45);
     _score_gagnant.setPosition(width_window / 2, thickness_line + height_window / 1.3);
+
 
     // choices
     std::vector<sf::Text *> _choices;
     t_number _index_choice_pos = 0;
     _choices.push_back(&_text_main_menu);
+
     _choices.push_back(&_text_exit);
+    if(_arbitre->jeu_res())
+        _choices.push_back(&_text_chat);
+
 
     // rectangle_choice
     sf::RectangleShape _choice_target(sf::Vector2f(_text_main_menu.getGlobalBounds().width + 75, _text_main_menu.getGlobalBounds().height + 30));
@@ -1098,8 +1126,12 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
                     { // main menu
                         menu();
                     }
-                    else if (_index_choice_pos == 1)
+                    else if (_index_choice_pos == 2)
                     {
+                        chat();
+                        _window.close();
+                    }
+                    else if(_index_choice_pos == 1){
                         _window.close();
                     }
                 }
@@ -1144,6 +1176,7 @@ void interface::game_over_screen(bool first_player_lost, t_number score)
         _window.draw(_text_looser);
         _window.draw(_text_main_menu);
         _window.draw(_text_exit);
+        _window.draw(_text_chat);
         _window.draw(_score_gagnant);
         _window.draw(_choice_target);
         _window.display();
@@ -1549,7 +1582,7 @@ void interface::menu_lan(bool disconnected)
                     if (_index_choice_pos == 1 && _ip_input.getSize() != 0)
                         _ip_input = _ip_input.substring(0, _ip_input.getSize() - 1);
                     else if (_index_choice_pos == 2 && _port_input.getSize() != 0)
-                        _ip_input = _port_input.substring(0, _port_input.getSize() - 1);
+                        _port_input = _port_input.substring(0, _port_input.getSize() - 1);
                 }
                 else if (e.key.code == sf::Keyboard::Key::Escape)
                 {
@@ -1621,6 +1654,7 @@ void interface::menu_lan(bool disconnected)
                 {
 
                     // On recoit seed2 avant seed1 car server_seed1=client_seed2
+                    // TOTODO remplcaer avec un if
                     while (_arbitre->recieve_number(seed) != sf::Socket::Done)
                     {
                     }
