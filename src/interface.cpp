@@ -86,7 +86,7 @@ void interface::chat()
     // TODO: peu etre gerer la deconnexion
     t_number total_height(500), total_width(500);
     _window.close();
-    sf::RenderWindow window(sf::VideoMode(total_height, total_width), "habibi", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(total_height, total_width), "Brick Clash", sf::Style::Titlebar | sf::Style::Close);
     sf::Color color_background = sf::Color::Black;
     t_number thickness_line = 10;
     sf::Color color_line = sf::Color(255, 87, 217);
@@ -742,11 +742,7 @@ void interface::menu()
     sf::Color color_background = sf::Color::Black;
     sf::Color color_line = sf::Color(255, 87, 217);
 
-    //_window
-    _window.setSize(sf::Vector2u(total_width, total_height));
-    _window.setView(sf::View(sf::FloatRect(0, 0, total_width, total_height)));
-    _window.setFramerateLimit(30);
-    _window.clear(color_background);
+    
 
     // border
     sf::RectangleShape line1(sf::Vector2f(thickness_line, 64 * 12 + thickness_line));
@@ -853,6 +849,11 @@ void interface::menu()
     _vector_second_player_choice.push_back(sf::String("NONE"));
     _vector_second_player_choice.push_back(sf::String("STANDARD"));
     _vector_second_player_choice.push_back(sf::String("BOT"));
+    //_window
+    _window.setSize(sf::Vector2u(width_window, height_window));
+    _window.setView(sf::View(sf::FloatRect(0, 0, width_window, height_window)));
+    _window.setFramerateLimit(30);
+    _window.clear(color_background);
 
     while (_window.isOpen())
     {
