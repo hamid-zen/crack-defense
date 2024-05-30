@@ -34,8 +34,8 @@ public:
     bool is_lost(); //teste si le joueur a perdu
     void move_target(t_direction dir);
     void show() const; //affichage de la grille
-    bool switch_cells_position(position p1 ,position p2);
-    void switch_cells_fall(position p1 ,position p2);
+    bool switch_cells_position(position p1 ,position p2); //echange les deux cases
+    void switch_cells_fall(position p1 ,position p2); 
     bool switch_cells_target();
     bool one_case_empty(position p1,position p2) const;
     bool one_case_empty() const; //return true si une deux cases du target est vide utilie pour determiner ce qui doit ou non etre fait apres le switch
