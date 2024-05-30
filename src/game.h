@@ -34,8 +34,8 @@ public:
     bool is_lost(); //teste si le joueur a perdu
     void move_target(t_direction dir);
     void show() const; //affichage de la grille
-    bool switch_cells_position(position p1 ,position p2); //echange les deux cases
-    void switch_cells_fall(position p1 ,position p2); 
+    bool switch_cells_position(position p1 ,position p2); //echange deux position aprés avoir fait une verification
+    void switch_cells_fall(position p1 ,position p2); //
     bool switch_cells_target();
     bool one_case_empty(position p1,position p2) const;
     bool one_case_empty() const; //return true si une deux cases du target est vide utilie pour determiner ce qui doit ou non etre fait apres le switch
@@ -51,9 +51,9 @@ public:
     t_colors getColor(position const & p) const; //recupere la couleur de la case qui a pour position pair
     t_colors operator()(position const & p)const;
     void rotate_target(); //change le sense de la target
-    void slideColumn(cordinate x,std::vector<position *> & cells);
+    void slideColumn(cordinate x,std::vector<position *> & cells);//ajoute la colonne a la coordonné x au vecteur qui est chargée de faire tomber les cases 
     void delete_cell(position const &x); //supprimer une case
-    void add_new_row(int frame=0);
+    void add_new_row(int frame=0);//genere une nouvelle ligne
     void setGrid_dy(float newGrid_dy);
     void place_new_case(position p,std::vector<cell> v);
     float grid_dy()const;
